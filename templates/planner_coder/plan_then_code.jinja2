@@ -4,12 +4,18 @@ Issue Title: {{ issue_title }}
 Issue Description:
 {{ issue_body }}
 
+Repository Context (Original Code):
+{{ repo_context }}
+
 Analysis of the Bug:
 {{ analysis }}
 
 First, outline your step-by-step plan for the fix.
 Then, output the final code modification inside a `<patch>` tag.
 Provide your patch as a list of Search-and-Replace blocks for the files to be modified.
+
+CRITICAL: You MUST use the exact markers `<<<<<<< SEARCH`, `=======`, and `>>>>>>> REPLACE`. Do not change the words SEARCH or REPLACE to anything else (like the function name).
+CRITICAL: The code inside the `<<<<<<< SEARCH` and `=======` markers MUST EXACTLY MATCH the existing original code character-for-character. Do not add any new comments, ellipses, or whitespace to the SEARCH block.
 
 Example format:
 <patch>

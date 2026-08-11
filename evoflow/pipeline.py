@@ -32,7 +32,7 @@ class SequentialPipeline:
         
         # 2. Planner
         print("[Pipeline] Running Planner...")
-        planner_res = await self.planner.run(issue_title, issue_body, analysis, self.genome)
+        planner_res = await self.planner.run(issue_title, issue_body, repo_context, analysis, self.genome)
         self.event_logger.log_agent_action("Planner", analysis, planner_res["raw_content"])
         draft_patch = planner_res["patch"]
         

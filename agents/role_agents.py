@@ -34,7 +34,7 @@ class PlannerCoderAgent(BaseAgent):
     """
     Generates a patch/code modification. Dynamic based on Genome settings.
     """
-    async def run(self, issue_title: str, issue_body: str, analysis: str, genome: Genome) -> Dict[str, Any]:
+    async def run(self, issue_title: str, issue_body: str, repo_context: str, analysis: str, genome: Genome) -> Dict[str, Any]:
         # Select prompt variant based on genome configuration
         template_name = f"planner_coder/{genome.planner_prompt_variant}.jinja2"
         
@@ -42,6 +42,7 @@ class PlannerCoderAgent(BaseAgent):
             template_name,
             issue_title=issue_title,
             issue_body=issue_body,
+            repo_context=repo_context,
             analysis=analysis
         )
         system_prompt = "You are a code synthesis assistant. Output code modifications in search-and-replace format."

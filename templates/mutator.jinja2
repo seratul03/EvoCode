@@ -7,7 +7,10 @@ Reviewer Critique:
 {{ critique }}
 
 Correct the errors highlighted in the critique, refine the implementation, and produce an improved, robust patch.
-Output the new, revised patch inside a `<patch>` tag using the search-and-replace block format:
+Output the new, revised patch inside a `<patch>` tag using the search-and-replace block format.
+
+CRITICAL: You MUST use the exact markers `<<<<<<< SEARCH`, `=======`, and `>>>>>>> REPLACE`. Do not change the words SEARCH or REPLACE to anything else.
+CRITICAL: The code inside the `<<<<<<< SEARCH` and `=======` markers MUST EXACTLY MATCH the existing original code character-for-character. Do not add any new comments, ellipses, or whitespace to the SEARCH block.
 
 <patch>
 <<<<<<< SEARCH
