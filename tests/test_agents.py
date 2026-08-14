@@ -64,6 +64,7 @@ async def test_planner_agent_genome_binding():
     res = await agent.run(
         issue_title="IndexError",
         issue_body="slice error",
+        repo_context="main.py",
         analysis="Validate slice ranges",
         genome=genome
     )

@@ -99,7 +99,7 @@ async def run_pipeline_demo():
     
     # 2. Plan & Code Generation
     print("\n2. Running PlannerCoderAgent...")
-    plan_res = await planner.run(issue_title, issue_body, analysis_res["analysis"], genome)
+    plan_res = await planner.run(issue_title, issue_body, repo_context, analysis_res["analysis"], genome)
     print(f"Parsed Patch Proposal:\n{plan_res['patch']}")
     
     # 3. Critique
