@@ -51,7 +51,7 @@ async def test_planner_agent_genome_binding():
     mock_client.create_completion = AsyncMock(return_value={
         "content": "<patch>modified code</patch>",
         "provider": "groq",
-        "model": "llama3-70b-8192"
+        "model": "mock-model"
     })
     
     agent = PlannerCoderAgent(client=mock_client)

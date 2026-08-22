@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 # Resolve the project root relative to this file to load the .env file
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 env_path = os.path.join(project_root, ".env")
-load_dotenv(env_path)
+load_dotenv(env_path, override=True)
 
 class EvoClient:
     """
@@ -33,12 +33,12 @@ class EvoClient:
 
         # Load Provider Configurations
         self.groq_key = os.getenv("GROQ_API_KEY", "")
-        self.groq_model = os.getenv("GROQ_MODEL", "llama3-70b-8192")
+        self.groq_model = os.getenv("GROQ_MODEL")
         self.groq_rpm = float(os.getenv("GROQ_RPM", "30"))
         self.groq_tpm = float(os.getenv("GROQ_TPM", "14400"))
 
         self.openrouter_key = os.getenv("OPENROUTER_API_KEY", "")
-        self.openrouter_model = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3-70b-instruct:free")
+        self.openrouter_model = os.getenv("OPENROUTER_MODEL")
         self.openrouter_rpm = float(os.getenv("OPENROUTER_RPM", "10"))
         self.openrouter_tpm = float(os.getenv("OPENROUTER_TPM", "0"))  # 0 means disabled
 
@@ -48,7 +48,7 @@ class EvoClient:
 
         # Initialize clients if valid keys are present
         self.groq_client = None
-        if self._is_key_valid(self.groq_key):
+        if self._is_key_valid(self.groq_key) and self.groq_model:
             self.groq_client = AsyncOpenAI(
                 api_key=self.groq_key,
                 base_url="https://api.groq.com/openai/v1"
@@ -58,7 +58,7 @@ class EvoClient:
             logger.warning("Groq API key not provided or is placeholder.")
 
         self.openrouter_client = None
-        if self._is_key_valid(self.openrouter_key):
+        if self._is_key_valid(self.openrouter_key) and self.openrouter_model:
             self.openrouter_client = AsyncOpenAI(
                 api_key=self.openrouter_key,
                 base_url="https://openrouter.ai/api/v1"

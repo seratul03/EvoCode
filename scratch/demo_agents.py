@@ -57,14 +57,14 @@ async def run_pipeline_demo():
             # Log metrics in budget tracker
             client.budget_tracker.record_call(
                 provider="openrouter",
-                model="meta-llama/llama-3-70b-instruct:free",
+                model=client.openrouter_model or "mock-model",
                 input_tokens=250,
                 output_tokens=120
             )
             
             return {
                 "provider": "openrouter",
-                "model": "meta-llama/llama-3-70b-instruct:free",
+                "model": client.openrouter_model or "mock-model",
                 "content": content,
                 "input_tokens": 250,
                 "output_tokens": 120

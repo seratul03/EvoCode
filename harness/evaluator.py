@@ -35,6 +35,20 @@ class Evaluator:
         workspace = tempfile.mkdtemp(prefix=f"evocode_eval_{task.instance_id}_")
         
         try:
+            if task.setup_script == "MOCK_SWE_BENCH":
+                # Simulated evaluation for prototyping
+                import random
+                # Make it deterministic based on patch length so it can eventually pass
+                # or just give it a 33% chance to pass
+                random.seed(len(patch) + hash(task.instance_id))
+                is_success = random.choice([True, False, False]) 
+                return {
+                    "success": is_success,
+                    "exit_code": 0 if is_success else 1,
+                    "logs": "Simulated test passed!" if is_success else "AssertionError: simulated test failed. Try again.",
+                    "error": None
+                }
+
             # 1. Setup the environment
             setup_exit_code, setup_stdout, setup_stderr = self.runner.run_command(
                 task.setup_script, working_dir=workspace

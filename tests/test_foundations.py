@@ -48,9 +48,9 @@ async def test_rate_limiter_tpm():
 
 def test_budget_tracker():
     tracker = CallBudgetTracker(max_calls=2)
-    tracker.record_call("groq", "llama3-70b-8192", 1000, 2000)
+    tracker.record_call("groq", "openai/gpt-oss-20b", 1000, 2000)
     
-    # Price for groq/llama3-70b-8192:
+    # Price for groq/openai/gpt-oss-20b:
     # Input: 1000 * 0.59 / 1,000,000 = $0.00059
     # Output: 2000 * 0.79 / 1,000,000 = $0.00158
     # Total: $0.00217
@@ -61,12 +61,12 @@ def test_budget_tracker():
     assert abs(summary["total_cost"] - 0.00217) < 1e-6
     
     # Second call
-    tracker.record_call("groq", "llama3-70b-8192", 1000, 2000)
+    tracker.record_call("groq", "openai/gpt-oss-20b", 1000, 2000)
     assert tracker.get_summary()["total_calls"] == 2
     
     # Third call should raise BudgetExceededError
     with pytest.raises(BudgetExceededError):
-        tracker.record_call("groq", "llama3-70b-8192", 1000, 2000)
+        tracker.record_call("groq", "openai/gpt-oss-20b", 1000, 2000)
         
     with pytest.raises(BudgetExceededError):
         tracker.check_budget()
@@ -78,12 +78,12 @@ async def test_client_fallback_success():
         # Create mock completions
         mock_groq_chat = MagicMock()
         mock_groq_chat.completions.create = AsyncMock(side_effect=openai.APIConnectionError(
-            message="Groq connection failed", request=MagicMock()
+            message="Groq failed, Evo agent is moving to OpenRouter", request=MagicMock()
         ))
         
         mock_or_chat = MagicMock()
         mock_choice = MagicMock()
-        mock_choice.message.content = "Hello from OpenRouter!"
+        mock_choice.message.content = "Hello from Evo agent. Openrouter is working fine."
         mock_or_chat.completions.create = AsyncMock(return_value=MagicMock(
             choices=[mock_choice],
             usage=MagicMock(prompt_tokens=50, completion_tokens=150)
@@ -102,17 +102,19 @@ async def test_client_fallback_success():
 
         with patch.dict("os.environ", {
             "GROQ_API_KEY": "groq_valid_test_key",
-            "OPENROUTER_API_KEY": "openrouter_valid_test_key"
+            "GROQ_MODEL": "mock-groq-model",
+            "OPENROUTER_API_KEY": "openrouter_valid_test_key",
+            "OPENROUTER_MODEL": "mock-or-model"
         }):
             client = EvoClient()
             res = await client.create_completion([{"role": "user", "content": "hi"}])
             
             assert res["provider"] == "openrouter"
-            assert res["content"] == "Hello from OpenRouter!"
+            assert res["content"] == "Hello from Evo agent. Openrouter is working fine."
             assert res["input_tokens"] == 50
             assert res["output_tokens"] == 150
             
             # Check budget counts
             summary = client.budget_tracker.get_summary()
             assert summary["total_calls"] == 1
-            assert summary["usage_by_model"]["openrouter/meta-llama/llama-3-70b-instruct:free"]["calls"] == 1
+            assert summary["usage_by_model"]["openrouter/mock-or-model"]["calls"] == 1

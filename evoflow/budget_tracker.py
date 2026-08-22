@@ -72,6 +72,7 @@ class CallBudgetTracker:
                 "mixtral-8x7b-32768": (0.24, 0.24),
                 "llama-3.1-70b-versatile": (0.59, 0.79),
                 "llama-3.1-8b-instant": (0.05, 0.08),
+                "openai/gpt-oss-20b": (0.59, 0.79),
             },
             "openrouter": {
                 # OpenRouter free tier models are $0
