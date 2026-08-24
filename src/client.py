@@ -6,8 +6,8 @@ from openai import AsyncOpenAI
 import openai
 from tenacity import AsyncRetrying, stop_after_attempt, wait_exponential, retry_if_exception_type
 
-from evoflow.rate_limiter import TokenBucketRateLimiter
-from evoflow.budget_tracker import CallBudgetTracker, BudgetExceededError
+from src.rate_limiter import TokenBucketRateLimiter
+from src.budget_tracker import CallBudgetTracker, BudgetExceededError
 
 # Setup logging
 logger = logging.getLogger(__name__)

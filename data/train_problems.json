@@ -1,1 +1,1832 @@
-[]
+[
+  {
+    "id": 1,
+    "category": "algorithmic",
+    "title": "Two Sum",
+    "description": "Given a list of integers `nums` and a target integer `target`, return the indices of the two numbers that add up to `target`. You may assume exactly one solution exists and you may not use the same element twice. Return as a list [i, j] where i < j.",
+    "difficulty": 2,
+    "function_signature": "def two_sum(nums: list[int], target: int) -> list[int]:",
+    "reference_solution": "def two_sum(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        if target - n in seen:\n            return [seen[target - n], i]\n        seen[n] = i",
+    "tests": [
+      {
+        "id": 0,
+        "input": "two_sum([2, 7, 11, 15], 9)",
+        "expected": "[0, 1]"
+      },
+      {
+        "id": 1,
+        "input": "two_sum([3, 2, 4], 6)",
+        "expected": "[1, 2]"
+      },
+      {
+        "id": 2,
+        "input": "two_sum([3, 3], 6)",
+        "expected": "[0, 1]"
+      },
+      {
+        "id": 3,
+        "input": "two_sum([1, 5, 3, 2], 4)",
+        "expected": "[0, 2]"
+      },
+      {
+        "id": 4,
+        "input": "two_sum([-1, -2, -3, -4], -5)",
+        "expected": "[1, 2]"
+      },
+      {
+        "id": 5,
+        "input": "two_sum([0, 4, 3, 0], 0)",
+        "expected": "[0, 3]"
+      },
+      {
+        "id": 6,
+        "input": "two_sum([1, 2, 3, 6], 9)",
+        "expected": "[2, 3]"
+      },
+      {
+        "id": 7,
+        "input": "two_sum([100, 200, 300], 500)",
+        "expected": "[1, 2]"
+      },
+      {
+        "id": 8,
+        "input": "two_sum([-10, 0, 10], 0)",
+        "expected": "[0, 2]"
+      },
+      {
+        "id": 9,
+        "input": "two_sum([1, 9], 10)",
+        "expected": "[0, 1]"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "category": "algorithmic",
+    "title": "Binary Search",
+    "description": "Given a sorted list of integers `nums` and a target integer `target`, return the index of `target` using binary search. If not found, return -1.",
+    "difficulty": 2,
+    "function_signature": "def binary_search(nums: list[int], target: int) -> int:",
+    "reference_solution": "def binary_search(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target: return mid\n        elif nums[mid] < target: lo = mid + 1\n        else: hi = mid - 1\n    return -1",
+    "tests": [
+      {
+        "id": 0,
+        "input": "binary_search([1, 3, 5, 7, 9], 5)",
+        "expected": "2"
+      },
+      {
+        "id": 1,
+        "input": "binary_search([1, 3, 5, 7, 9], 1)",
+        "expected": "0"
+      },
+      {
+        "id": 2,
+        "input": "binary_search([1, 3, 5, 7, 9], 9)",
+        "expected": "4"
+      },
+      {
+        "id": 3,
+        "input": "binary_search([1, 3, 5, 7, 9], 4)",
+        "expected": "-1"
+      },
+      {
+        "id": 4,
+        "input": "binary_search([], 5)",
+        "expected": "-1"
+      },
+      {
+        "id": 5,
+        "input": "binary_search([5], 5)",
+        "expected": "0"
+      },
+      {
+        "id": 6,
+        "input": "binary_search([5], 3)",
+        "expected": "-1"
+      },
+      {
+        "id": 7,
+        "input": "binary_search([-5, -3, 0, 2, 8], -3)",
+        "expected": "1"
+      },
+      {
+        "id": 8,
+        "input": "binary_search([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 10)",
+        "expected": "9"
+      },
+      {
+        "id": 9,
+        "input": "binary_search([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 6)",
+        "expected": "5"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "category": "algorithmic",
+    "title": "Longest Common Subsequence",
+    "description": "Given two strings `text1` and `text2`, return the length of their longest common subsequence. A subsequence is a sequence derived from another by deleting some elements without changing the order.",
+    "difficulty": 6,
+    "function_signature": "def lcs(text1: str, text2: str) -> int:",
+    "reference_solution": "def lcs(text1, text2):\n    m, n = len(text1), len(text2)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if text1[i-1] == text2[j-1]:\n                dp[i][j] = dp[i-1][j-1] + 1\n            else:\n                dp[i][j] = max(dp[i-1][j], dp[i][j-1])\n    return dp[m][n]",
+    "tests": [
+      {
+        "id": 0,
+        "input": "lcs('abcde', 'ace')",
+        "expected": "3"
+      },
+      {
+        "id": 1,
+        "input": "lcs('abc', 'abc')",
+        "expected": "3"
+      },
+      {
+        "id": 2,
+        "input": "lcs('abc', 'def')",
+        "expected": "0"
+      },
+      {
+        "id": 3,
+        "input": "lcs('', 'abc')",
+        "expected": "0"
+      },
+      {
+        "id": 4,
+        "input": "lcs('abc', '')",
+        "expected": "0"
+      },
+      {
+        "id": 5,
+        "input": "lcs('oxcpqrsvwf', 'shmtulqrypy')",
+        "expected": "2"
+      },
+      {
+        "id": 6,
+        "input": "lcs('a', 'a')",
+        "expected": "1"
+      },
+      {
+        "id": 7,
+        "input": "lcs('aab', 'azb')",
+        "expected": "2"
+      },
+      {
+        "id": 8,
+        "input": "lcs('bsbininm', 'jmjkbkjkv')",
+        "expected": "1"
+      },
+      {
+        "id": 9,
+        "input": "lcs('abcba', 'abcbcba')",
+        "expected": "5"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "category": "algorithmic",
+    "title": "Coin Change",
+    "description": "Given a list of coin denominations `coins` and an integer `amount`, return the minimum number of coins needed to make up `amount`. If it cannot be made up, return -1.",
+    "difficulty": 6,
+    "function_signature": "def coin_change(coins: list[int], amount: int) -> int:",
+    "reference_solution": "def coin_change(coins, amount):\n    dp = [float('inf')] * (amount + 1)\n    dp[0] = 0\n    for i in range(1, amount + 1):\n        for c in coins:\n            if c <= i:\n                dp[i] = min(dp[i], dp[i - c] + 1)\n    return dp[amount] if dp[amount] != float('inf') else -1",
+    "tests": [
+      {
+        "id": 0,
+        "input": "coin_change([1, 5, 10, 25], 36)",
+        "expected": "3"
+      },
+      {
+        "id": 1,
+        "input": "coin_change([2], 3)",
+        "expected": "-1"
+      },
+      {
+        "id": 2,
+        "input": "coin_change([1], 0)",
+        "expected": "0"
+      },
+      {
+        "id": 3,
+        "input": "coin_change([1], 1)",
+        "expected": "1"
+      },
+      {
+        "id": 4,
+        "input": "coin_change([1, 2, 5], 11)",
+        "expected": "3"
+      },
+      {
+        "id": 5,
+        "input": "coin_change([186, 419, 83, 408], 6249)",
+        "expected": "20"
+      },
+      {
+        "id": 6,
+        "input": "coin_change([1, 5, 10], 0)",
+        "expected": "0"
+      },
+      {
+        "id": 7,
+        "input": "coin_change([3, 5], 7)",
+        "expected": "-1"
+      },
+      {
+        "id": 8,
+        "input": "coin_change([2, 5, 10], 15)",
+        "expected": "2"
+      },
+      {
+        "id": 9,
+        "input": "coin_change([1, 4, 6], 8)",
+        "expected": "2"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "category": "algorithmic",
+    "title": "Maximum Subarray Sum",
+    "description": "Given a list of integers `nums`, return the maximum sum of a contiguous subarray. The subarray must contain at least one element.",
+    "difficulty": 3,
+    "function_signature": "def max_subarray(nums: list[int]) -> int:",
+    "reference_solution": "def max_subarray(nums):\n    best = cur = nums[0]\n    for n in nums[1:]:\n        cur = max(n, cur + n)\n        best = max(best, cur)\n    return best",
+    "tests": [
+      {
+        "id": 0,
+        "input": "max_subarray([-2,1,-3,4,-1,2,1,-5,4])",
+        "expected": "6"
+      },
+      {
+        "id": 1,
+        "input": "max_subarray([1])",
+        "expected": "1"
+      },
+      {
+        "id": 2,
+        "input": "max_subarray([5, 4, -1, 7, 8])",
+        "expected": "23"
+      },
+      {
+        "id": 3,
+        "input": "max_subarray([-1, -2, -3])",
+        "expected": "-1"
+      },
+      {
+        "id": 4,
+        "input": "max_subarray([0])",
+        "expected": "0"
+      },
+      {
+        "id": 5,
+        "input": "max_subarray([-2, -1])",
+        "expected": "-1"
+      },
+      {
+        "id": 6,
+        "input": "max_subarray([1, 2, 3])",
+        "expected": "6"
+      },
+      {
+        "id": 7,
+        "input": "max_subarray([-1, 0, -2])",
+        "expected": "0"
+      },
+      {
+        "id": 8,
+        "input": "max_subarray([2, -1, 2, 3, 4, -5])",
+        "expected": "10"
+      },
+      {
+        "id": 9,
+        "input": "max_subarray([-5, 8, -3, 9, -1])",
+        "expected": "14"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "category": "algorithmic",
+    "title": "Climbing Stairs",
+    "description": "You are climbing a staircase. It takes `n` steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
+    "difficulty": 3,
+    "function_signature": "def climb_stairs(n: int) -> int:",
+    "reference_solution": "def climb_stairs(n):\n    if n <= 2: return n\n    a, b = 1, 2\n    for _ in range(3, n + 1):\n        a, b = b, a + b\n    return b",
+    "tests": [
+      {
+        "id": 0,
+        "input": "climb_stairs(1)",
+        "expected": "1"
+      },
+      {
+        "id": 1,
+        "input": "climb_stairs(2)",
+        "expected": "2"
+      },
+      {
+        "id": 2,
+        "input": "climb_stairs(3)",
+        "expected": "3"
+      },
+      {
+        "id": 3,
+        "input": "climb_stairs(4)",
+        "expected": "5"
+      },
+      {
+        "id": 4,
+        "input": "climb_stairs(5)",
+        "expected": "8"
+      },
+      {
+        "id": 5,
+        "input": "climb_stairs(6)",
+        "expected": "13"
+      },
+      {
+        "id": 6,
+        "input": "climb_stairs(10)",
+        "expected": "89"
+      },
+      {
+        "id": 7,
+        "input": "climb_stairs(15)",
+        "expected": "987"
+      },
+      {
+        "id": 8,
+        "input": "climb_stairs(20)",
+        "expected": "10946"
+      },
+      {
+        "id": 9,
+        "input": "climb_stairs(30)",
+        "expected": "1346269"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "category": "data_structures",
+    "title": "Valid Parentheses",
+    "description": "Given a string `s` containing only '(', ')', '{', '}', '[' and ']', determine if the input string is valid. A string is valid if every opening bracket has a corresponding closing bracket in the correct order.",
+    "difficulty": 3,
+    "function_signature": "def is_valid(s: str) -> bool:",
+    "reference_solution": "def is_valid(s):\n    stack = []\n    pairs = {')': '(', '}': '{', ']': '['}\n    for c in s:\n        if c in '([{':\n            stack.append(c)\n        elif not stack or stack[-1] != pairs[c]:\n            return False\n        else:\n            stack.pop()\n    return not stack",
+    "tests": [
+      {
+        "id": 0,
+        "input": "is_valid('()')",
+        "expected": "True"
+      },
+      {
+        "id": 1,
+        "input": "is_valid('()[]{}')",
+        "expected": "True"
+      },
+      {
+        "id": 2,
+        "input": "is_valid('(]')",
+        "expected": "False"
+      },
+      {
+        "id": 3,
+        "input": "is_valid('([)]')",
+        "expected": "False"
+      },
+      {
+        "id": 4,
+        "input": "is_valid('{[]}')",
+        "expected": "True"
+      },
+      {
+        "id": 5,
+        "input": "is_valid('')",
+        "expected": "True"
+      },
+      {
+        "id": 6,
+        "input": "is_valid('(')",
+        "expected": "False"
+      },
+      {
+        "id": 7,
+        "input": "is_valid(']')",
+        "expected": "False"
+      },
+      {
+        "id": 8,
+        "input": "is_valid('((()))')",
+        "expected": "True"
+      },
+      {
+        "id": 9,
+        "input": "is_valid('({[]})')",
+        "expected": "True"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "category": "data_structures",
+    "title": "Min Stack",
+    "description": "Implement a stack that supports push, pop, top, and retrieving the minimum element in constant time. Implement the class MinStack with methods push(val), pop(), top(), and get_min().",
+    "difficulty": 5,
+    "function_signature": "class MinStack:\n    def __init__(self): ...\n    def push(self, val: int) -> None: ...\n    def pop(self) -> None: ...\n    def top(self) -> int: ...\n    def get_min(self) -> int: ...",
+    "reference_solution": "class MinStack:\n    def __init__(self):\n        self.stack = []\n        self.min_stack = []\n    def push(self, val):\n        self.stack.append(val)\n        self.min_stack.append(min(val, self.min_stack[-1] if self.min_stack else val))\n    def pop(self):\n        self.stack.pop()\n        self.min_stack.pop()\n    def top(self):\n        return self.stack[-1]\n    def get_min(self):\n        return self.min_stack[-1]",
+    "tests": [
+      {
+        "id": 0,
+        "input": "ms = MinStack(); ms.push(3); ms.push(5); str(ms.get_min()) + ',' + str(ms.top())",
+        "expected": "3,5"
+      },
+      {
+        "id": 1,
+        "input": "ms = MinStack(); ms.push(-2); ms.push(0); ms.push(-3); str(ms.get_min())",
+        "expected": "-3"
+      },
+      {
+        "id": 2,
+        "input": "ms = MinStack(); ms.push(-2); ms.push(0); ms.push(-3); ms.pop(); str(ms.get_min())",
+        "expected": "-2"
+      },
+      {
+        "id": 3,
+        "input": "ms = MinStack(); ms.push(1); str(ms.get_min())",
+        "expected": "1"
+      },
+      {
+        "id": 4,
+        "input": "ms = MinStack(); ms.push(5); ms.push(3); ms.push(7); str(ms.get_min())",
+        "expected": "3"
+      },
+      {
+        "id": 5,
+        "input": "ms = MinStack(); ms.push(5); ms.push(3); ms.push(7); ms.pop(); str(ms.get_min())",
+        "expected": "3"
+      },
+      {
+        "id": 6,
+        "input": "ms = MinStack(); ms.push(5); ms.push(3); ms.pop(); str(ms.get_min())",
+        "expected": "5"
+      },
+      {
+        "id": 7,
+        "input": "ms = MinStack(); ms.push(0); ms.push(0); str(ms.get_min())",
+        "expected": "0"
+      },
+      {
+        "id": 8,
+        "input": "ms = MinStack(); ms.push(2); ms.push(2); ms.pop(); str(ms.get_min())",
+        "expected": "2"
+      },
+      {
+        "id": 9,
+        "input": "ms = MinStack(); ms.push(10); ms.push(1); ms.push(5); str(ms.top())",
+        "expected": "5"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "category": "data_structures",
+    "title": "LRU Cache",
+    "description": "Implement an LRU (Least Recently Used) cache. Implement the class LRUCache(capacity) with methods get(key) returning the value or -1 if not found, and put(key, value) which inserts the key-value pair, evicting the least recently used key if capacity is exceeded.",
+    "difficulty": 7,
+    "function_signature": "class LRUCache:\n    def __init__(self, capacity: int): ...\n    def get(self, key: int) -> int: ...\n    def put(self, key: int, value: int) -> None: ...",
+    "reference_solution": "from collections import OrderedDict\nclass LRUCache:\n    def __init__(self, capacity):\n        self.cap = capacity\n        self.cache = OrderedDict()\n    def get(self, key):\n        if key not in self.cache: return -1\n        self.cache.move_to_end(key)\n        return self.cache[key]\n    def put(self, key, value):\n        if key in self.cache: self.cache.move_to_end(key)\n        self.cache[key] = value\n        if len(self.cache) > self.cap:\n            self.cache.popitem(last=False)",
+    "tests": [
+      {
+        "id": 0,
+        "input": "c = LRUCache(2); c.put(1,1); c.put(2,2); str(c.get(1))",
+        "expected": "1"
+      },
+      {
+        "id": 1,
+        "input": "c = LRUCache(2); c.put(1,1); c.put(2,2); c.put(3,3); str(c.get(2))",
+        "expected": "2"
+      },
+      {
+        "id": 2,
+        "input": "c = LRUCache(2); c.put(1,1); c.put(2,2); c.get(1); c.put(3,3); str(c.get(2))",
+        "expected": "-1"
+      },
+      {
+        "id": 3,
+        "input": "c = LRUCache(1); c.put(1,1); c.put(2,2); str(c.get(1))",
+        "expected": "-1"
+      },
+      {
+        "id": 4,
+        "input": "c = LRUCache(2); c.put(2,1); c.put(3,2); str(c.get(3))",
+        "expected": "2"
+      },
+      {
+        "id": 5,
+        "input": "c = LRUCache(3); c.put(1,1); c.put(2,2); c.put(3,3); c.put(4,4); str(c.get(1))",
+        "expected": "-1"
+      },
+      {
+        "id": 6,
+        "input": "c = LRUCache(2); c.put(2,1); c.put(1,1); c.get(2); c.put(3,3); str(c.get(1))",
+        "expected": "-1"
+      },
+      {
+        "id": 7,
+        "input": "c = LRUCache(2); c.put(2,1); c.put(2,2); str(c.get(2))",
+        "expected": "2"
+      },
+      {
+        "id": 8,
+        "input": "c = LRUCache(2); str(c.get(1))",
+        "expected": "-1"
+      },
+      {
+        "id": 9,
+        "input": "c = LRUCache(3); c.put(1,1); c.put(2,2); c.put(3,3); c.get(1); c.put(4,4); str(c.get(2))",
+        "expected": "-1"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "category": "data_structures",
+    "title": "Number of Islands",
+    "description": "Given an m\u00c3\u2014n grid of '1's (land) and '0's (water), return the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically.",
+    "difficulty": 5,
+    "function_signature": "def num_islands(grid: list[list[str]]) -> int:",
+    "reference_solution": "def num_islands(grid):\n    if not grid: return 0\n    rows, cols = len(grid), len(grid[0])\n    count = 0\n    def dfs(r, c):\n        if r < 0 or r >= rows or c < 0 or c >= cols or grid[r][c] == '0': return\n        grid[r][c] = '0'\n        dfs(r+1,c); dfs(r-1,c); dfs(r,c+1); dfs(r,c-1)\n    for r in range(rows):\n        for c in range(cols):\n            if grid[r][c] == '1':\n                count += 1\n                dfs(r, c)\n    return count",
+    "tests": [
+      {
+        "id": 0,
+        "input": "num_islands([['1','1','1','1','0'],['1','1','0','1','0'],['1','1','0','0','0'],['0','0','0','0','0']])",
+        "expected": "1"
+      },
+      {
+        "id": 1,
+        "input": "num_islands([['1','1','0','0','0'],['1','1','0','0','0'],['0','0','1','0','0'],['0','0','0','1','1']])",
+        "expected": "3"
+      },
+      {
+        "id": 2,
+        "input": "num_islands([['0']])",
+        "expected": "0"
+      },
+      {
+        "id": 3,
+        "input": "num_islands([['1']])",
+        "expected": "1"
+      },
+      {
+        "id": 4,
+        "input": "num_islands([['1','0'],['0','1']])",
+        "expected": "2"
+      },
+      {
+        "id": 5,
+        "input": "num_islands([['1','1'],['1','1']])",
+        "expected": "1"
+      },
+      {
+        "id": 6,
+        "input": "num_islands([])",
+        "expected": "0"
+      },
+      {
+        "id": 7,
+        "input": "num_islands([['0','0','0'],['0','0','0']])",
+        "expected": "0"
+      },
+      {
+        "id": 8,
+        "input": "num_islands([['1'],['1'],['0'],['1']])",
+        "expected": "2"
+      },
+      {
+        "id": 9,
+        "input": "num_islands([['1','0','1'],['0','1','0'],['1','0','1']])",
+        "expected": "5"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "category": "data_structures",
+    "title": "Merge K Sorted Lists",
+    "description": "Given a list of k sorted lists of integers, merge them all into one sorted list and return it.",
+    "difficulty": 7,
+    "function_signature": "def merge_k_sorted(lists: list[list[int]]) -> list[int]:",
+    "reference_solution": "import heapq\ndef merge_k_sorted(lists):\n    heap, result = [], []\n    for i, lst in enumerate(lists):\n        if lst:\n            heapq.heappush(heap, (lst[0], i, 0))\n    while heap:\n        val, i, j = heapq.heappop(heap)\n        result.append(val)\n        if j + 1 < len(lists[i]):\n            heapq.heappush(heap, (lists[i][j+1], i, j+1))\n    return result",
+    "tests": [
+      {
+        "id": 0,
+        "input": "merge_k_sorted([[1,4,5],[1,3,4],[2,6]])",
+        "expected": "[1, 1, 2, 3, 4, 4, 5, 6]"
+      },
+      {
+        "id": 1,
+        "input": "merge_k_sorted([])",
+        "expected": "[]"
+      },
+      {
+        "id": 2,
+        "input": "merge_k_sorted([[]])",
+        "expected": "[]"
+      },
+      {
+        "id": 3,
+        "input": "merge_k_sorted([[1],[2],[3]])",
+        "expected": "[1, 2, 3]"
+      },
+      {
+        "id": 4,
+        "input": "merge_k_sorted([[1,3,5],[2,4,6]])",
+        "expected": "[1, 2, 3, 4, 5, 6]"
+      },
+      {
+        "id": 5,
+        "input": "merge_k_sorted([[-1,0,1]])",
+        "expected": "[-1, 0, 1]"
+      },
+      {
+        "id": 6,
+        "input": "merge_k_sorted([[1,1],[1,1]])",
+        "expected": "[1, 1, 1, 1]"
+      },
+      {
+        "id": 7,
+        "input": "merge_k_sorted([[],[1,2]])",
+        "expected": "[1, 2]"
+      },
+      {
+        "id": 8,
+        "input": "merge_k_sorted([[5],[4],[3],[2],[1]])",
+        "expected": "[1, 2, 3, 4, 5]"
+      },
+      {
+        "id": 9,
+        "input": "merge_k_sorted([[1,2,3],[4,5,6],[7,8,9]])",
+        "expected": "[1, 2, 3, 4, 5, 6, 7, 8, 9]"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "category": "data_structures",
+    "title": "Implement Queue Using Stacks",
+    "description": "Implement a FIFO queue using only two stacks. The queue should support push(x), pop(), peek(), and empty() operations.",
+    "difficulty": 4,
+    "function_signature": "class MyQueue:\n    def __init__(self): ...\n    def push(self, x: int) -> None: ...\n    def pop(self) -> int: ...\n    def peek(self) -> int: ...\n    def empty(self) -> bool: ...",
+    "reference_solution": "class MyQueue:\n    def __init__(self):\n        self.in_stack = []\n        self.out_stack = []\n    def push(self, x):\n        self.in_stack.append(x)\n    def _transfer(self):\n        if not self.out_stack:\n            while self.in_stack:\n                self.out_stack.append(self.in_stack.pop())\n    def pop(self):\n        self._transfer()\n        return self.out_stack.pop()\n    def peek(self):\n        self._transfer()\n        return self.out_stack[-1]\n    def empty(self):\n        return not self.in_stack and not self.out_stack",
+    "tests": [
+      {
+        "id": 0,
+        "input": "q = MyQueue(); q.push(1); q.push(2); str(q.peek())",
+        "expected": "1"
+      },
+      {
+        "id": 1,
+        "input": "q = MyQueue(); q.push(1); q.push(2); str(q.pop())",
+        "expected": "1"
+      },
+      {
+        "id": 2,
+        "input": "q = MyQueue(); str(q.empty())",
+        "expected": "True"
+      },
+      {
+        "id": 3,
+        "input": "q = MyQueue(); q.push(1); str(q.empty())",
+        "expected": "False"
+      },
+      {
+        "id": 4,
+        "input": "q = MyQueue(); q.push(1); q.pop(); str(q.empty())",
+        "expected": "True"
+      },
+      {
+        "id": 5,
+        "input": "q = MyQueue(); q.push(1); q.push(2); q.pop(); str(q.peek())",
+        "expected": "2"
+      },
+      {
+        "id": 6,
+        "input": "q = MyQueue(); q.push(1); q.push(2); q.push(3); str(q.pop()) + str(q.pop())",
+        "expected": "12"
+      },
+      {
+        "id": 7,
+        "input": "q = MyQueue(); q.push(5); str(q.peek()) + str(q.pop())",
+        "expected": "55"
+      },
+      {
+        "id": 8,
+        "input": "q = MyQueue(); q.push(1); q.push(2); q.push(3); q.pop(); q.pop(); str(q.pop())",
+        "expected": "3"
+      },
+      {
+        "id": 9,
+        "input": "q = MyQueue(); q.push(10); q.push(20); str(q.peek())",
+        "expected": "10"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "category": "string_parsing",
+    "title": "Longest Palindromic Substring",
+    "description": "Given a string `s`, return the longest palindromic substring. If there are multiple of the same length, return the first one found.",
+    "difficulty": 5,
+    "function_signature": "def longest_palindrome(s: str) -> str:",
+    "reference_solution": "def longest_palindrome(s):\n    res = ''\n    for i in range(len(s)):\n        for l, r in [(i,i),(i,i+1)]:\n            while l >= 0 and r < len(s) and s[l] == s[r]:\n                l -= 1; r += 1\n            if r - l - 1 > len(res):\n                res = s[l+1:r]\n    return res",
+    "tests": [
+      {
+        "id": 0,
+        "input": "longest_palindrome('babad')",
+        "expected": "bab"
+      },
+      {
+        "id": 1,
+        "input": "longest_palindrome('cbbd')",
+        "expected": "bb"
+      },
+      {
+        "id": 2,
+        "input": "longest_palindrome('a')",
+        "expected": "a"
+      },
+      {
+        "id": 3,
+        "input": "longest_palindrome('ac')",
+        "expected": "a"
+      },
+      {
+        "id": 4,
+        "input": "longest_palindrome('racecar')",
+        "expected": "racecar"
+      },
+      {
+        "id": 5,
+        "input": "longest_palindrome('abcba')",
+        "expected": "abcba"
+      },
+      {
+        "id": 6,
+        "input": "longest_palindrome('aacabdkacaa')",
+        "expected": "aca"
+      },
+      {
+        "id": 7,
+        "input": "len(longest_palindrome('aaaa'))",
+        "expected": "4"
+      },
+      {
+        "id": 8,
+        "input": "longest_palindrome('noon')",
+        "expected": "noon"
+      },
+      {
+        "id": 9,
+        "input": "len(longest_palindrome('abcdefedcba'))",
+        "expected": "11"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "category": "string_parsing",
+    "title": "Word Frequency Count",
+    "description": "Given a string `text`, return a dictionary where each key is a word (case-insensitive, punctuation stripped) and each value is how many times it appears.",
+    "difficulty": 3,
+    "function_signature": "def word_frequency(text: str) -> dict:",
+    "reference_solution": "import re\ndef word_frequency(text):\n    words = re.findall(r\"[a-z']+\", text.lower())\n    freq = {}\n    for w in words:\n        freq[w] = freq.get(w, 0) + 1\n    return freq",
+    "tests": [
+      {
+        "id": 0,
+        "input": "word_frequency('hello world hello')",
+        "expected": "{'hello': 2, 'world': 1}"
+      },
+      {
+        "id": 1,
+        "input": "word_frequency('')",
+        "expected": "{}"
+      },
+      {
+        "id": 2,
+        "input": "word_frequency('Hello HELLO hello')",
+        "expected": "{'hello': 3}"
+      },
+      {
+        "id": 3,
+        "input": "word_frequency('one two three')['two']",
+        "expected": "1"
+      },
+      {
+        "id": 4,
+        "input": "word_frequency('a a a b b c')['a']",
+        "expected": "3"
+      },
+      {
+        "id": 5,
+        "input": "len(word_frequency('the cat sat on the mat'))",
+        "expected": "5"
+      },
+      {
+        "id": 6,
+        "input": "word_frequency('the cat sat on the mat')['the']",
+        "expected": "2"
+      },
+      {
+        "id": 7,
+        "input": "word_frequency('test!test?test.')['test']",
+        "expected": "3"
+      },
+      {
+        "id": 8,
+        "input": "word_frequency('Go go GO')['go']",
+        "expected": "3"
+      },
+      {
+        "id": 9,
+        "input": "word_frequency('a')['a']",
+        "expected": "1"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "category": "string_parsing",
+    "title": "Valid Anagram",
+    "description": "Given two strings `s` and `t`, return True if `t` is an anagram of `s`, and False otherwise.",
+    "difficulty": 2,
+    "function_signature": "def is_anagram(s: str, t: str) -> bool:",
+    "reference_solution": "def is_anagram(s, t):\n    return sorted(s) == sorted(t)",
+    "tests": [
+      {
+        "id": 0,
+        "input": "is_anagram('anagram', 'nagaram')",
+        "expected": "True"
+      },
+      {
+        "id": 1,
+        "input": "is_anagram('rat', 'car')",
+        "expected": "False"
+      },
+      {
+        "id": 2,
+        "input": "is_anagram('', '')",
+        "expected": "True"
+      },
+      {
+        "id": 3,
+        "input": "is_anagram('a', 'a')",
+        "expected": "True"
+      },
+      {
+        "id": 4,
+        "input": "is_anagram('ab', 'ba')",
+        "expected": "True"
+      },
+      {
+        "id": 5,
+        "input": "is_anagram('listen', 'silent')",
+        "expected": "True"
+      },
+      {
+        "id": 6,
+        "input": "is_anagram('hello', 'world')",
+        "expected": "False"
+      },
+      {
+        "id": 7,
+        "input": "is_anagram('ab', 'abc')",
+        "expected": "False"
+      },
+      {
+        "id": 8,
+        "input": "is_anagram('aabbcc', 'abcabc')",
+        "expected": "True"
+      },
+      {
+        "id": 9,
+        "input": "is_anagram('aabc', 'aacb')",
+        "expected": "True"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "category": "string_parsing",
+    "title": "Roman to Integer",
+    "description": "Given a roman numeral string `s`, convert it to an integer. Numerals: I=1, V=5, X=10, L=50, C=100, D=500, M=1000. Subtractive rules apply (e.g., IV=4, IX=9).",
+    "difficulty": 3,
+    "function_signature": "def roman_to_int(s: str) -> int:",
+    "reference_solution": "def roman_to_int(s):\n    vals = {'I':1,'V':5,'X':10,'L':50,'C':100,'D':500,'M':1000}\n    total = 0\n    for i in range(len(s)):\n        if i + 1 < len(s) and vals[s[i]] < vals[s[i+1]]:\n            total -= vals[s[i]]\n        else:\n            total += vals[s[i]]\n    return total",
+    "tests": [
+      {
+        "id": 0,
+        "input": "roman_to_int('III')",
+        "expected": "3"
+      },
+      {
+        "id": 1,
+        "input": "roman_to_int('IV')",
+        "expected": "4"
+      },
+      {
+        "id": 2,
+        "input": "roman_to_int('IX')",
+        "expected": "9"
+      },
+      {
+        "id": 3,
+        "input": "roman_to_int('LVIII')",
+        "expected": "58"
+      },
+      {
+        "id": 4,
+        "input": "roman_to_int('MCMXCIV')",
+        "expected": "1994"
+      },
+      {
+        "id": 5,
+        "input": "roman_to_int('I')",
+        "expected": "1"
+      },
+      {
+        "id": 6,
+        "input": "roman_to_int('MMMCMXCIX')",
+        "expected": "3999"
+      },
+      {
+        "id": 7,
+        "input": "roman_to_int('XLII')",
+        "expected": "42"
+      },
+      {
+        "id": 8,
+        "input": "roman_to_int('CD')",
+        "expected": "400"
+      },
+      {
+        "id": 9,
+        "input": "roman_to_int('XC')",
+        "expected": "90"
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "category": "string_parsing",
+    "title": "Group Anagrams",
+    "description": "Given a list of strings `strs`, group the anagrams together and return them as a list of lists. The order of groups and order within groups does not matter.",
+    "difficulty": 4,
+    "function_signature": "def group_anagrams(strs: list[str]) -> list[list[str]]:",
+    "reference_solution": "from collections import defaultdict\ndef group_anagrams(strs):\n    d = defaultdict(list)\n    for s in strs:\n        d[tuple(sorted(s))].append(s)\n    return list(d.values())",
+    "tests": [
+      {
+        "id": 0,
+        "input": "sorted([sorted(g) for g in group_anagrams(['eat','tea','tan','ate','nat','bat'])])",
+        "expected": "[['ate', 'eat', 'tea'], ['bat'], ['nat', 'tan']]"
+      },
+      {
+        "id": 1,
+        "input": "group_anagrams([''])",
+        "expected": "[['']]"
+      },
+      {
+        "id": 2,
+        "input": "group_anagrams(['a'])",
+        "expected": "[['a']]"
+      },
+      {
+        "id": 3,
+        "input": "len(group_anagrams(['abc','bca','cab','xyz']))",
+        "expected": "2"
+      },
+      {
+        "id": 4,
+        "input": "len(group_anagrams(['a','b','c']))",
+        "expected": "3"
+      },
+      {
+        "id": 5,
+        "input": "sorted([sorted(g) for g in group_anagrams(['ab','ba'])])",
+        "expected": "[['ab', 'ba']]"
+      },
+      {
+        "id": 6,
+        "input": "len(group_anagrams([]))",
+        "expected": "0"
+      },
+      {
+        "id": 7,
+        "input": "len(group_anagrams(['aab','baa','aba','xyz']))",
+        "expected": "2"
+      },
+      {
+        "id": 8,
+        "input": "sorted([sorted(g) for g in group_anagrams(['dog','god','cat','tac'])])",
+        "expected": "[['cat', 'tac'], ['dog', 'god']]"
+      },
+      {
+        "id": 9,
+        "input": "len(group_anagrams(['abcde','edcba','xyz','zyx']))",
+        "expected": "2"
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "category": "string_parsing",
+    "title": "Count and Say",
+    "description": "The count-and-say sequence is defined as follows: countAndSay(1) = '1', and countAndSay(n) is the run-length encoding of countAndSay(n-1). Given integer `n`, return the nth term of the sequence.",
+    "difficulty": 4,
+    "function_signature": "def count_and_say(n: int) -> str:",
+    "reference_solution": "def count_and_say(n):\n    s = '1'\n    for _ in range(n - 1):\n        new_s = ''\n        i = 0\n        while i < len(s):\n            c = s[i]\n            count = 0\n            while i < len(s) and s[i] == c:\n                i += 1\n                count += 1\n            new_s += str(count) + c\n        s = new_s\n    return s",
+    "tests": [
+      {
+        "id": 0,
+        "input": "count_and_say(1)",
+        "expected": "1"
+      },
+      {
+        "id": 1,
+        "input": "count_and_say(2)",
+        "expected": "11"
+      },
+      {
+        "id": 2,
+        "input": "count_and_say(3)",
+        "expected": "21"
+      },
+      {
+        "id": 3,
+        "input": "count_and_say(4)",
+        "expected": "1211"
+      },
+      {
+        "id": 4,
+        "input": "count_and_say(5)",
+        "expected": "111221"
+      },
+      {
+        "id": 5,
+        "input": "count_and_say(6)",
+        "expected": "312211"
+      },
+      {
+        "id": 6,
+        "input": "count_and_say(7)",
+        "expected": "13112221"
+      },
+      {
+        "id": 7,
+        "input": "count_and_say(8)",
+        "expected": "1113213211"
+      },
+      {
+        "id": 8,
+        "input": "len(count_and_say(9))",
+        "expected": "14"
+      },
+      {
+        "id": 9,
+        "input": "len(count_and_say(10))",
+        "expected": "20"
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "category": "system_style",
+    "title": "Rate Limiter",
+    "description": "Implement a token bucket rate limiter class RateLimiter(max_calls, period_seconds) with method allow(timestamp) returning True if the call is allowed and False otherwise. `max_calls` calls are allowed within `period_seconds`. Use a sliding window approach.",
+    "difficulty": 7,
+    "function_signature": "class RateLimiter:\n    def __init__(self, max_calls: int, period_seconds: float): ...\n    def allow(self, timestamp: float) -> bool: ...",
+    "reference_solution": "from collections import deque\nclass RateLimiter:\n    def __init__(self, max_calls, period_seconds):\n        self.max_calls = max_calls\n        self.period = period_seconds\n        self.calls = deque()\n    def allow(self, timestamp):\n        while self.calls and self.calls[0] <= timestamp - self.period:\n            self.calls.popleft()\n        if len(self.calls) < self.max_calls:\n            self.calls.append(timestamp)\n            return True\n        return False",
+    "tests": [
+      {
+        "id": 0,
+        "input": "rl = RateLimiter(3, 1.0); [rl.allow(t) for t in [0.0, 0.3, 0.6, 0.9]]",
+        "expected": "[True, True, True, False]"
+      },
+      {
+        "id": 1,
+        "input": "rl = RateLimiter(2, 1.0); rl.allow(0.0); rl.allow(0.5); rl.allow(1.1)",
+        "expected": "True"
+      },
+      {
+        "id": 2,
+        "input": "rl = RateLimiter(1, 1.0); rl.allow(0.0); rl.allow(0.5)",
+        "expected": "False"
+      },
+      {
+        "id": 3,
+        "input": "rl = RateLimiter(5, 2.0); [rl.allow(t) for t in [0,0.5,1,1.5,2]].count(True)",
+        "expected": "5"
+      },
+      {
+        "id": 4,
+        "input": "rl = RateLimiter(1, 1.0); rl.allow(0); rl.allow(1.0); rl.allow(1.5)",
+        "expected": "False"
+      },
+      {
+        "id": 5,
+        "input": "rl = RateLimiter(3, 3.0); [rl.allow(i) for i in range(5)]",
+        "expected": "[True, True, True, True, True]"
+      },
+      {
+        "id": 6,
+        "input": "rl = RateLimiter(2, 1.0); rl.allow(0); rl.allow(0.9); rl.allow(1.0)",
+        "expected": "True"
+      },
+      {
+        "id": 7,
+        "input": "rl = RateLimiter(1, 0.5); rl.allow(0); rl.allow(0.4); rl.allow(0.6)",
+        "expected": "True"
+      },
+      {
+        "id": 8,
+        "input": "rl = RateLimiter(10, 1.0); all(rl.allow(i/100) for i in range(10))",
+        "expected": "True"
+      },
+      {
+        "id": 9,
+        "input": "rl = RateLimiter(3, 1.0); rl.allow(0); rl.allow(0.1); rl.allow(0.2); rl.allow(1.1); rl.allow(1.2); rl.allow(1.3)",
+        "expected": "True"
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "category": "system_style",
+    "title": "In-Memory Key-Value Store with TTL",
+    "description": "Implement a key-value store with TTL (time-to-live) support. Class KVStore with methods: set(key, value, ttl_seconds, current_time), get(key, current_time) returning the value or None if expired/missing.",
+    "difficulty": 6,
+    "function_signature": "class KVStore:\n    def __init__(self): ...\n    def set(self, key: str, value, ttl: float, now: float) -> None: ...\n    def get(self, key: str, now: float): ...",
+    "reference_solution": "class KVStore:\n    def __init__(self):\n        self.store = {}\n    def set(self, key, value, ttl, now):\n        self.store[key] = (value, now + ttl)\n    def get(self, key, now):\n        if key not in self.store: return None\n        value, expiry = self.store[key]\n        if now >= expiry:\n            del self.store[key]\n            return None\n        return value",
+    "tests": [
+      {
+        "id": 0,
+        "input": "kv = KVStore(); kv.set('x', 1, 5.0, 0.0); kv.get('x', 3.0)",
+        "expected": "1"
+      },
+      {
+        "id": 1,
+        "input": "kv = KVStore(); kv.set('x', 1, 5.0, 0.0); kv.get('x', 5.0)",
+        "expected": "None"
+      },
+      {
+        "id": 2,
+        "input": "kv = KVStore(); kv.get('missing', 0.0)",
+        "expected": "None"
+      },
+      {
+        "id": 3,
+        "input": "kv = KVStore(); kv.set('a', 'hello', 10.0, 0.0); kv.get('a', 9.9)",
+        "expected": "hello"
+      },
+      {
+        "id": 4,
+        "input": "kv = KVStore(); kv.set('a', 42, 1.0, 0.0); kv.set('a', 99, 10.0, 0.5); kv.get('a', 5.0)",
+        "expected": "99"
+      },
+      {
+        "id": 5,
+        "input": "kv = KVStore(); kv.set('k', True, 0.1, 0.0); kv.get('k', 0.2)",
+        "expected": "None"
+      },
+      {
+        "id": 6,
+        "input": "kv = KVStore(); kv.set('a', 1, 10, 0); kv.set('b', 2, 10, 0); kv.get('a', 5) + kv.get('b', 5)",
+        "expected": "3"
+      },
+      {
+        "id": 7,
+        "input": "kv = KVStore(); kv.set('x', 'v', 5, 0); kv.get('x', 4.999)",
+        "expected": "v"
+      },
+      {
+        "id": 8,
+        "input": "kv = KVStore(); kv.set('x', 'v', 5, 0); kv.get('x', 5.0)",
+        "expected": "None"
+      },
+      {
+        "id": 9,
+        "input": "kv = KVStore(); kv.set('a', 1, 5, 10); kv.get('a', 14)",
+        "expected": "1"
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "category": "system_style",
+    "title": "Task Scheduler",
+    "description": "Given a list of CPU tasks (characters), and an integer `n` representing the cooldown period, return the minimum number of intervals needed to complete all tasks. Tasks can be executed in any order.",
+    "difficulty": 7,
+    "function_signature": "def least_interval(tasks: list[str], n: int) -> int:",
+    "reference_solution": "from collections import Counter\ndef least_interval(tasks, n):\n    counts = sorted(Counter(tasks).values(), reverse=True)\n    max_count = counts[0]\n    max_count_tasks = counts.count(max_count)\n    return max(len(tasks), (max_count - 1) * (n + 1) + max_count_tasks)",
+    "tests": [
+      {
+        "id": 0,
+        "input": "least_interval(['A','A','A','B','B','B'], 2)",
+        "expected": "8"
+      },
+      {
+        "id": 1,
+        "input": "least_interval(['A','A','A','B','B','B'], 0)",
+        "expected": "6"
+      },
+      {
+        "id": 2,
+        "input": "least_interval(['A','A','A','A','A','A','B','C','D','E','F','G'], 2)",
+        "expected": "16"
+      },
+      {
+        "id": 3,
+        "input": "least_interval(['A'], 2)",
+        "expected": "1"
+      },
+      {
+        "id": 4,
+        "input": "least_interval(['A','A','B','B'], 2)",
+        "expected": "5"
+      },
+      {
+        "id": 5,
+        "input": "least_interval(['A','A','A','B','B','B','C','C','C'], 2)",
+        "expected": "9"
+      },
+      {
+        "id": 6,
+        "input": "least_interval(['A','B','C'], 3)",
+        "expected": "3"
+      },
+      {
+        "id": 7,
+        "input": "least_interval(['A','A','A'], 2)",
+        "expected": "7"
+      },
+      {
+        "id": 8,
+        "input": "least_interval(['A','A','A','B','B'], 2)",
+        "expected": "7"
+      },
+      {
+        "id": 9,
+        "input": "least_interval(['A','A','A','A'], 3)",
+        "expected": "13"
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "category": "system_style",
+    "title": "Logger Rate Limiter",
+    "description": "Implement a Logger class that limits the printing of each message to once every 10 seconds. Method should_print(message, timestamp) returns True if the message should be printed (not printed in the past 10 seconds), False otherwise.",
+    "difficulty": 4,
+    "function_signature": "class Logger:\n    def __init__(self): ...\n    def should_print(self, message: str, timestamp: int) -> bool: ...",
+    "reference_solution": "class Logger:\n    def __init__(self):\n        self.msg_time = {}\n    def should_print(self, message, timestamp):\n        if message not in self.msg_time or timestamp >= self.msg_time[message] + 10:\n            self.msg_time[message] = timestamp\n            return True\n        return False",
+    "tests": [
+      {
+        "id": 0,
+        "input": "l = Logger(); l.should_print('foo', 1)",
+        "expected": "True"
+      },
+      {
+        "id": 1,
+        "input": "l = Logger(); l.should_print('foo', 1); l.should_print('foo', 5)",
+        "expected": "False"
+      },
+      {
+        "id": 2,
+        "input": "l = Logger(); l.should_print('foo', 1); l.should_print('foo', 11)",
+        "expected": "True"
+      },
+      {
+        "id": 3,
+        "input": "l = Logger(); l.should_print('foo', 1); l.should_print('bar', 2)",
+        "expected": "True"
+      },
+      {
+        "id": 4,
+        "input": "l = Logger(); l.should_print('foo', 1); l.should_print('foo', 10)",
+        "expected": "False"
+      },
+      {
+        "id": 5,
+        "input": "l = Logger(); [l.should_print('a', t) for t in [0, 5, 10, 15]]",
+        "expected": "[True, False, True, False]"
+      },
+      {
+        "id": 6,
+        "input": "l = Logger(); l.should_print('x', 0); l.should_print('y', 0); l.should_print('x', 9)",
+        "expected": "False"
+      },
+      {
+        "id": 7,
+        "input": "l = Logger(); l.should_print('a', 0); l.should_print('b', 0); [l.should_print('a', 10), l.should_print('b', 10)]",
+        "expected": "[True, True]"
+      },
+      {
+        "id": 8,
+        "input": "l = Logger(); [l.should_print('m', i*10) for i in range(5)].count(True)",
+        "expected": "5"
+      },
+      {
+        "id": 9,
+        "input": "l = Logger(); l.should_print('a', 0); l.should_print('a', 0)",
+        "expected": "False"
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "category": "system_style",
+    "title": "Design Hit Counter",
+    "description": "Design a hit counter that counts hits in the last 300 seconds. Implement class HitCounter with methods hit(timestamp) to record a hit, and get_hits(timestamp) to return total hits in the past 300 seconds.",
+    "difficulty": 5,
+    "function_signature": "class HitCounter:\n    def __init__(self): ...\n    def hit(self, timestamp: int) -> None: ...\n    def get_hits(self, timestamp: int) -> int: ...",
+    "reference_solution": "from collections import deque\nclass HitCounter:\n    def __init__(self):\n        self.hits = deque()\n    def hit(self, timestamp):\n        self.hits.append(timestamp)\n    def get_hits(self, timestamp):\n        while self.hits and self.hits[0] <= timestamp - 300:\n            self.hits.popleft()\n        return len(self.hits)",
+    "tests": [
+      {
+        "id": 0,
+        "input": "hc = HitCounter(); hc.hit(1); hc.hit(2); hc.hit(3); hc.get_hits(4)",
+        "expected": "3"
+      },
+      {
+        "id": 1,
+        "input": "hc = HitCounter(); hc.hit(1); hc.hit(2); hc.hit(3); hc.get_hits(301)",
+        "expected": "2"
+      },
+      {
+        "id": 2,
+        "input": "hc = HitCounter(); hc.get_hits(1)",
+        "expected": "0"
+      },
+      {
+        "id": 3,
+        "input": "hc = HitCounter(); hc.hit(1); hc.get_hits(301)",
+        "expected": "0"
+      },
+      {
+        "id": 4,
+        "input": "hc = HitCounter(); hc.hit(1); hc.hit(300); hc.get_hits(300)",
+        "expected": "2"
+      },
+      {
+        "id": 5,
+        "input": "hc = HitCounter(); hc.hit(1); hc.hit(300); hc.get_hits(301)",
+        "expected": "1"
+      },
+      {
+        "id": 6,
+        "input": "hc = HitCounter(); [hc.hit(i) for i in range(1,11)]; hc.get_hits(10)",
+        "expected": "10"
+      },
+      {
+        "id": 7,
+        "input": "hc = HitCounter(); hc.hit(100); hc.hit(200); hc.hit(300); hc.get_hits(400)",
+        "expected": "2"
+      },
+      {
+        "id": 8,
+        "input": "hc = HitCounter(); hc.hit(1); hc.hit(1); hc.hit(1); hc.get_hits(1)",
+        "expected": "3"
+      },
+      {
+        "id": 9,
+        "input": "hc = HitCounter(); hc.hit(5); hc.get_hits(304)",
+        "expected": "1"
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "category": "edge_cases",
+    "title": "Integer Overflow Safe Add",
+    "description": "Write a function `safe_add(a, b)` that adds two integers but safely handles boundary conditions. If the result would overflow a 32-bit signed integer range [-2^31, 2^31 - 1], clamp it to the boundary.",
+    "difficulty": 4,
+    "function_signature": "def safe_add(a: int, b: int) -> int:",
+    "reference_solution": "def safe_add(a, b):\n    INT_MIN, INT_MAX = -(2**31), 2**31 - 1\n    return max(INT_MIN, min(INT_MAX, a + b))",
+    "tests": [
+      {
+        "id": 0,
+        "input": "safe_add(1, 2)",
+        "expected": "3"
+      },
+      {
+        "id": 1,
+        "input": "safe_add(2**31 - 1, 1)",
+        "expected": "2147483647"
+      },
+      {
+        "id": 2,
+        "input": "safe_add(-(2**31), -1)",
+        "expected": "-2147483648"
+      },
+      {
+        "id": 3,
+        "input": "safe_add(0, 0)",
+        "expected": "0"
+      },
+      {
+        "id": 4,
+        "input": "safe_add(-1, 1)",
+        "expected": "0"
+      },
+      {
+        "id": 5,
+        "input": "safe_add(2**31 - 1, 2**31 - 1)",
+        "expected": "2147483647"
+      },
+      {
+        "id": 6,
+        "input": "safe_add(-(2**31), -(2**31))",
+        "expected": "-2147483648"
+      },
+      {
+        "id": 7,
+        "input": "safe_add(100, -50)",
+        "expected": "50"
+      },
+      {
+        "id": 8,
+        "input": "safe_add(2**30, 2**30)",
+        "expected": "2147483647"
+      },
+      {
+        "id": 9,
+        "input": "safe_add(2**30, 2**31)",
+        "expected": "2147483647"
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "category": "edge_cases",
+    "title": "Flatten Nested List",
+    "description": "Write a function `flatten(lst)` that takes a deeply nested list and returns a flat list of all values. Handle arbitrary nesting depth.",
+    "difficulty": 4,
+    "function_signature": "def flatten(lst: list) -> list:",
+    "reference_solution": "def flatten(lst):\n    result = []\n    for item in lst:\n        if isinstance(item, list):\n            result.extend(flatten(item))\n        else:\n            result.append(item)\n    return result",
+    "tests": [
+      {
+        "id": 0,
+        "input": "flatten([1, [2, 3], [4, [5, 6]]])",
+        "expected": "[1, 2, 3, 4, 5, 6]"
+      },
+      {
+        "id": 1,
+        "input": "flatten([])",
+        "expected": "[]"
+      },
+      {
+        "id": 2,
+        "input": "flatten([1, 2, 3])",
+        "expected": "[1, 2, 3]"
+      },
+      {
+        "id": 3,
+        "input": "flatten([[[[1]]]])",
+        "expected": "[1]"
+      },
+      {
+        "id": 4,
+        "input": "flatten([1, [2, [3, [4, [5]]]]])",
+        "expected": "[1, 2, 3, 4, 5]"
+      },
+      {
+        "id": 5,
+        "input": "flatten([[],[],[]])",
+        "expected": "[]"
+      },
+      {
+        "id": 6,
+        "input": "flatten([[1,2],[3,4],[5]])",
+        "expected": "[1, 2, 3, 4, 5]"
+      },
+      {
+        "id": 7,
+        "input": "flatten([None, [None]])",
+        "expected": "[None, None]"
+      },
+      {
+        "id": 8,
+        "input": "flatten([[1,[2]],[3]])",
+        "expected": "[1, 2, 3]"
+      },
+      {
+        "id": 9,
+        "input": "len(flatten([[i for i in range(10)] for _ in range(10)]))",
+        "expected": "100"
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "category": "edge_cases",
+    "title": "Safe Dictionary Get Nested",
+    "description": "Write a function `deep_get(d, keys, default=None)` that safely retrieves a value from a nested dictionary using a list of keys. Return `default` if any key is missing.",
+    "difficulty": 3,
+    "function_signature": "def deep_get(d: dict, keys: list, default=None):",
+    "reference_solution": "def deep_get(d, keys, default=None):\n    for key in keys:\n        if not isinstance(d, dict) or key not in d:\n            return default\n        d = d[key]\n    return d",
+    "tests": [
+      {
+        "id": 0,
+        "input": "deep_get({'a': {'b': {'c': 42}}}, ['a', 'b', 'c'])",
+        "expected": "42"
+      },
+      {
+        "id": 1,
+        "input": "deep_get({'a': {'b': 1}}, ['a', 'x'], 'missing')",
+        "expected": "missing"
+      },
+      {
+        "id": 2,
+        "input": "deep_get({}, ['a'])",
+        "expected": "None"
+      },
+      {
+        "id": 3,
+        "input": "deep_get({'a': 1}, [], None)",
+        "expected": "{'a': 1}"
+      },
+      {
+        "id": 4,
+        "input": "deep_get({'x': None}, ['x'])",
+        "expected": "None"
+      },
+      {
+        "id": 5,
+        "input": "deep_get({'a': {'b': {'c': 'deep'}}}, ['a', 'b', 'c', 'd'], 0)",
+        "expected": "0"
+      },
+      {
+        "id": 6,
+        "input": "deep_get({'k': 'val'}, ['k'])",
+        "expected": "val"
+      },
+      {
+        "id": 7,
+        "input": "deep_get({'a': [1,2,3]}, ['a'])",
+        "expected": "[1, 2, 3]"
+      },
+      {
+        "id": 8,
+        "input": "deep_get({'a': {'b': 0}}, ['a', 'b'])",
+        "expected": "0"
+      },
+      {
+        "id": 9,
+        "input": "deep_get({'a': {'b': False}}, ['a', 'b'], 'default')",
+        "expected": "False"
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "category": "edge_cases",
+    "title": "Divide Without Division",
+    "description": "Given two integers `dividend` and `divisor`, return the quotient of dividing `dividend` by `divisor` using only subtraction, addition, and bit shifting. Truncate towards zero. Clamp to 32-bit signed int range.",
+    "difficulty": 7,
+    "function_signature": "def divide(dividend: int, divisor: int) -> int:",
+    "reference_solution": "def divide(dividend, divisor):\n    INT_MAX, INT_MIN = 2**31 - 1, -(2**31)\n    if dividend == INT_MIN and divisor == -1: return INT_MAX\n    neg = (dividend < 0) != (divisor < 0)\n    a, b = abs(dividend), abs(divisor)\n    q = 0\n    while a >= b:\n        t, m = b, 1\n        while a >= (t << 1):\n            t <<= 1\n            m <<= 1\n        a -= t\n        q += m\n    return -q if neg else q",
+    "tests": [
+      {
+        "id": 0,
+        "input": "divide(10, 3)",
+        "expected": "3"
+      },
+      {
+        "id": 1,
+        "input": "divide(7, -2)",
+        "expected": "-3"
+      },
+      {
+        "id": 2,
+        "input": "divide(0, 1)",
+        "expected": "0"
+      },
+      {
+        "id": 3,
+        "input": "divide(1, 1)",
+        "expected": "1"
+      },
+      {
+        "id": 4,
+        "input": "divide(-1, 1)",
+        "expected": "-1"
+      },
+      {
+        "id": 5,
+        "input": "divide(-(2**31), -1)",
+        "expected": "2147483647"
+      },
+      {
+        "id": 6,
+        "input": "divide(-(2**31), 1)",
+        "expected": "-2147483648"
+      },
+      {
+        "id": 7,
+        "input": "divide(100, 10)",
+        "expected": "10"
+      },
+      {
+        "id": 8,
+        "input": "divide(-7, 2)",
+        "expected": "-3"
+      },
+      {
+        "id": 9,
+        "input": "divide(2**31 - 1, 1)",
+        "expected": "2147483647"
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "category": "edge_cases",
+    "title": "Circular Buffer",
+    "description": "Implement a fixed-size circular buffer (ring buffer) with class CircularBuffer(size). Methods: write(item) which writes to the buffer (overwrites oldest if full), read() which reads and removes oldest item or returns None if empty, and is_full() which returns bool.",
+    "difficulty": 5,
+    "function_signature": "class CircularBuffer:\n    def __init__(self, size: int): ...\n    def write(self, item) -> None: ...\n    def read(self): ...\n    def is_full(self) -> bool: ...",
+    "reference_solution": "class CircularBuffer:\n    def __init__(self, size):\n        self.size = size\n        self.buf = []\n    def write(self, item):\n        if len(self.buf) >= self.size:\n            self.buf.pop(0)\n        self.buf.append(item)\n    def read(self):\n        if not self.buf: return None\n        return self.buf.pop(0)\n    def is_full(self):\n        return len(self.buf) >= self.size",
+    "tests": [
+      {
+        "id": 0,
+        "input": "cb = CircularBuffer(3); cb.write(1); cb.write(2); cb.write(3); cb.is_full()",
+        "expected": "True"
+      },
+      {
+        "id": 1,
+        "input": "cb = CircularBuffer(3); cb.write(1); cb.write(2); cb.read()",
+        "expected": "1"
+      },
+      {
+        "id": 2,
+        "input": "cb = CircularBuffer(3); cb.read()",
+        "expected": "None"
+      },
+      {
+        "id": 3,
+        "input": "cb = CircularBuffer(2); cb.write(1); cb.write(2); cb.write(3); cb.read()",
+        "expected": "2"
+      },
+      {
+        "id": 4,
+        "input": "cb = CircularBuffer(3); cb.write(1); cb.is_full()",
+        "expected": "False"
+      },
+      {
+        "id": 5,
+        "input": "cb = CircularBuffer(1); cb.write('a'); cb.write('b'); cb.read()",
+        "expected": "b"
+      },
+      {
+        "id": 6,
+        "input": "cb = CircularBuffer(3); [cb.write(i) for i in range(5)]; cb.read()",
+        "expected": "2"
+      },
+      {
+        "id": 7,
+        "input": "cb = CircularBuffer(3); cb.write(1); cb.read(); cb.is_full()",
+        "expected": "False"
+      },
+      {
+        "id": 8,
+        "input": "cb = CircularBuffer(3); cb.write(1); cb.write(2); cb.write(3); cb.write(4); cb.read()",
+        "expected": "2"
+      },
+      {
+        "id": 9,
+        "input": "cb = CircularBuffer(2); cb.write(1); cb.write(2); cb.write(3); cb.is_full()",
+        "expected": "True"
+      }
+    ]
+  },
+  {
+    "id": 29,
+    "category": "edge_cases",
+    "title": "Power Function",
+    "description": "Implement `my_pow(x, n)` that calculates x raised to the power n (x^n). Handle negative exponents and n=0. Do not use the built-in `**` operator or `pow()` function.",
+    "difficulty": 5,
+    "function_signature": "def my_pow(x: float, n: int) -> float:",
+    "reference_solution": "def my_pow(x, n):\n    if n == 0: return 1.0\n    if n < 0: x, n = 1/x, -n\n    result = 1.0\n    while n > 0:\n        if n % 2 == 1:\n            result *= x\n        x *= x\n        n //= 2\n    return result",
+    "tests": [
+      {
+        "id": 0,
+        "input": "round(my_pow(2.0, 10), 5)",
+        "expected": "1024.0"
+      },
+      {
+        "id": 1,
+        "input": "round(my_pow(2.1, 3), 5)",
+        "expected": "9.261"
+      },
+      {
+        "id": 2,
+        "input": "round(my_pow(2.0, -2), 5)",
+        "expected": "0.25"
+      },
+      {
+        "id": 3,
+        "input": "my_pow(1.0, 1000000)",
+        "expected": "1.0"
+      },
+      {
+        "id": 4,
+        "input": "my_pow(2.0, 0)",
+        "expected": "1.0"
+      },
+      {
+        "id": 5,
+        "input": "my_pow(0.0, 5)",
+        "expected": "0.0"
+      },
+      {
+        "id": 6,
+        "input": "round(my_pow(0.5, 4), 5)",
+        "expected": "0.0625"
+      },
+      {
+        "id": 7,
+        "input": "my_pow(-2.0, 3)",
+        "expected": "-8.0"
+      },
+      {
+        "id": 8,
+        "input": "my_pow(-2.0, 4)",
+        "expected": "16.0"
+      },
+      {
+        "id": 9,
+        "input": "round(my_pow(3.0, -1), 5)",
+        "expected": "0.33333"
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "category": "algorithmic",
+    "title": "Product of Array Except Self",
+    "description": "Given an integer array `nums`, return an array `output` such that `output[i]` is the product of all elements of `nums` except `nums[i]`. Solve without using division and in O(n) time.",
+    "difficulty": 5,
+    "function_signature": "def product_except_self(nums: list[int]) -> list[int]:",
+    "reference_solution": "def product_except_self(nums):\n    n = len(nums)\n    out = [1] * n\n    left = 1\n    for i in range(n):\n        out[i] = left\n        left *= nums[i]\n    right = 1\n    for i in range(n - 1, -1, -1):\n        out[i] *= right\n        right *= nums[i]\n    return out",
+    "tests": [
+      {
+        "id": 0,
+        "input": "product_except_self([1,2,3,4])",
+        "expected": "[24, 12, 8, 6]"
+      },
+      {
+        "id": 1,
+        "input": "product_except_self([-1,1,0,-3,3])",
+        "expected": "[0, 0, 9, 0, 0]"
+      },
+      {
+        "id": 2,
+        "input": "product_except_self([1,1])",
+        "expected": "[1, 1]"
+      },
+      {
+        "id": 3,
+        "input": "product_except_self([2,3])",
+        "expected": "[3, 2]"
+      },
+      {
+        "id": 4,
+        "input": "product_except_self([1,2,3])",
+        "expected": "[6, 3, 2]"
+      },
+      {
+        "id": 5,
+        "input": "product_except_self([0,0])",
+        "expected": "[0, 0]"
+      },
+      {
+        "id": 6,
+        "input": "product_except_self([5])",
+        "expected": "[1]"
+      },
+      {
+        "id": 7,
+        "input": "product_except_self([2,2,2,2])",
+        "expected": "[8, 8, 8, 8]"
+      },
+      {
+        "id": 8,
+        "input": "product_except_self([-1,-2,-3,-4])",
+        "expected": "[-24, -12, -8, -6]"
+      },
+      {
+        "id": 9,
+        "input": "product_except_self([1,0,3,4])",
+        "expected": "[0, 12, 0, 0]"
+      }
+    ]
+  }
+]
