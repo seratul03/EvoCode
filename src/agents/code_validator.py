@@ -23,9 +23,11 @@ class CodeValidatorAgent:
         user_prompt += "Output a JSON object with three keys: 'is_correct' (boolean), 'confidence' (0.0 to 1.0), and 'issues' (list of strings)."
 
         # Fixed behavior: low temperature for deterministic verdicts
-        response = await self.client.execute_call(
-            system_prompt=system_prompt,
-            user_prompt=user_prompt,
+        response = await self.client.create_completion(
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
             temperature=0.3
         )
         

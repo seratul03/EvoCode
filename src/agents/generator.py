@@ -12,9 +12,11 @@ class GeneratorAgent:
         system_prompt = self._build_system_prompt(genome)
         user_prompt = self._build_user_prompt(problem, genome)
         
-        response = await self.client.execute_call(
-            system_prompt=system_prompt,
-            user_prompt=user_prompt,
+        response = await self.client.create_completion(
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
             temperature=genome.temperature
         )
         return self._extract_code(response["content"])

@@ -1,0 +1,12 @@
+FROM python:3.12-slim
+
+# Create a non-root user for security
+RUN useradd -m sandbox_user
+
+WORKDIR /workspace
+RUN chown sandbox_user:sandbox_user /workspace
+
+USER sandbox_user
+
+# The default command will just be to run the runner script that we map into the container
+CMD ["python", "runner.py"]
