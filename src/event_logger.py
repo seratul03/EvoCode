@@ -143,5 +143,45 @@ class EventLogger:
         ''', (problem_id, generation_id, generator_id, passed, total, json.dumps(failed_ids), json.dumps(timeout_ids), json.dumps(crash_ids), exec_ms, peak_mem, datetime.utcnow()))
         self.conn.commit()
 
+    def log_fitness(self, agent_type: str, agent_id: int, generation_id: int, problem_id: int, fitness_value: float, breakdown: dict):
+        cursor = self.conn.cursor()
+        cursor.execute('''
+            INSERT INTO fitness_scores (agent_type, agent_id, generation_id, problem_id, fitness_value, breakdown, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (agent_type, agent_id, generation_id, problem_id, fitness_value, json.dumps(breakdown), datetime.utcnow()))
+        self.conn.commit()
+
+    def log_mutation(self, agent_type: str, agent_id: int, generation_id: int, genome_before: dict, genome_after: dict, mutation_type: str, reason: str, fitness_before: float, fitness_after: float):
+        cursor = self.conn.cursor()
+        cursor.execute('''
+            INSERT INTO mutations (agent_type, agent_id, generation_id, genome_before, genome_after, mutation_type, reason, fitness_before, fitness_after, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (agent_type, agent_id, generation_id, json.dumps(genome_before), json.dumps(genome_after), mutation_type, reason, fitness_before, fitness_after, datetime.utcnow()))
+        self.conn.commit()
+
+    def log_genome(self, agent_type: str, agent_id: int, generation_id: int, genome_json: dict, parent_id: int):
+        cursor = self.conn.cursor()
+        cursor.execute('''
+            INSERT INTO agent_genomes (agent_type, agent_id, generation_id, genome_json, parent_id, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (agent_type, agent_id, generation_id, json.dumps(genome_json), parent_id, datetime.utcnow()))
+        self.conn.commit()
+
+    def log_critic(self, problem_id: int, generation_id: int, failure_type: str, severity: float, code_issues: list, suggested_mutations: list):
+        cursor = self.conn.cursor()
+        cursor.execute('''
+            INSERT INTO critic_feedback (problem_id, generation_id, failure_type, severity, code_issues, suggested_mutations, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (problem_id, generation_id, failure_type, severity, json.dumps(code_issues), json.dumps(suggested_mutations), datetime.utcnow()))
+        self.conn.commit()
+
+    def log_validation(self, problem_id: int, generation_id: int, is_correct: bool, confidence: float, issues_found: str, tokens_used: int):
+        cursor = self.conn.cursor()
+        cursor.execute('''
+            INSERT INTO validation_results (problem_id, generation_id, is_correct, confidence, issues_found, tokens_used, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (problem_id, generation_id, is_correct, confidence, issues_found, tokens_used, datetime.utcnow()))
+        self.conn.commit()
+
     def close(self):
         self.conn.close()
