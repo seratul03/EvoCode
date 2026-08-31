@@ -4,18 +4,14 @@ from src.evoflow import EvoFlowOrchestrator
 
 async def main():
     print("Loading training problems...")
-    with open("data/train_problems.json", "r") as f:
+    with open("data/train_problems.json", "r", encoding="utf-8") as f:
         problems = json.load(f)
         
-    test_subset = problems[:2]
+    print(f"Starting EvoFlow on all {len(problems)} training problems.")
     
-    print(f"Starting EvoFlow on {len(test_subset)} problems.")
-    
+    # Baseline C: Random mutation, 5 agents per generation, 6 generations
     orchestrator = EvoFlowOrchestrator(pop_size=5)
-    
-    # Run for 2 generations
-    await orchestrator.run_generations(num_generations=2, problems=test_subset)
-    
+    await orchestrator.run_generations(num_generations=6, problems=problems, mode="baseline_c")
     print("Run completed successfully.")
 
 if __name__ == "__main__":

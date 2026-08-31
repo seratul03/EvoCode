@@ -29,6 +29,14 @@ class GeneratorGenome(BaseGenome):
         default="standard",
         description="Variant of the system instruction: 'standard', 'expert_coder', 'pedantic_reviewer'."
     )
+    past_code: str | None = Field(
+        default=None,
+        description="Previous code attempt (for reflection)."
+    )
+    critic_feedback: str | None = Field(
+        default=None,
+        description="Critic's diagnosis of the previous attempt (for reflection)."
+    )
 
 class CriticGenome(BaseGenome):
     """

@@ -28,6 +28,12 @@ class GeneratorAgent:
 
     def _build_user_prompt(self, problem: dict, genome: GeneratorGenome) -> str:
         prompt = f"Problem: {problem.get('title', 'Unknown')}\n{problem.get('description', '')}\n\n"
+        
+        if genome.past_code and genome.critic_feedback:
+            prompt += f"Here is your previous attempt which failed:\n```python\n{genome.past_code}\n```\n\n"
+            prompt += f"Here is the Critic's feedback on why it failed:\n{genome.critic_feedback}\n\n"
+            prompt += "Please fix the code based on the feedback.\n\n"
+            
         if genome.prompt_style == "chain_of_thought":
             prompt += "Please think step-by-step and then provide the final code inside ```python blocks."
         else:
