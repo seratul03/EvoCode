@@ -115,68 +115,77 @@ class EvoClient:
         last_exception = None
 
         # 1. Try Groq Clients starting from the current active index
-        while self.groq_clients and self.current_groq_index < len(self.groq_clients):
-            client = self.groq_clients[self.current_groq_index]
-            name = f"groq_key_{self.current_groq_index + 1}"
-            model = self.groq_model
-            limiter = self.groq_limiter
+        for groq_pass in range(2):
+            while self.groq_clients and self.current_groq_index < len(self.groq_clients):
+                client = self.groq_clients[self.current_groq_index]
+                name = f"groq_key_{self.current_groq_index + 1}"
+                model = self.groq_model
+                limiter = self.groq_limiter
 
-            logger.info(f"Attempting completion with provider: {name}, model: {model}")
-            try:
-                # Wrap with Tenacity ONLY for connection/timeout errors
-                async for attempt in AsyncRetrying(
-                    stop=stop_after_attempt(3),
-                    wait=wait_exponential(multiplier=1, min=2, max=10),
-                    retry=retry_if_exception_type((
-                        openai.APIConnectionError,
-                        openai.APITimeoutError
-                    )),
-                    reraise=True
-                ):
-                    with attempt:
-                        total_input_chars = sum(len(m.get("content", "")) for m in messages)
-                        estimated_tokens = int(total_input_chars / 4) + (max_tokens or 500)
-                        
-                        await limiter.acquire(estimated_tokens=estimated_tokens)
+                logger.info(f"Attempting completion with provider: {name}, model: {model}")
+                try:
+                    # Wrap with Tenacity ONLY for connection/timeout errors
+                    async for attempt in AsyncRetrying(
+                        stop=stop_after_attempt(3),
+                        wait=wait_exponential(multiplier=1, min=2, max=10),
+                        retry=retry_if_exception_type((
+                            RuntimeError,
+                            openai.APIConnectionError,
+                            openai.APITimeoutError
+                        )),
+                        reraise=True
+                    ):
+                        with attempt:
+                            total_input_chars = sum(len(m.get("content", "")) for m in messages)
+                            estimated_tokens = int(total_input_chars / 4) + (max_tokens or 500)
+                            
+                            await limiter.acquire(estimated_tokens=estimated_tokens)
 
-                        response = await client.chat.completions.create(
-                            model=model,
-                            messages=messages,
-                            temperature=temperature,
-                            max_tokens=max_tokens,
-                            **kwargs
-                        )
-                        
-                        usage = response.usage
-                        input_tokens = usage.prompt_tokens if usage else int(total_input_chars / 4)
-                        output_tokens = usage.completion_tokens if usage else (max_tokens or 100)
-                        actual_total_tokens = input_tokens + output_tokens
+                            response = await client.chat.completions.create(
+                                model=model,
+                                messages=messages,
+                                temperature=temperature,
+                                max_tokens=max_tokens,
+                                **kwargs
+                            )
+                            
+                            if getattr(response, "choices", None) is None or len(response.choices) == 0:
+                                raise RuntimeError(f"API Provider {name} returned empty choices: {response}")
+                            
+                            usage = response.usage
+                            input_tokens = usage.prompt_tokens if usage else int(total_input_chars / 4)
+                            output_tokens = usage.completion_tokens if usage else (max_tokens or 100)
+                            actual_total_tokens = input_tokens + output_tokens
 
-                        await limiter.update_tokens(actual_total_tokens)
-                        
-                        self.budget_tracker.record_call(
-                            provider=name,
-                            model=model,
-                            input_tokens=input_tokens,
-                            output_tokens=output_tokens
-                        )
-                        
-                        logger.info(f"Completion successful via {name}.")
-                        return {
-                            "provider": name,
-                            "model": model,
-                            "content": response.choices[0].message.content,
-                            "input_tokens": input_tokens,
-                            "output_tokens": output_tokens
-                        }
-            except openai.RateLimitError as e:
-                logger.warning(f"Provider {name} hit Rate Limit (429): {e}. Moving to next Groq key...")
-                last_exception = e
-                self.current_groq_index += 1  # Permanently switch to the next key
-            except Exception as e:
-                logger.error(f"Provider {name} failed: {e}")
-                last_exception = e
-                self.current_groq_index += 1  # Move to next key on unexpected errors too
+                            await limiter.update_tokens(actual_total_tokens)
+                            
+                            self.budget_tracker.record_call(
+                                provider=name,
+                                model=model,
+                                input_tokens=input_tokens,
+                                output_tokens=output_tokens
+                            )
+                            
+                            logger.info(f"Completion successful via {name}.")
+                            return {
+                                "provider": name,
+                                "model": model,
+                                "content": response.choices[0].message.content,
+                                "input_tokens": input_tokens,
+                                "output_tokens": output_tokens
+                            }
+                except openai.RateLimitError as e:
+                    logger.warning(f"Provider {name} hit Rate Limit (429): {e}. Moving to next Groq key...")
+                    last_exception = e
+                    self.current_groq_index += 1  # Switch to next key
+                except Exception as e:
+                    logger.error(f"Provider {name} failed: {e}")
+                    last_exception = e
+                    self.current_groq_index += 1
+
+            if self.groq_clients and self.current_groq_index >= len(self.groq_clients) and groq_pass == 0:
+                logger.info("All Groq keys currently rate-limited. Resetting key index to 0 for second pass...")
+                self.current_groq_index = 0
 
         # 2. If all Groq keys are exhausted, fallback to OpenRouter
         if self.openrouter_client:
@@ -191,6 +200,7 @@ class EvoClient:
                     stop=stop_after_attempt(3),
                     wait=wait_exponential(multiplier=1, min=2, max=10),
                     retry=retry_if_exception_type((
+                        RuntimeError,
                         openai.RateLimitError,
                         openai.APIConnectionError,
                         openai.APITimeoutError
@@ -209,6 +219,9 @@ class EvoClient:
                             max_tokens=max_tokens,
                             **kwargs
                         )
+                        
+                        if getattr(response, "choices", None) is None or len(response.choices) == 0:
+                            raise RuntimeError(f"API Provider {name} returned empty choices: {response}")
                         
                         usage = response.usage
                         input_tokens = usage.prompt_tokens if usage else int(total_input_chars / 4)

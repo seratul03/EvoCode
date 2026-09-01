@@ -18,6 +18,9 @@ import random
 import string
 import time
 from typing import Any
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
+
+_TIMEOUT_SENTINEL = object()
 
 
 class PropertyTester:
@@ -76,7 +79,10 @@ class PropertyTester:
                 if input_str in existing_inputs:
                     continue
 
-                expected = ref_func(*args)
+                expected = self._safe_call(ref_func, args, timeout=1.0)
+                if expected is _TIMEOUT_SENTINEL:
+                    continue
+
                 results.append({
                     "id": next_id,
                     "input": input_str,
@@ -89,6 +95,14 @@ class PropertyTester:
                 continue
 
         return results
+
+    def _safe_call(self, func, args: list, timeout: float = 1.0):
+        with ThreadPoolExecutor(max_workers=1) as ex:
+            future = ex.submit(func, *args)
+            try:
+                return future.result(timeout=timeout)
+            except (FuturesTimeoutError, Exception):
+                return _TIMEOUT_SENTINEL
 
     # -------------------------------------------------------------------------
     # Signature Parsing (mirrors TestAugmentor — intentionally standalone)
@@ -121,10 +135,10 @@ class PropertyTester:
         th = type_hint.lower()
 
         if th in ("int", "integer") or th.startswith("optional[int"):
-            # Mix of small, large, and boundary values
+            # Mix of small, large, and boundary values, capped at 20 to prevent DP/recursion hangs
             return rng.choice([
-                rng.randint(-100, 100),
-                rng.choice([0, 1, -1, 2, -2, 10 ** 6, -(10 ** 6)]),
+                rng.randint(-20, 20),
+                rng.choice([0, 1, -1, 2, -2, 20, -20]),
             ])
 
         if "float" in th:

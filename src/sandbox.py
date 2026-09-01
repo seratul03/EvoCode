@@ -55,7 +55,10 @@ try:
         exec(f.read(), ns)
 except Exception as e:
     # If the file itself is invalid Python (syntax error)
-    print(json.dumps({"error": "syntax", "details": str(e)}))
+    err_msg = traceback.format_exc()
+    if len(err_msg) > 1000:
+        err_msg = err_msg[:500] + "\\n... [TRUNCATED] ...\\n" + err_msg[-500:]
+    print(json.dumps({"error": "syntax", "details": err_msg}))
     sys.exit(1)
 
 results = []
@@ -85,7 +88,10 @@ for test in tests:
         else:
             results.append({"id": tid, "status": "fail", "expected": expected_raw, "actual": repr(result)})
     except Exception as e:
-        results.append({"id": tid, "status": "crash", "error": str(e)})
+        err_msg = str(e)
+        if len(err_msg) > 500:
+            err_msg = err_msg[:250] + " ... [TRUNCATED] ... " + err_msg[-250:]
+        results.append({"id": tid, "status": "crash", "error": err_msg})
 
 print(json.dumps({"results": results}))
 """
