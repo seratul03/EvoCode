@@ -66,8 +66,127 @@ class EvoFlowOrchestrator:
             "problems_evaluated": []
         }
 
+    async def _evaluate_single_genome(self, i: int, generation_id: int, problem: dict, problem_id: int):
+        print(f"    Evaluating Genome {i+1}/{self.pop_size}...")
+        gen_genome = self.pop_generator[i]
+        crit_genome = self.pop_critic[i]
+        mut_genome = self.pop_mutator[i]
+        eval_genome = self.pop_evaluator[i]
+
+        # 1. Generate
+        code = await self.generator.solve(problem, gen_genome)
+        safe_code = code[:100].replace(chr(10), ' ').encode('ascii', 'replace').decode('ascii')
+        print(f"      [Code Generated] (Truncated): {safe_code}...")
+        
+        code_hash = hash(_normalize_code(code))
+        if code_hash in self.code_cache:
+            print(f"      [CACHE HIT] Generated code is identical to a previous run. Reusing results.")
+            cached = self.code_cache[code_hash]
+            test_results, validation, fitness, diagnosis = cached["test_results"], cached["validation"], cached["fitness"], cached["diagnosis"]
+            passed, total = test_results["passed_tests"], test_results["total_tests"]
+            
+            # Inject a warning so mutator forces a change if it gets this diagnosis
+            if "break_cache_loop" not in diagnosis.get("recommended_mutations", []):
+                diagnosis.setdefault("recommended_mutations", []).append("break_cache_loop")
+            if not any("WARNING: You generated this exact code" in str(iss) for iss in diagnosis.get("code_issues", [])):
+                diagnosis.setdefault("code_issues", []).append("WARNING: You generated this exact code previously and it failed. Try a fundamentally different approach.")
+        else:
+            # 2. Layer 2 — Property-Based Tests: append ephemeral random cases
+            extra_tests = self.property_tester.generate(problem, n=5)
+            all_tests = problem.get("tests", []) + extra_tests
+
+            # 3. Sandbox with full test suite (fixed + ephemeral) wrapped in to_thread
+            test_results = await asyncio.to_thread(self.sandbox.run, code, all_tests)
+            passed = test_results["passed_tests"]
+            total = test_results["total_tests"]
+            print(f"      [Sandbox] Passed {passed}/{total} tests "
+                  f"(+{len(extra_tests)} ephemeral). "
+                  f"Crashes: {len(test_results['crash_tests'])}")
+
+            self.logger.log_test_result(
+                problem_id, generation_id, i,
+                passed, total,
+                test_results["failed_test_ids"], test_results["timeout_tests"],
+                test_results["crash_tests"], test_results["execution_time_ms"],
+                test_results["peak_memory_kb"]
+            )
+
+            # 4. Layer 4 — Validate (LLM validator only active in evolve mode)
+            if self.use_validator:
+                validation = await self.validator.validate(code, problem, test_results)
+            else:
+                # Baselines: derive correctness signal directly from sandbox
+                validation = {
+                    "is_correct": passed == total and total > 0,
+                    "confidence": passed / max(total, 1),
+                    "issues": [] if passed == total else [f"Failed {total - passed}/{total} tests."]
+                }
+            self.logger.log_validation(
+                problem_id, generation_id, validation.get("is_correct", False),
+                validation.get("confidence", 0.0), str(validation.get("issues", [])), 0
+            )
+
+            # 5. Layer 3B — Multiplicative Fitness (correctness_rate × quality)
+            fitness = self.fitness_scorer.calculate_fitness(code, test_results, eval_genome)
+            self.logger.log_fitness("generator", i, generation_id, problem_id, fitness["fitness_value"], fitness)
+
+            # 6. Critique (or bypass if 100% crash rate)
+            if len(test_results["crash_tests"]) == total and total > 0:
+                print("      [Fast-Track] 100% Crash Rate. Bypassing Critic API.")
+                error_msgs = [out.get("error", "Unknown Crash") for out in test_results.get("test_outputs", []) if out.get("error")]
+                first_error = error_msgs[0] if error_msgs else "Unknown Crash"
+                diagnosis = {
+                    "severity": 1.0,
+                    "primary_failure": "runtime_crash",
+                    "code_issues": [first_error],
+                    "recommended_mutations": ["fix_crash"]
+                }
+            else:
+                diagnosis = self.critic.critique(code, test_results, validation, crit_genome)
+            
+            self.code_cache[code_hash] = {
+                "test_results": test_results,
+                "validation": validation,
+                "fitness": fitness,
+                "diagnosis": diagnosis
+            }
+
+        severity = diagnosis.get("severity", 0.0)
+        primary_fail = diagnosis.get("primary_failure", "none")
+        rec_mutations = diagnosis.get("recommended_mutations", [])
+        print(f"      [Critic] Severity: {severity:.2f}, Failure: {primary_fail}, "
+              f"Mutations: {rec_mutations}")
+        print(f"      [Fitness] Score: {fitness['fitness_value']:.4f} "
+              f"(correctness={fitness.get('correctness_rate', passed/max(total,1)):.2f} x quality={fitness.get('quality_score', 0):.2f})")
+
+        self.logger.log_critic(
+            problem_id, generation_id, primary_fail,
+            severity, diagnosis.get("code_issues", []), rec_mutations
+        )
+
+        result_item = {
+            "index": i,
+            "fitness": fitness["fitness_value"],
+            "passed_tests": passed,        # Layer 3A: needed for viability gate
+            "total_tests": total,
+            "diagnosis": diagnosis,
+            "gen_genome": gen_genome,
+            "mut_genome": mut_genome
+        }
+        
+        evaluation_item = {
+            "genome_index": i,
+            "gen_genome_snapshot": gen_genome.model_dump(),
+            "generated_code": code,
+            "test_results": test_results,
+            "validation": validation,
+            "fitness": fitness,
+            "critic_diagnosis": diagnosis
+        }
+        
+        return result_item, evaluation_item
+
     async def evaluate_population(self, generation_id: int, problem: dict, problem_report: dict):
-        results = []
         problem_id = problem.get("id", 0)
         
         gen_report = {
@@ -76,123 +195,17 @@ class EvoFlowOrchestrator:
             "selection_and_breeding": {}
         }
         
-        for i in range(self.pop_size):
-            print(f"    Evaluating Genome {i+1}/{self.pop_size}...")
-            gen_genome = self.pop_generator[i]
-            crit_genome = self.pop_critic[i]
-            mut_genome = self.pop_mutator[i]
-            eval_genome = self.pop_evaluator[i]
-
-            # 1. Generate
-            code = await self.generator.solve(problem, gen_genome)
-            safe_code = code[:100].replace(chr(10), ' ').encode('ascii', 'replace').decode('ascii')
-            print(f"      [Code Generated] (Truncated): {safe_code}...")
-            
-            code_hash = hash(_normalize_code(code))
-            if code_hash in self.code_cache:
-                print(f"      [CACHE HIT] Generated code is identical to a previous run. Reusing results.")
-                cached = self.code_cache[code_hash]
-                test_results, validation, fitness, diagnosis = cached["test_results"], cached["validation"], cached["fitness"], cached["diagnosis"]
-                passed, total = test_results["passed_tests"], test_results["total_tests"]
-                
-                # Inject a warning so mutator forces a change if it gets this diagnosis
-                if "break_cache_loop" not in diagnosis.get("recommended_mutations", []):
-                    diagnosis.setdefault("recommended_mutations", []).append("break_cache_loop")
-                if not any("WARNING: You generated this exact code" in str(iss) for iss in diagnosis.get("code_issues", [])):
-                    diagnosis.setdefault("code_issues", []).append("WARNING: You generated this exact code previously and it failed. Try a fundamentally different approach.")
-            else:
-                # 2. Layer 2 — Property-Based Tests: append ephemeral random cases
-                extra_tests = self.property_tester.generate(problem, n=5)
-                all_tests = problem.get("tests", []) + extra_tests
-
-                # 3. Sandbox with full test suite (fixed + ephemeral)
-                test_results = self.sandbox.run(code, all_tests)
-                passed = test_results["passed_tests"]
-                total = test_results["total_tests"]
-                print(f"      [Sandbox] Passed {passed}/{total} tests "
-                      f"(+{len(extra_tests)} ephemeral). "
-                      f"Crashes: {len(test_results['crash_tests'])}")
-
-                self.logger.log_test_result(
-                    problem_id, generation_id, i,
-                    passed, total,
-                    test_results["failed_test_ids"], test_results["timeout_tests"],
-                    test_results["crash_tests"], test_results["execution_time_ms"],
-                    test_results["peak_memory_kb"]
-                )
-
-                # 4. Layer 4 — Validate (LLM validator only active in evolve mode)
-                if self.use_validator:
-                    validation = await self.validator.validate(code, problem, test_results)
-                else:
-                    # Baselines: derive correctness signal directly from sandbox
-                    validation = {
-                        "is_correct": passed == total and total > 0,
-                        "confidence": passed / max(total, 1),
-                        "issues": [] if passed == total else [f"Failed {total - passed}/{total} tests."]
-                    }
-                self.logger.log_validation(
-                    problem_id, generation_id, validation.get("is_correct", False),
-                    validation.get("confidence", 0.0), str(validation.get("issues", [])), 0
-                )
-
-                # 5. Layer 3B — Multiplicative Fitness (correctness_rate × quality)
-                fitness = self.fitness_scorer.calculate_fitness(code, test_results, eval_genome)
-                self.logger.log_fitness("generator", i, generation_id, problem_id, fitness["fitness_value"], fitness)
-
-                # 6. Critique (or bypass if 100% crash rate)
-                if len(test_results["crash_tests"]) == total and total > 0:
-                    print("      [Fast-Track] 100% Crash Rate. Bypassing Critic API.")
-                    error_msgs = [out.get("error", "Unknown Crash") for out in test_results.get("test_outputs", []) if out.get("error")]
-                    first_error = error_msgs[0] if error_msgs else "Unknown Crash"
-                    diagnosis = {
-                        "severity": 1.0,
-                        "primary_failure": "runtime_crash",
-                        "code_issues": [first_error],
-                        "recommended_mutations": ["fix_crash"]
-                    }
-                else:
-                    diagnosis = self.critic.critique(code, test_results, validation, crit_genome)
-                
-                self.code_cache[code_hash] = {
-                    "test_results": test_results,
-                    "validation": validation,
-                    "fitness": fitness,
-                    "diagnosis": diagnosis
-                }
-
-            severity = diagnosis.get("severity", 0.0)
-            primary_fail = diagnosis.get("primary_failure", "none")
-            rec_mutations = diagnosis.get("recommended_mutations", [])
-            print(f"      [Critic] Severity: {severity:.2f}, Failure: {primary_fail}, "
-                  f"Mutations: {rec_mutations}")
-            print(f"      [Fitness] Score: {fitness['fitness_value']:.4f} "
-                  f"(correctness={fitness.get('correctness_rate', passed/max(total,1)):.2f} x quality={fitness.get('quality_score', 0):.2f})")
-
-            self.logger.log_critic(
-                problem_id, generation_id, primary_fail,
-                severity, diagnosis.get("code_issues", []), rec_mutations
-            )
-
-            results.append({
-                "index": i,
-                "fitness": fitness["fitness_value"],
-                "passed_tests": passed,        # Layer 3A: needed for viability gate
-                "total_tests": total,
-                "diagnosis": diagnosis,
-                "gen_genome": gen_genome,
-                "mut_genome": mut_genome
-            })
-            
-            gen_report["evaluations"].append({
-                "genome_index": i,
-                "gen_genome_snapshot": gen_genome.model_dump(),
-                "generated_code": code,
-                "test_results": test_results,
-                "validation": validation,
-                "fitness": fitness,
-                "critic_diagnosis": diagnosis
-            })
+        tasks = [
+            self._evaluate_single_genome(i, generation_id, problem, problem_id)
+            for i in range(self.pop_size)
+        ]
+        
+        task_outputs = await asyncio.gather(*tasks)
+        
+        results = []
+        for result_item, evaluation_item in task_outputs:
+            results.append(result_item)
+            gen_report["evaluations"].append(evaluation_item)
             
         problem_report["generations"].append(gen_report)
         return results, gen_report

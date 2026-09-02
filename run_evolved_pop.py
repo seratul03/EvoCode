@@ -7,11 +7,11 @@ async def main():
     with open("data/train_problems.json", "r", encoding="utf-8") as f:
         problems = json.load(f)
         
-    print(f"Starting EvoFlow on first 10 training problems.")
+    print(f"Starting EvoFlow on all training problems.")
     
     # Evolved Population: 5 agents per generation, 6 generations
     orchestrator = EvoFlowOrchestrator(pop_size=5)
-    await orchestrator.run_generations(num_generations=6, problems=problems[:10], mode="evolve")
+    await orchestrator.run_generations(num_generations=6, problems=problems, mode="evolve")
     print("Run completed successfully.")
 
 if __name__ == "__main__":
