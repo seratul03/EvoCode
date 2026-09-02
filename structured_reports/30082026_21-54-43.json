@@ -1,0 +1,2395 @@
+{
+  "start_time": "2026-08-30T16:18:47.694440",
+  "pop_size": 1,
+  "problems_evaluated": [
+    {
+      "problem_id": 1,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "from typing import List\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        Returns the indices of the two numbers in `nums` that add up to `target`.\n\n        Assumptions:\n        - Exactly one valid pair exists.\n        - The same element cannot be used twice.\n        - The returned list is ordered such that i < j.\n\n        Approach:\n        Use a hash map (dictionary) to store each number's index as we iterate.\n        For each number `num` at index `i`, we check if `target - num` has already\n        been seen. If so, we have found the pair.\n\n        Time Complexity: O(n)\n        Space Complexity: O(n)\n        \"\"\"\n        # Map from number value to its index\n        seen = {}\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # Ensure the smaller index comes first\n                j = seen[complement]\n                return [j, i] if j < i else [i, j]\n            # Store the index of the current number\n            seen[num] = i\n        # According to the problem statement, a solution always exists,\n        # so we should never reach this point.\n        raise ValueError(\"No two sum solution found\")\n\n# Example usage:\nif __name__ == \"__main__\":\n    sol = Solution()\n    print(sol.twoSum([2, 7, 11, 15], 9))   # Output: [0, 1]\n    print(sol.twoSum([3, 2, 4], 6))        # Output: [1, 2]\n    print(sol.twoSum([3, 3], 6))           # Output: [0, 1]",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 152.39739418029785,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.97,
+                "issues": [
+                  "None significant. The implementation correctly handles duplicate values, returns indices in increasing order, and raises an error only in the impossible case where no solution exists.",
+                  "Potential minor concern: for extremely large input sizes the O(n) extra space could be high, but this matches the typical constraints of the Two Sum problem."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.27714039087295533,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.8476026058197021,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 2,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "from typing import List\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        Returns the indices of the two numbers in `nums` that add up to `target`.\n\n        Assumptions:\n        - Exactly one valid pair exists.\n        - The same element cannot be used twice.\n        - The returned list is ordered such that i < j.\n\n        Approach:\n        Use a hash map (dictionary) to store each number's index as we iterate.\n        For each number `num` at index `i`, we check if `target - num` has already\n        been seen. If so, we have found the pair.\n\n        Time Complexity: O(n)\n        Space Complexity: O(n)\n        \"\"\"\n        # Map from number value to its index\n        seen = {}\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # Ensure the smaller index comes first\n                j = seen[complement]\n                return [j, i] if j < i else [i, j]\n            # Store the index of the current number\n            seen[num] = i\n        # According to the problem statement, a solution always exists,\n        # so we should never reach this point.\n        raise ValueError(\"No two sum solution found\")\n\n# Example usage:\nif __name__ == \"__main__\":\n    sol = Solution()\n    print(sol.twoSum([2, 7, 11, 15], 9))   # Output: [0, 1]\n    print(sol.twoSum([3, 2, 4], 6))        # Output: [1, 2]\n    print(sol.twoSum([3, 3], 6))           # Output: [0, 1]",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "from typing import List\n\nclass Solution:\n    \"\"\"\n    LeetCode 1. Two Sum\n\n    Given an integer array `nums` and an integer `target`,\n    return the indices of the two numbers such that they add up to `target`.\n\n    The solution assumes exactly one valid pair exists and the same element\n    cannot be used twice. The returned list is ordered as [i, j] with i < j.\n    \"\"\"\n\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        Uses a hash map to record numbers we have seen so far.\n        For each number we look for its complement (target - num) in the map.\n        If the complement is found, we have the answer.\n\n        Time   : O(n)\n        Space  : O(n)\n        \"\"\"\n        # value -> index of the first occurrence\n        seen: dict[int, int] = {}\n\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # `seen[complement]` is guaranteed to be < i because we only\n                # insert after the check.\n                return [seen[complement], i]\n\n            # Store the index only if the number hasn't been stored before.\n            # This preserves the smallest index for duplicate values,\n            # which guarantees i < j in the result.\n            if num not in seen:\n                seen[num] = i\n\n        # According to the problem statement a solution always exists,\n        # so reaching this line means the input violated the constraints.\n        raise ValueError(\"No two-sum solution found for the given input.\")\n\n\n# ------------------- Example usage -------------------\nif __name__ == \"__main__\":\n    sol = Solution()\n    print(sol.twoSum([2, 7, 11, 15], 9))   # -> [0, 1]\n    print(sol.twoSum([3, 2, 4], 6))        # -> [1, 2]\n    print(sol.twoSum([3, 3], 6))           # -> [0, 1]",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 168.60342025756836,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.97,
+                "issues": [
+                  "The code assumes Python 3.9+ syntax for dict[int, int] type hints; on older Python versions this could raise a SyntaxError. Using `Dict[int, int]` from `typing` would be more compatible.",
+                  "No handling for the (unlikely) case where the input violates the problem constraints other than raising a ValueError, which is acceptable.",
+                  "Memory usage is O(n); for extremely large inputs this could be heavy, but it matches the expected algorithmic complexity for the problem."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.27470948696136477,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.8313965797424316,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 3,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "from typing import List\n\nclass Solution:\n    \"\"\"\n    LeetCode 1. Two Sum\n\n    Given an integer array `nums` and an integer `target`,\n    return the indices of the two numbers such that they add up to `target`.\n\n    The solution assumes exactly one valid pair exists and the same element\n    cannot be used twice. The returned list is ordered as [i, j] with i < j.\n    \"\"\"\n\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        Uses a hash map to record numbers we have seen so far.\n        For each number we look for its complement (target - num) in the map.\n        If the complement is found, we have the answer.\n\n        Time   : O(n)\n        Space  : O(n)\n        \"\"\"\n        # value -> index of the first occurrence\n        seen: dict[int, int] = {}\n\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # `seen[complement]` is guaranteed to be < i because we only\n                # insert after the check.\n                return [seen[complement], i]\n\n            # Store the index only if the number hasn't been stored before.\n            # This preserves the smallest index for duplicate values,\n            # which guarantees i < j in the result.\n            if num not in seen:\n                seen[num] = i\n\n        # According to the problem statement a solution always exists,\n        # so reaching this line means the input violated the constraints.\n        raise ValueError(\"No two-sum solution found for the given input.\")\n\n\n# ------------------- Example usage -------------------\nif __name__ == \"__main__\":\n    sol = Solution()\n    print(sol.twoSum([2, 7, 11, 15], 9))   # -> [0, 1]\n    print(sol.twoSum([3, 2, 4], 6))        # -> [1, 2]\n    print(sol.twoSum([3, 3], 6))           # -> [0, 1]",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "from typing import List, Dict\n\nclass Solution:\n    \"\"\"\n    LeetCode 1. Two Sum\n\n    Given an integer array `nums` and an integer `target`,\n    return the indices of the two numbers such that they add up to `target`.\n\n    The solution assumes exactly one valid pair exists and the same element\n    cannot be used twice. The returned list is ordered as [i, j] with i < j.\n    \"\"\"\n\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        Uses a hash map to record numbers we have seen so far.\n        For each number we look for its complement (target - num) in the map.\n        If the complement is found, we have the answer.\n\n        Time   : O(n)\n        Space  : O(n)\n        \"\"\"\n        # value -> index of its first occurrence\n        seen: Dict[int, int] = {}\n\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # seen[complement] is guaranteed to be < i because we only\n                # insert after the check.\n                return [seen[complement], i]\n\n            # Store only the first index for each value to keep i < j.\n            if num not in seen:\n                seen[num] = i\n\n        # According to the problem statement a solution always exists,\n        # so reaching this line means the input violated the constraints.\n        raise ValueError(\"No two-sum solution found for the given input.\")\n\n\n# ------------------- Example usage -------------------\nif __name__ == \"__main__\":\n    sol = Solution()\n    print(sol.twoSum([2, 7, 11, 15], 9))   # -> [0, 1]\n    print(sol.twoSum([3, 2, 4], 6))        # -> [1, 2]\n    print(sol.twoSum([3, 3], 6))           # -> [0, 1]",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 148.13804626464844,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.98,
+                "issues": [
+                  "The function raises a ValueError if no solution is found. While the problem guarantees a solution, some judges might expect a different behavior (e.g., returning an empty list). This is a minor deviation but does not affect correctness under the given constraints.",
+                  "No infinite loops or resource‑exhaustion risks are present."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.27777929306030275,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.8518619537353516,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 4,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "from typing import List, Dict\n\nclass Solution:\n    \"\"\"\n    LeetCode 1. Two Sum\n\n    Given an integer array `nums` and an integer `target`,\n    return the indices of the two numbers such that they add up to `target`.\n\n    The solution assumes exactly one valid pair exists and the same element\n    cannot be used twice. The returned list is ordered as [i, j] with i < j.\n    \"\"\"\n\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        Uses a hash map to record numbers we have seen so far.\n        For each number we look for its complement (target - num) in the map.\n        If the complement is found, we have the answer.\n\n        Time   : O(n)\n        Space  : O(n)\n        \"\"\"\n        # value -> index of its first occurrence\n        seen: Dict[int, int] = {}\n\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # seen[complement] is guaranteed to be < i because we only\n                # insert after the check.\n                return [seen[complement], i]\n\n            # Store only the first index for each value to keep i < j.\n            if num not in seen:\n                seen[num] = i\n\n        # According to the problem statement a solution always exists,\n        # so reaching this line means the input violated the constraints.\n        raise ValueError(\"No two-sum solution found for the given input.\")\n\n\n# ------------------- Example usage -------------------\nif __name__ == \"__main__\":\n    sol = Solution()\n    print(sol.twoSum([2, 7, 11, 15], 9))   # -> [0, 1]\n    print(sol.twoSum([3, 2, 4], 6))        # -> [1, 2]\n    print(sol.twoSum([3, 3], 6))           # -> [0, 1]",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "#!/usr/bin/env python3\n\"\"\"\nLeetCode 1. Two Sum\n\nGiven an integer array `nums` and an integer `target`,\nreturn the indices of the two numbers such that they add up to `target`.\n\nAssumptions:\n* Exactly one valid pair exists.\n* The same element cannot be used twice.\n* The returned list is ordered as [i, j] with i < j.\n\"\"\"\n\nfrom typing import List, Dict\n\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        Find two distinct indices i, j (i < j) such that nums[i] + nums[j] == target.\n\n        Approach:\n        * Iterate through `nums` while storing each number's first index in a dict.\n        * For each number, compute its complement (target - num) and check if the\n          complement has already been seen.\n        * If found, return the stored index of the complement and the current index.\n\n        Time   : O(n)\n        Space  : O(n)\n        \"\"\"\n        # Maps a number to the index of its first occurrence.\n        seen: Dict[int, int] = {}\n\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # `seen[complement]` is guaranteed to be < i because we only\n                # insert after the check.\n                return [seen[complement], i]\n\n            # Store only the first index for each value to keep i < j.\n            if num not in seen:\n                seen[num] = i\n\n        # According to the problem statement a solution always exists.\n        # Raising an exception makes debugging easier if the contract is broken.\n        raise ValueError(\"No two‑sum solution found for the given input.\")\n\n\n# ------------------- Simple test harness -------------------\nif __name__ == \"__main__\":\n    sol = Solution()\n    test_cases = [\n        ([2, 7, 11, 15], 9, [0, 1]),\n        ([3, 2, 4], 6, [1, 2]),\n        ([3, 3], 6, [0, 1]),\n        ([1, 5, 3, 7], 8, [0, 3]),\n    ]\n\n    for nums, target, expected in test_cases:\n        result = sol.twoSum(nums, target)\n        assert result == expected, f\"Failed: nums={nums}, target={target}, got={result}\"\n        print(f\"Passed: nums={nums}, target={target} → {result}\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 157.17768669128418,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.97,
+                "issues": [
+                  "The function raises a ValueError when no solution is found. While the problem guarantees a solution, some test harnesses might expect an empty list instead of an exception.",
+                  "No handling for non‑list inputs or non‑integer elements, but the type hints and problem constraints make this acceptable."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.2764233469963074,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.8428223133087158,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 5,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "#!/usr/bin/env python3\n\"\"\"\nLeetCode 1. Two Sum\n\nGiven an integer array `nums` and an integer `target`,\nreturn the indices of the two numbers such that they add up to `target`.\n\nAssumptions:\n* Exactly one valid pair exists.\n* The same element cannot be used twice.\n* The returned list is ordered as [i, j] with i < j.\n\"\"\"\n\nfrom typing import List, Dict\n\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        Find two distinct indices i, j (i < j) such that nums[i] + nums[j] == target.\n\n        Approach:\n        * Iterate through `nums` while storing each number's first index in a dict.\n        * For each number, compute its complement (target - num) and check if the\n          complement has already been seen.\n        * If found, return the stored index of the complement and the current index.\n\n        Time   : O(n)\n        Space  : O(n)\n        \"\"\"\n        # Maps a number to the index of its first occurrence.\n        seen: Dict[int, int] = {}\n\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # `seen[complement]` is guaranteed to be < i because we only\n                # insert after the check.\n                return [seen[complement], i]\n\n            # Store only the first index for each value to keep i < j.\n            if num not in seen:\n                seen[num] = i\n\n        # According to the problem statement a solution always exists.\n        # Raising an exception makes debugging easier if the contract is broken.\n        raise ValueError(\"No two‑sum solution found for the given input.\")\n\n\n# ------------------- Simple test harness -------------------\nif __name__ == \"__main__\":\n    sol = Solution()\n    test_cases = [\n        ([2, 7, 11, 15], 9, [0, 1]),\n        ([3, 2, 4], 6, [1, 2]),\n        ([3, 3], 6, [0, 1]),\n        ([1, 5, 3, 7], 8, [0, 3]),\n    ]\n\n    for nums, target, expected in test_cases:\n        result = sol.twoSum(nums, target)\n        assert result == expected, f\"Failed: nums={nums}, target={target}, got={result}\"\n        print(f\"Passed: nums={nums}, target={target} → {result}\")",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "#!/usr/bin/env python3\n\"\"\"\nLeetCode 1. Two Sum\n\nGiven an integer array `nums` and an integer `target`,\nreturn the indices of the two numbers such that they add up to `target`.\n\nAssumptions:\n* Exactly one valid pair exists (the function still behaves gracefully if not).\n* The same element cannot be used twice.\n* The returned list is ordered as [i, j] with i < j.\n\"\"\"\n\nclass Solution:\n    def twoSum(self, nums, target):\n        \"\"\"\n        Find two distinct indices i, j (i < j) such that nums[i] + nums[j] == target.\n\n        Approach:\n        * Iterate through `nums` while storing each number's first index in a dict.\n        * For each number, compute its complement (target - num) and check if the\n          complement has already been seen.\n        * If found, return the stored index of the complement and the current index.\n\n        Time   : O(n)\n        Space  : O(n)\n        \"\"\"\n        # Maps a number to the index of its first occurrence.\n        seen = {}\n\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # `seen[complement]` is guaranteed to be < i because we only\n                # insert after the check.\n                return [seen[complement], i]\n\n            # Store only the first index for each value to keep i < j.\n            if num not in seen:\n                seen[num] = i\n\n        # If no pair is found (should not happen per problem statement),\n        # return an empty list instead of raising an exception.\n        return []\n\n\n# ------------------- Simple test harness -------------------\nif __name__ == \"__main__\":\n    sol = Solution()\n    test_cases = [\n        ([2, 7, 11, 15], 9, [0, 1]),\n        ([3, 2, 4], 6, [1, 2]),\n        ([3, 3], 6, [0, 1]),\n        ([1, 5, 3, 7], 8, [0, 3]),\n        ([-1, -2, -3, -4, -5], -8, [2, 4]),  # additional test with negatives\n    ]\n\n    for nums, target, expected in test_cases:\n        result = sol.twoSum(nums, target)\n        assert result == expected, f\"Failed: nums={nums}, target={target}, got={result}\"\n        print(f\"Passed: nums={nums}, target={target} → {result}\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 156.05497360229492,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.98,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.27659175395965574,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.8439450263977051,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 6,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "#!/usr/bin/env python3\n\"\"\"\nLeetCode 1. Two Sum\n\nGiven an integer array `nums` and an integer `target`,\nreturn the indices of the two numbers such that they add up to `target`.\n\nAssumptions:\n* Exactly one valid pair exists (the function still behaves gracefully if not).\n* The same element cannot be used twice.\n* The returned list is ordered as [i, j] with i < j.\n\"\"\"\n\nclass Solution:\n    def twoSum(self, nums, target):\n        \"\"\"\n        Find two distinct indices i, j (i < j) such that nums[i] + nums[j] == target.\n\n        Approach:\n        * Iterate through `nums` while storing each number's first index in a dict.\n        * For each number, compute its complement (target - num) and check if the\n          complement has already been seen.\n        * If found, return the stored index of the complement and the current index.\n\n        Time   : O(n)\n        Space  : O(n)\n        \"\"\"\n        # Maps a number to the index of its first occurrence.\n        seen = {}\n\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # `seen[complement]` is guaranteed to be < i because we only\n                # insert after the check.\n                return [seen[complement], i]\n\n            # Store only the first index for each value to keep i < j.\n            if num not in seen:\n                seen[num] = i\n\n        # If no pair is found (should not happen per problem statement),\n        # return an empty list instead of raising an exception.\n        return []\n\n\n# ------------------- Simple test harness -------------------\nif __name__ == \"__main__\":\n    sol = Solution()\n    test_cases = [\n        ([2, 7, 11, 15], 9, [0, 1]),\n        ([3, 2, 4], 6, [1, 2]),\n        ([3, 3], 6, [0, 1]),\n        ([1, 5, 3, 7], 8, [0, 3]),\n        ([-1, -2, -3, -4, -5], -8, [2, 4]),  # additional test with negatives\n    ]\n\n    for nums, target, expected in test_cases:\n        result = sol.twoSum(nums, target)\n        assert result == expected, f\"Failed: nums={nums}, target={target}, got={result}\"\n        print(f\"Passed: nums={nums}, target={target} → {result}\")",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "#!/usr/bin/env python3\n\"\"\"\nLeetCode 1. Two Sum\n\nGiven an integer array `nums` and an integer `target`,\nreturn the indices of the two numbers such that they add up to `target`.\n\nAssumptions:\n* Exactly one valid pair exists (the function still behaves gracefully if not).\n* The same element cannot be used twice.\n* The returned list is ordered as [i, j] with i < j.\n\"\"\"\n\nfrom typing import List\n\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        Find two distinct indices i, j (i < j) such that nums[i] + nums[j] == target.\n\n        Approach:\n        * Iterate through `nums` while storing each number's first index in a dict.\n        * For each number, compute its complement (target - num) and check if the\n          complement has already been seen.\n        * If found, return the stored index of the complement and the current index.\n\n        Time   : O(n)\n        Space  : O(n)\n        \"\"\"\n        # Maps a number to the index of its first occurrence.\n        seen: dict[int, int] = {}\n\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # `seen[complement]` is guaranteed to be < i because we only\n                # insert after the check.\n                return [seen[complement], i]\n\n            # Store only the first index for each value to keep i < j.\n            if num not in seen:\n                seen[num] = i\n\n        # If no pair is found (should not happen per problem statement),\n        # return an empty list instead of raising an exception.\n        return []\n\n\n# ------------------- Simple test harness -------------------\nif __name__ == \"__main__\":\n    sol = Solution()\n    test_cases = [\n        ([2, 7, 11, 15], 9, [0, 1]),\n        ([3, 2, 4], 6, [1, 2]),\n        ([3, 3], 6, [0, 1]),\n        ([1, 5, 3, 7], 8, [0, 3]),\n        ([-1, -2, -3, -4, -5], -8, [2, 4]),  # additional test with negatives\n        ([0, 4, 3, 0], 0, [0, 3]),          # test with zeros\n    ]\n\n    for nums, target, expected in test_cases:\n        result = sol.twoSum(nums, target)\n        assert result == expected, f\"Failed: nums={nums}, target={target}, got={result}\"\n        print(f\"Passed: nums={nums}, target={target} → {result}\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 160.35103797912598,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.98,
+                "issues": [
+                  "None detected. The implementation follows the standard O(n) hash‑map approach, handles duplicates, negatives, and zeros, and avoids infinite loops or excessive resource use. It returns an empty list if no pair is found, which is safe even though the problem guarantees a solution."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.2759473443031311,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.839648962020874,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 7,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "#!/usr/bin/env python3\n\"\"\"\nLeetCode 1. Two Sum\n\nGiven an integer array `nums` and an integer `target`,\nreturn the indices of the two numbers such that they add up to `target`.\n\nAssumptions:\n* Exactly one valid pair exists (the function still behaves gracefully if not).\n* The same element cannot be used twice.\n* The returned list is ordered as [i, j] with i < j.\n\"\"\"\n\nfrom typing import List\n\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        Find two distinct indices i, j (i < j) such that nums[i] + nums[j] == target.\n\n        Approach:\n        * Iterate through `nums` while storing each number's first index in a dict.\n        * For each number, compute its complement (target - num) and check if the\n          complement has already been seen.\n        * If found, return the stored index of the complement and the current index.\n\n        Time   : O(n)\n        Space  : O(n)\n        \"\"\"\n        # Maps a number to the index of its first occurrence.\n        seen: dict[int, int] = {}\n\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # `seen[complement]` is guaranteed to be < i because we only\n                # insert after the check.\n                return [seen[complement], i]\n\n            # Store only the first index for each value to keep i < j.\n            if num not in seen:\n                seen[num] = i\n\n        # If no pair is found (should not happen per problem statement),\n        # return an empty list instead of raising an exception.\n        return []\n\n\n# ------------------- Simple test harness -------------------\nif __name__ == \"__main__\":\n    sol = Solution()\n    test_cases = [\n        ([2, 7, 11, 15], 9, [0, 1]),\n        ([3, 2, 4], 6, [1, 2]),\n        ([3, 3], 6, [0, 1]),\n        ([1, 5, 3, 7], 8, [0, 3]),\n        ([-1, -2, -3, -4, -5], -8, [2, 4]),  # additional test with negatives\n        ([0, 4, 3, 0], 0, [0, 3]),          # test with zeros\n    ]\n\n    for nums, target, expected in test_cases:\n        result = sol.twoSum(nums, target)\n        assert result == expected, f\"Failed: nums={nums}, target={target}, got={result}\"\n        print(f\"Passed: nums={nums}, target={target} → {result}\")",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "#!/usr/bin/env python3\n\"\"\"\nLeetCode 1. Two Sum\n\nGiven an integer array `nums` and an integer `target`,\nreturn the indices of the two numbers such that they add up to `target`.\n\nAssumptions\n* Exactly one valid pair exists (the function still behaves gracefully if not).\n* The same element cannot be used twice.\n* The returned list is ordered as [i, j] with i < j.\n\"\"\"\n\nfrom typing import List\n\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        One‑pass hash‑table solution.\n\n        While scanning the list we store each number we have seen so far\n        together with its index. For the current number `num` we look for\n        its complement `target - num` in the table. If the complement is\n        present we have found the answer; otherwise we add `num` to the\n        table for future look‑ups.\n\n        This guarantees O(n) time and O(n) extra space and also ensures\n        that the first index is always smaller than the second because we\n        only ever look up values that were seen earlier in the iteration.\n        \"\"\"\n        # Maps a number to its index (the first index at which it appears).\n        seen: dict[int, int] = {}\n\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # `seen[complement]` is guaranteed to be < i.\n                return [seen[complement], i]\n\n            # Store the index only the first time we encounter `num`.\n            # This keeps the returned pair ordered as i < j.\n            if num not in seen:\n                seen[num] = i\n\n        # If we exit the loop no pair was found – this should not happen\n        # according to the problem statement, but we return an empty list\n        # to keep the API safe.\n        return []\n\n\n# ------------------- Simple test harness -------------------\nif __name__ == \"__main__\":\n    sol = Solution()\n    test_cases = [\n        ([2, 7, 11, 15], 9, [0, 1]),\n        ([3, 2, 4], 6, [1, 2]),\n        ([3, 3], 6, [0, 1]),\n        ([1, 5, 3, 7], 8, [0, 3]),\n        ([-1, -2, -3, -4, -5], -8, [2, 4]),   # negatives\n        ([0, 4, 3, 0], 0, [0, 3]),           # zeros\n        ([1, 2, 3, 4, 5], 9, [3, 4]),        # larger numbers\n        ([5, 75, 25], 100, [1, 2]),          # non‑adjacent pair\n    ]\n\n    for nums, target, expected in test_cases:\n        result = sol.twoSum(nums, target)\n        assert result == expected, (\n            f\"Failed: nums={nums}, target={target}, \"\n            f\"expected={expected}, got={result}\"\n        )\n        print(f\"Passed: nums={nums}, target={target} → {result}\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 153.23996543884277,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.99,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.2770140051841736,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.8467600345611572,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 8,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "#!/usr/bin/env python3\n\"\"\"\nLeetCode 1. Two Sum\n\nGiven an integer array `nums` and an integer `target`,\nreturn the indices of the two numbers such that they add up to `target`.\n\nAssumptions\n* Exactly one valid pair exists (the function still behaves gracefully if not).\n* The same element cannot be used twice.\n* The returned list is ordered as [i, j] with i < j.\n\"\"\"\n\nfrom typing import List\n\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        One‑pass hash‑table solution.\n\n        While scanning the list we store each number we have seen so far\n        together with its index. For the current number `num` we look for\n        its complement `target - num` in the table. If the complement is\n        present we have found the answer; otherwise we add `num` to the\n        table for future look‑ups.\n\n        This guarantees O(n) time and O(n) extra space and also ensures\n        that the first index is always smaller than the second because we\n        only ever look up values that were seen earlier in the iteration.\n        \"\"\"\n        # Maps a number to its index (the first index at which it appears).\n        seen: dict[int, int] = {}\n\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # `seen[complement]` is guaranteed to be < i.\n                return [seen[complement], i]\n\n            # Store the index only the first time we encounter `num`.\n            # This keeps the returned pair ordered as i < j.\n            if num not in seen:\n                seen[num] = i\n\n        # If we exit the loop no pair was found – this should not happen\n        # according to the problem statement, but we return an empty list\n        # to keep the API safe.\n        return []\n\n\n# ------------------- Simple test harness -------------------\nif __name__ == \"__main__\":\n    sol = Solution()\n    test_cases = [\n        ([2, 7, 11, 15], 9, [0, 1]),\n        ([3, 2, 4], 6, [1, 2]),\n        ([3, 3], 6, [0, 1]),\n        ([1, 5, 3, 7], 8, [0, 3]),\n        ([-1, -2, -3, -4, -5], -8, [2, 4]),   # negatives\n        ([0, 4, 3, 0], 0, [0, 3]),           # zeros\n        ([1, 2, 3, 4, 5], 9, [3, 4]),        # larger numbers\n        ([5, 75, 25], 100, [1, 2]),          # non‑adjacent pair\n    ]\n\n    for nums, target, expected in test_cases:\n        result = sol.twoSum(nums, target)\n        assert result == expected, (\n            f\"Failed: nums={nums}, target={target}, \"\n            f\"expected={expected}, got={result}\"\n        )\n        print(f\"Passed: nums={nums}, target={target} → {result}\")",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "#!/usr/bin/env python3\n\"\"\"\nLeetCode 1. Two Sum\n\nGiven an integer array `nums` and an integer `target`,\nreturn the indices of the two numbers such that they add up to `target`.\n\nAssumptions\n* Exactly one valid pair exists (the function still behaves gracefully if not).\n* The same element cannot be used twice.\n* The returned list is ordered as [i, j] with i < j.\n\"\"\"\n\nfrom typing import List, Dict\n\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        One‑pass hash‑table solution.\n\n        While scanning the list we store each number we have seen so far\n        together with its index. For the current number `num` we look for\n        its complement `target - num` in the table. If the complement is\n        present we have found the answer; otherwise we add `num` to the\n        table for future look‑ups.\n\n        This guarantees O(n) time and O(n) extra space and also ensures\n        that the first index is always smaller than the second because we\n        only ever look up values that were seen earlier in the iteration.\n        \"\"\"\n        # Maps a number to its first index.\n        seen: Dict[int, int] = {}\n\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # `seen[complement]` is guaranteed to be < i.\n                return [seen[complement], i]\n\n            # Store only the first occurrence to keep i < j.\n            if num not in seen:\n                seen[num] = i\n\n        # According to the problem statement this line is never reached,\n        # but we return an empty list for safety.\n        return []\n\n\n# ------------------- Simple test harness -------------------\nif __name__ == \"__main__\":\n    sol = Solution()\n    test_cases = [\n        ([2, 7, 11, 15], 9, [0, 1]),\n        ([3, 2, 4], 6, [1, 2]),\n        ([3, 3], 6, [0, 1]),\n        ([1, 5, 3, 7], 8, [0, 3]),\n        ([-1, -2, -3, -4, -5], -8, [2, 4]),   # negatives\n        ([0, 4, 3, 0], 0, [0, 3]),           # zeros\n        ([1, 2, 3, 4, 5], 9, [3, 4]),        # larger numbers\n        ([5, 75, 25], 100, [1, 2]),          # non‑adjacent pair\n    ]\n\n    for nums, target, expected in test_cases:\n        result = sol.twoSum(nums, target)\n        assert result == expected, (\n            f\"Failed: nums={nums}, target={target}, \"\n            f\"expected={expected}, got={result}\"\n        )\n        print(f\"Passed: nums={nums}, target={target} → {result}\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 152.4367332458496,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.98,
+                "issues": [
+                  "None detected. The implementation follows the standard one‑pass hash‑table algorithm, runs in O(n) time and O(n) space, handles duplicates, negatives, zeros, and respects the i < j requirement. It safely returns an empty list if no solution exists (which should never happen per problem constraints) and contains no infinite loops or resource‑exhaustion risks."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.27713449001312257,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.8475632667541504,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 9,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "#!/usr/bin/env python3\n\"\"\"\nLeetCode 1. Two Sum\n\nGiven an integer array `nums` and an integer `target`,\nreturn the indices of the two numbers such that they add up to `target`.\n\nAssumptions\n* Exactly one valid pair exists (the function still behaves gracefully if not).\n* The same element cannot be used twice.\n* The returned list is ordered as [i, j] with i < j.\n\"\"\"\n\nfrom typing import List, Dict\n\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        One‑pass hash‑table solution.\n\n        While scanning the list we store each number we have seen so far\n        together with its index. For the current number `num` we look for\n        its complement `target - num` in the table. If the complement is\n        present we have found the answer; otherwise we add `num` to the\n        table for future look‑ups.\n\n        This guarantees O(n) time and O(n) extra space and also ensures\n        that the first index is always smaller than the second because we\n        only ever look up values that were seen earlier in the iteration.\n        \"\"\"\n        # Maps a number to its first index.\n        seen: Dict[int, int] = {}\n\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # `seen[complement]` is guaranteed to be < i.\n                return [seen[complement], i]\n\n            # Store only the first occurrence to keep i < j.\n            if num not in seen:\n                seen[num] = i\n\n        # According to the problem statement this line is never reached,\n        # but we return an empty list for safety.\n        return []\n\n\n# ------------------- Simple test harness -------------------\nif __name__ == \"__main__\":\n    sol = Solution()\n    test_cases = [\n        ([2, 7, 11, 15], 9, [0, 1]),\n        ([3, 2, 4], 6, [1, 2]),\n        ([3, 3], 6, [0, 1]),\n        ([1, 5, 3, 7], 8, [0, 3]),\n        ([-1, -2, -3, -4, -5], -8, [2, 4]),   # negatives\n        ([0, 4, 3, 0], 0, [0, 3]),           # zeros\n        ([1, 2, 3, 4, 5], 9, [3, 4]),        # larger numbers\n        ([5, 75, 25], 100, [1, 2]),          # non‑adjacent pair\n    ]\n\n    for nums, target, expected in test_cases:\n        result = sol.twoSum(nums, target)\n        assert result == expected, (\n            f\"Failed: nums={nums}, target={target}, \"\n            f\"expected={expected}, got={result}\"\n        )\n        print(f\"Passed: nums={nums}, target={target} → {result}\")",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "#!/usr/bin/env python3\n\"\"\"\nLeetCode 1 – Two Sum\n\nGiven an integer array `nums` and an integer `target`,\nreturn the indices of the two numbers such that they add up to `target`.\n\nAssumptions\n* Exactly one valid pair exists.\n* The same element cannot be used twice.\n* The returned list is ordered as [i, j] with i < j.\n\"\"\"\n\nfrom typing import List, Dict\n\n\ndef two_sum(nums: List[int], target: int) -> List[int]:\n    \"\"\"\n    One‑pass hash‑table solution.\n\n    While scanning the list we store each number we have seen so far\n    together with its index. For the current number `num` we look for\n    its complement `target - num` in the table. If the complement is\n    present we have found the answer; otherwise we add `num` to the\n    table for future look‑ups.\n\n    This runs in O(n) time and O(n) extra space and guarantees i < j\n    because we only ever look up values that were seen earlier.\n    \"\"\"\n    # Maps a number to its first index.\n    seen: Dict[int, int] = {}\n\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            # `seen[complement]` is guaranteed to be < i.\n            return [seen[complement], i]\n\n        # Store only the first occurrence to keep i < j.\n        if num not in seen:\n            seen[num] = i\n\n    # According to the problem statement this line is never reached,\n    # but we return an empty list for safety.\n    return []\n\n\n# ------------------- Simple test harness -------------------\nif __name__ == \"__main__\":\n    test_cases = [\n        ([2, 7, 11, 15], 9, [0, 1]),\n        ([3, 2, 4], 6, [1, 2]),\n        ([3, 3], 6, [0, 1]),\n        ([1, 5, 3, 7], 8, [0, 3]),\n        ([-1, -2, -3, -4, -5], -8, [2, 4]),   # negatives\n        ([0, 4, 3, 0], 0, [0, 3]),           # zeros\n        ([1, 2, 3, 4, 5], 9, [3, 4]),        # larger numbers\n        ([5, 75, 25], 100, [1, 2]),          # non‑adjacent pair\n    ]\n\n    for nums, target, expected in test_cases:\n        result = two_sum(nums, target)\n        assert result == expected, (\n            f\"Failed: nums={nums}, target={target}, \"\n            f\"expected={expected}, got={result}\"\n        )\n        print(f\"Passed: nums={nums}, target={target} → {result}\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 164.47114944458008,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.98,
+                "issues": [
+                  "None detected. The implementation follows the standard one‑pass hash‑table algorithm, handles duplicates, negatives, zeros, and respects the i < j ordering. It terminates correctly, uses O(n) time and space, and safely returns an empty list if no pair is found (which shouldn't happen per problem guarantees)."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.27532932758331297,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.8355288505554199,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 10,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "#!/usr/bin/env python3\n\"\"\"\nLeetCode 1 – Two Sum\n\nGiven an integer array `nums` and an integer `target`,\nreturn the indices of the two numbers such that they add up to `target`.\n\nAssumptions\n* Exactly one valid pair exists.\n* The same element cannot be used twice.\n* The returned list is ordered as [i, j] with i < j.\n\"\"\"\n\nfrom typing import List, Dict\n\n\ndef two_sum(nums: List[int], target: int) -> List[int]:\n    \"\"\"\n    One‑pass hash‑table solution.\n\n    While scanning the list we store each number we have seen so far\n    together with its index. For the current number `num` we look for\n    its complement `target - num` in the table. If the complement is\n    present we have found the answer; otherwise we add `num` to the\n    table for future look‑ups.\n\n    This runs in O(n) time and O(n) extra space and guarantees i < j\n    because we only ever look up values that were seen earlier.\n    \"\"\"\n    # Maps a number to its first index.\n    seen: Dict[int, int] = {}\n\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            # `seen[complement]` is guaranteed to be < i.\n            return [seen[complement], i]\n\n        # Store only the first occurrence to keep i < j.\n        if num not in seen:\n            seen[num] = i\n\n    # According to the problem statement this line is never reached,\n    # but we return an empty list for safety.\n    return []\n\n\n# ------------------- Simple test harness -------------------\nif __name__ == \"__main__\":\n    test_cases = [\n        ([2, 7, 11, 15], 9, [0, 1]),\n        ([3, 2, 4], 6, [1, 2]),\n        ([3, 3], 6, [0, 1]),\n        ([1, 5, 3, 7], 8, [0, 3]),\n        ([-1, -2, -3, -4, -5], -8, [2, 4]),   # negatives\n        ([0, 4, 3, 0], 0, [0, 3]),           # zeros\n        ([1, 2, 3, 4, 5], 9, [3, 4]),        # larger numbers\n        ([5, 75, 25], 100, [1, 2]),          # non‑adjacent pair\n    ]\n\n    for nums, target, expected in test_cases:\n        result = two_sum(nums, target)\n        assert result == expected, (\n            f\"Failed: nums={nums}, target={target}, \"\n            f\"expected={expected}, got={result}\"\n        )\n        print(f\"Passed: nums={nums}, target={target} → {result}\")",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "#!/usr/bin/env python3\n\"\"\"\nLeetCode 1 – Two Sum\n\nGiven an integer array `nums` and an integer `target`,\nreturn the indices of the two numbers such that they add up to `target`.\n\nAssumptions\n* Exactly one valid pair exists.\n* The same element cannot be used twice.\n* The returned list is ordered as [i, j] with i < j.\n\"\"\"\n\nfrom typing import List, Dict\n\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        One‑pass hash‑table solution.\n\n        While scanning the list we store each number we have seen so far\n        together with its index. For the current number `num` we look for\n        its complement `target - num` in the table. If the complement is\n        present we have found the answer; otherwise we add `num` to the\n        table for future look‑ups.\n\n        This runs in O(n) time and O(n) extra space and guarantees i < j\n        because we only ever look up values that were seen earlier.\n        \"\"\"\n        # Maps a number to its first index.\n        seen: Dict[int, int] = {}\n\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # `seen[complement]` is guaranteed to be < i.\n                return [seen[complement], i]\n\n            # Store only the first occurrence to keep i < j.\n            if num not in seen:\n                seen[num] = i\n\n        # According to the problem statement this line is never reached,\n        # but we return an empty list for safety.\n        return []\n\n\n# ------------------- Simple test harness -------------------\nif __name__ == \"__main__\":\n    sol = Solution()\n    test_cases = [\n        ([2, 7, 11, 15], 9, [0, 1]),\n        ([3, 2, 4], 6, [1, 2]),\n        ([3, 3], 6, [0, 1]),\n        ([1, 5, 3, 7], 8, [0, 3]),\n        ([-1, -2, -3, -4, -5], -8, [2, 4]),   # negatives\n        ([0, 4, 3, 0], 0, [0, 3]),           # zeros\n        ([1, 2, 3, 4, 5], 9, [3, 4]),        # larger numbers\n        ([5, 75, 25], 100, [1, 2]),          # non‑adjacent pair\n    ]\n\n    for nums, target, expected in test_cases:\n        result = sol.twoSum(nums, target)\n        assert result == expected, (\n            f\"Failed: nums={nums}, target={target}, \"\n            f\"expected={expected}, got={result}\"\n        )\n        print(f\"Passed: nums={nums}, target={target} → {result}\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 179.65006828308105,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.97,
+                "issues": [
+                  "The fallback `return []` masks the case where no solution exists; while the problem guarantees a solution, returning an empty list could hide logical errors if the guarantee is violated.",
+                  "Storing only the first occurrence of each number means that if the unique valid pair uses a later duplicate as the first element (and an earlier duplicate is not part of the solution), the algorithm would miss it. This cannot happen under the \"exactly one solution\" guarantee, but it is a subtle limitation worth noting."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.2730524897575378,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.820349931716919,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        }
+      ]
+    },
+    {
+      "problem_id": 2,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "def binary_search(nums, target):\n    \"\"\"\n    Perform binary search on a sorted list of integers.\n\n    Args:\n        nums (List[int]): A list of integers sorted in non‑decreasing order.\n        target (int): The integer value to search for.\n\n    Returns:\n        int: The index of `target` in `nums` if found; otherwise -1.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = left + (right - left) // 2  # avoid overflow in other languages\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid\n        elif mid_val < target:\n            left = mid + 1\n        else:  # mid_val > target\n            right = mid - 1\n\n    # target not found\n    return -1\n\n\n# Example usage:\nif __name__ == \"__main__\":\n    # Example 1\n    arr = [1, 3, 5, 7, 9, 11]\n    print(binary_search(arr, 7))   # Output: 3\n\n    # Example 2\n    print(binary_search(arr, 2))   # Output: -1",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 158.14518928527832,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.98,
+                "issues": [
+                  "The implementation correctly handles empty lists, single‑element lists, and typical cases.",
+                  "It returns the index of any matching element; if the list contains duplicates the first found index (not necessarily the leftmost) is returned, which matches the usual binary‑search contract.",
+                  "No infinite loops, excessive memory usage, or other safety concerns are present.",
+                  "The only minor note is that the docstring mentions \"non‑decreasing\" order, which is fine, but the algorithm assumes the list is sorted accordingly."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.2762782216072083,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.8418548107147217,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 2,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "def binary_search(nums, target):\n    \"\"\"\n    Perform binary search on a sorted list of integers.\n\n    Args:\n        nums (List[int]): A list of integers sorted in non‑decreasing order.\n        target (int): The integer value to search for.\n\n    Returns:\n        int: The index of `target` in `nums` if found; otherwise -1.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = left + (right - left) // 2  # avoid overflow in other languages\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid\n        elif mid_val < target:\n            left = mid + 1\n        else:  # mid_val > target\n            right = mid - 1\n\n    # target not found\n    return -1\n\n\n# Example usage:\nif __name__ == \"__main__\":\n    # Example 1\n    arr = [1, 3, 5, 7, 9, 11]\n    print(binary_search(arr, 7))   # Output: 3\n\n    # Example 2\n    print(binary_search(arr, 2))   # Output: -1",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "from typing import List\n\ndef binary_search(nums: List[int], target: int) -> int:\n    \"\"\"\n    Perform binary search on a sorted list of integers.\n\n    Args:\n        nums: A list of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        The index of ``target`` in ``nums`` if it exists; otherwise -1.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        # Using left + (right-left)//2 avoids overflow in languages with fixed‑size ints.\n        mid = left + (right - left) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid\n        if mid_val < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n\n    # Target not found\n    return -1\n\n\n# ----------------------------------------------------------------------\n# Simple self‑test (can be removed when the function is imported elsewhere)\nif __name__ == \"__main__\":\n    test_cases = [\n        ([1, 3, 5, 7, 9, 11], 7, 3),\n        ([1, 3, 5, 7, 9, 11], 2, -1),\n        ([], 5, -1),\n        ([2, 2, 2, 2], 2, 0),   # any valid index is acceptable; we return the first found\n        ([-10, -5, 0, 5, 10], -5, 1),\n    ]\n\n    for nums, target, expected in test_cases:\n        result = binary_search(nums, target)\n        assert result == expected, f\"Failed for {nums=} {target=}: got {result}, expected {expected}\"\n    print(\"All tests passed.\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 147.3541259765625,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.85,
+                "issues": [
+                  "The implementation returns the first index it encounters for a matching value. When the input list contains duplicate values (e.g., [2, 2, 2, 2]), the function may return a non‑first index (e.g., 1 or 2) while the test suite expects the first occurrence (index 0). This causes failures on cases with duplicates.",
+                  "To satisfy the typical binary‑search contract for this problem, the algorithm should continue searching the left half after finding a match to locate the left‑most index, or explicitly handle duplicates.",
+                  "No infinite loops, resource‑exhaustion, or security concerns are present; the only functional defect is the handling of duplicate elements."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.2778968811035156,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.8526458740234375,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling",
+                  "fix_edge_cases"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 3,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "from typing import List\n\ndef binary_search(nums: List[int], target: int) -> int:\n    \"\"\"\n    Perform binary search on a sorted list of integers.\n\n    Args:\n        nums: A list of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        The index of ``target`` in ``nums`` if it exists; otherwise -1.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        # Using left + (right-left)//2 avoids overflow in languages with fixed‑size ints.\n        mid = left + (right - left) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid\n        if mid_val < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n\n    # Target not found\n    return -1\n\n\n# ----------------------------------------------------------------------\n# Simple self‑test (can be removed when the function is imported elsewhere)\nif __name__ == \"__main__\":\n    test_cases = [\n        ([1, 3, 5, 7, 9, 11], 7, 3),\n        ([1, 3, 5, 7, 9, 11], 2, -1),\n        ([], 5, -1),\n        ([2, 2, 2, 2], 2, 0),   # any valid index is acceptable; we return the first found\n        ([-10, -5, 0, 5, 10], -5, 1),\n    ]\n\n    for nums, target, expected in test_cases:\n        result = binary_search(nums, target)\n        assert result == expected, f\"Failed for {nums=} {target=}: got {result}, expected {expected}\"\n    print(\"All tests passed.\")",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "from typing import List\n\ndef binary_search(nums: List[int], target: int) -> int:\n    \"\"\"\n    Perform binary search on a sorted list of integers and return the\n    **left‑most** index of ``target``. If ``target`` is not present,\n    return -1.\n\n    Args:\n        nums: A list of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        The smallest index i such that nums[i] == target, or -1 if the\n        target does not exist in the list.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n    answer = -1                     # stores the best (left‑most) match found\n\n    while left <= right:\n        # left + (right - left) // 2 prevents overflow in languages with\n        # fixed‑size integers; in Python it is just a good habit.\n        mid = left + (right - left) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            answer = mid            # we found a match, but keep looking left\n            right = mid - 1\n        elif mid_val < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n\n    return answer\n\n\n# ----------------------------------------------------------------------\n# Simple self‑test (can be removed when the function is imported elsewhere)\nif __name__ == \"__main__\":\n    test_cases = [\n        ([1, 3, 5, 7, 9, 11], 7, 3),\n        ([1, 3, 5, 7, 9, 11], 2, -1),\n        ([], 5, -1),\n        ([2, 2, 2, 2], 2, 0),   # now we guarantee the left‑most index (0)\n        ([-10, -5, 0, 5, 10], -5, 1),\n    ]\n\n    for nums, target, expected in test_cases:\n        result = binary_search(nums, target)\n        assert result == expected, (\n            f\"Failed for nums={nums}, target={target}: got {result}, expected {expected}\"\n        )\n    print(\"All tests passed.\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 152.67348289489746,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.95,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.2770989775657654,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.8473265171051025,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 4,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "from typing import List\n\ndef binary_search(nums: List[int], target: int) -> int:\n    \"\"\"\n    Perform binary search on a sorted list of integers and return the\n    **left‑most** index of ``target``. If ``target`` is not present,\n    return -1.\n\n    Args:\n        nums: A list of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        The smallest index i such that nums[i] == target, or -1 if the\n        target does not exist in the list.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n    answer = -1                     # stores the best (left‑most) match found\n\n    while left <= right:\n        # left + (right - left) // 2 prevents overflow in languages with\n        # fixed‑size integers; in Python it is just a good habit.\n        mid = left + (right - left) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            answer = mid            # we found a match, but keep looking left\n            right = mid - 1\n        elif mid_val < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n\n    return answer\n\n\n# ----------------------------------------------------------------------\n# Simple self‑test (can be removed when the function is imported elsewhere)\nif __name__ == \"__main__\":\n    test_cases = [\n        ([1, 3, 5, 7, 9, 11], 7, 3),\n        ([1, 3, 5, 7, 9, 11], 2, -1),\n        ([], 5, -1),\n        ([2, 2, 2, 2], 2, 0),   # now we guarantee the left‑most index (0)\n        ([-10, -5, 0, 5, 10], -5, 1),\n    ]\n\n    for nums, target, expected in test_cases:\n        result = binary_search(nums, target)\n        assert result == expected, (\n            f\"Failed for nums={nums}, target={target}: got {result}, expected {expected}\"\n        )\n    print(\"All tests passed.\")",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "from typing import List, Sequence\n\ndef binary_search(nums: Sequence[int], target: int) -> int:\n    \"\"\"\n    Perform a classic binary search on a sorted sequence of integers.\n\n    Returns the index of *any* occurrence of ``target`` if it exists,\n    otherwise returns -1.\n\n    Args:\n        nums: A sequence of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        The index of ``target`` in ``nums`` or -1 if ``target`` is absent.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = (left + right) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid                     # target found\n        elif mid_val < target:\n            left = mid + 1                 # search right half\n        else:\n            right = mid - 1                # search left half\n\n    return -1                               # not found\n\n\n# ----------------------------------------------------------------------\n# Simple self‑test (can be removed when the function is imported elsewhere)\nif __name__ == \"__main__\":\n    test_cases = [\n        ([1, 3, 5, 7, 9, 11], 7, 3),\n        ([1, 3, 5, 7, 9, 11], 2, -1),\n        ([], 5, -1),\n        ([2, 2, 2, 2], 2, 0),   # any index is acceptable; 0 is returned here\n        ([-10, -5, 0, 5, 10], -5, 1),\n    ]\n\n    for nums, target, expected in test_cases:\n        result = binary_search(nums, target)\n        assert result == expected, (\n            f\"Failed for nums={nums}, target={target}: got {result}, expected {expected}\"\n        )\n    print(\"All tests passed.\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 154.9077033996582,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.62,
+                "issues": [
+                  "The implementation returns the index of *any* matching element when duplicates exist. Many test suites (including the hidden one) expect the **first/leftmost** occurrence, which this classic binary‑search does not guarantee.",
+                  "The function accepts any ``Sequence[int]`` but relies on random access indexing; passing an iterator or other non‑indexable sequence would raise an error. While the problem statement specifies a list, stricter type checking could be added.",
+                  "No explicit input validation is performed (e.g., ensuring ``nums`` is sorted). This is acceptable for the problem constraints but could lead to silent logical errors if misused.",
+                  "The docstring mentions returning \"any occurrence\" which conflicts with the typical expectation of returning the first index; aligning the documentation with the required behavior would improve clarity."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.27676384449005126,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.8450922966003418,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling",
+                  "fix_edge_cases"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 5,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "from typing import List, Sequence\n\ndef binary_search(nums: Sequence[int], target: int) -> int:\n    \"\"\"\n    Perform a classic binary search on a sorted sequence of integers.\n\n    Returns the index of *any* occurrence of ``target`` if it exists,\n    otherwise returns -1.\n\n    Args:\n        nums: A sequence of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        The index of ``target`` in ``nums`` or -1 if ``target`` is absent.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = (left + right) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid                     # target found\n        elif mid_val < target:\n            left = mid + 1                 # search right half\n        else:\n            right = mid - 1                # search left half\n\n    return -1                               # not found\n\n\n# ----------------------------------------------------------------------\n# Simple self‑test (can be removed when the function is imported elsewhere)\nif __name__ == \"__main__\":\n    test_cases = [\n        ([1, 3, 5, 7, 9, 11], 7, 3),\n        ([1, 3, 5, 7, 9, 11], 2, -1),\n        ([], 5, -1),\n        ([2, 2, 2, 2], 2, 0),   # any index is acceptable; 0 is returned here\n        ([-10, -5, 0, 5, 10], -5, 1),\n    ]\n\n    for nums, target, expected in test_cases:\n        result = binary_search(nums, target)\n        assert result == expected, (\n            f\"Failed for nums={nums}, target={target}: got {result}, expected {expected}\"\n        )\n    print(\"All tests passed.\")",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "from typing import Sequence, List\n\n\ndef binary_search(nums: Sequence[int], target: int) -> int:\n    \"\"\"\n    Perform a binary search on a sorted sequence of integers and return the\n    **left‑most** index of ``target`` if it exists, otherwise -1.\n\n    The original implementation returned any matching index, which caused the\n    test case with duplicate values (e.g. ``[2, 2, 2, 2]``) to fail because it\n    expected the first occurrence (index 0).  This version records a match and\n    continues searching the left half to guarantee the smallest possible index.\n\n    Args:\n        nums: A sequence of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        The left‑most index of ``target`` in ``nums`` or -1 if ``target`` is absent.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n    answer = -1                     # stores the best (left‑most) index found so far\n\n    while left <= right:\n        mid = (left + right) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            answer = mid            # a match is found; remember it\n            right = mid - 1         # keep looking to the left for an earlier one\n        elif mid_val < target:\n            left = mid + 1\n        else:                       # mid_val > target\n            right = mid - 1\n\n    return answer\n\n\n# ----------------------------------------------------------------------\n# Simple self‑test (can be removed when the function is imported elsewhere)\nif __name__ == \"__main__\":\n    test_cases: List[tuple[Sequence[int], int, int]] = [\n        ([1, 3, 5, 7, 9, 11], 7, 3),\n        ([1, 3, 5, 7, 9, 11], 2, -1),\n        ([], 5, -1),\n        ([2, 2, 2, 2], 2, 0),          # expects the first (left‑most) index\n        ([-10, -5, 0, 5, 10], -5, 1),\n        ([1, 2, 2, 2, 3], 2, 1),       # another duplicate test\n    ]\n\n    for nums, target, expected in test_cases:\n        result = binary_search(nums, target)\n        assert result == expected, (\n            f\"Failed for nums={list(nums)}, target={target}: \"\n            f\"got {result}, expected {expected}\"\n        )\n    print(\"All tests passed.\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 157.16838836669922,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.99,
+                "issues": [
+                  "None detected. The implementation correctly performs a binary search, returns the left‑most index for duplicate values, handles empty inputs, and terminates without infinite loops or excessive resource use."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.2764247417449951,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.8428316116333008,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 6,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "from typing import Sequence, List\n\n\ndef binary_search(nums: Sequence[int], target: int) -> int:\n    \"\"\"\n    Perform a binary search on a sorted sequence of integers and return the\n    **left‑most** index of ``target`` if it exists, otherwise -1.\n\n    The original implementation returned any matching index, which caused the\n    test case with duplicate values (e.g. ``[2, 2, 2, 2]``) to fail because it\n    expected the first occurrence (index 0).  This version records a match and\n    continues searching the left half to guarantee the smallest possible index.\n\n    Args:\n        nums: A sequence of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        The left‑most index of ``target`` in ``nums`` or -1 if ``target`` is absent.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n    answer = -1                     # stores the best (left‑most) index found so far\n\n    while left <= right:\n        mid = (left + right) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            answer = mid            # a match is found; remember it\n            right = mid - 1         # keep looking to the left for an earlier one\n        elif mid_val < target:\n            left = mid + 1\n        else:                       # mid_val > target\n            right = mid - 1\n\n    return answer\n\n\n# ----------------------------------------------------------------------\n# Simple self‑test (can be removed when the function is imported elsewhere)\nif __name__ == \"__main__\":\n    test_cases: List[tuple[Sequence[int], int, int]] = [\n        ([1, 3, 5, 7, 9, 11], 7, 3),\n        ([1, 3, 5, 7, 9, 11], 2, -1),\n        ([], 5, -1),\n        ([2, 2, 2, 2], 2, 0),          # expects the first (left‑most) index\n        ([-10, -5, 0, 5, 10], -5, 1),\n        ([1, 2, 2, 2, 3], 2, 1),       # another duplicate test\n    ]\n\n    for nums, target, expected in test_cases:\n        result = binary_search(nums, target)\n        assert result == expected, (\n            f\"Failed for nums={list(nums)}, target={target}: \"\n            f\"got {result}, expected {expected}\"\n        )\n    print(\"All tests passed.\")",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "from typing import List\n\ndef binary_search(nums: List[int], target: int) -> int:\n    \"\"\"\n    Perform a binary search on a sorted list of integers.\n\n    Returns the index of *any* occurrence of ``target`` if it exists,\n    otherwise returns -1.\n\n    Args:\n        nums: A list of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        Index of ``target`` in ``nums`` or -1 if ``target`` is absent.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = (left + right) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid               # found – return immediately\n        elif mid_val < target:\n            left = mid + 1\n        else:  # mid_val > target\n            right = mid - 1\n\n    return -1\n\n\n# ----------------------------------------------------------------------\n# Simple self‑test (can be removed when the function is imported elsewhere)\nif __name__ == \"__main__\":\n    test_cases = [\n        ([1, 3, 5, 7, 9, 11], 7, 3),\n        ([1, 3, 5, 7, 9, 11], 2, -1),\n        ([], 5, -1),\n        ([2, 2, 2, 2], 2, 0),          # any index is acceptable; 0 is typical\n        ([-10, -5, 0, 5, 10], -5, 1),\n        ([1, 2, 2, 2, 3], 2, 1),       # any matching index; 1 is typical\n    ]\n\n    for nums, target, expected in test_cases:\n        result = binary_search(nums, target)\n        assert result == expected, (\n            f\"Failed for nums={nums}, target={target}: \"\n            f\"got {result}, expected {expected}\"\n        )\n    print(\"All tests passed.\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 293.7641143798828,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.96,
+                "issues": [
+                  "The implementation correctly performs an iterative binary search and safely handles empty lists and duplicate values.",
+                  "It returns the index of *any* matching element, which matches the problem specification, but the provided self‑test expects specific indices (e.g., the first occurrence). This mismatch causes the test suite to fail even though the algorithm is correct.",
+                  "If the test harness requires the leftmost index, the algorithm would need to be adjusted (e.g., continue searching left after a match). Otherwise, the current code is fine.",
+                  "No infinite loops, recursion depth issues, or resource‑exhaustion concerns are present."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.2559353828430176,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.7062358856201172,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 7,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "from typing import List\n\ndef binary_search(nums: List[int], target: int) -> int:\n    \"\"\"\n    Perform a binary search on a sorted list of integers.\n\n    Returns the index of *any* occurrence of ``target`` if it exists,\n    otherwise returns -1.\n\n    Args:\n        nums: A list of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        Index of ``target`` in ``nums`` or -1 if ``target`` is absent.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = (left + right) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid               # found – return immediately\n        elif mid_val < target:\n            left = mid + 1\n        else:  # mid_val > target\n            right = mid - 1\n\n    return -1\n\n\n# ----------------------------------------------------------------------\n# Simple self‑test (can be removed when the function is imported elsewhere)\nif __name__ == \"__main__\":\n    test_cases = [\n        ([1, 3, 5, 7, 9, 11], 7, 3),\n        ([1, 3, 5, 7, 9, 11], 2, -1),\n        ([], 5, -1),\n        ([2, 2, 2, 2], 2, 0),          # any index is acceptable; 0 is typical\n        ([-10, -5, 0, 5, 10], -5, 1),\n        ([1, 2, 2, 2, 3], 2, 1),       # any matching index; 1 is typical\n    ]\n\n    for nums, target, expected in test_cases:\n        result = binary_search(nums, target)\n        assert result == expected, (\n            f\"Failed for nums={nums}, target={target}: \"\n            f\"got {result}, expected {expected}\"\n        )\n    print(\"All tests passed.\")",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "from typing import List\n\ndef binary_search(nums: List[int], target: int) -> int:\n    \"\"\"\n    Perform a binary search on a sorted list of integers and return the\n    **left‑most** index of ``target`` if it exists, otherwise ``-1``.\n\n    The classic binary‑search that stops at the first match may return any\n    occurrence when duplicates are present.  The tests for this kata expect\n    the first (smallest) index, so we continue searching the left half after\n    a match is found.\n\n    Args:\n        nums: A list of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        The smallest index ``i`` such that ``nums[i] == target``, or ``-1`` if\n        ``target`` is not present.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n    answer = -1                     # store the best (left‑most) match seen so far\n\n    while left <= right:\n        mid = (left + right) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            answer = mid            # a match – remember it\n            right = mid - 1         # keep looking to the left for an earlier one\n        elif mid_val < target:\n            left = mid + 1\n        else:  # mid_val > target\n            right = mid - 1\n\n    return answer\n\n\n# ----------------------------------------------------------------------\n# Simple self‑test (can be removed when the function is imported elsewhere)\nif __name__ == \"__main__\":\n    test_cases = [\n        ([1, 3, 5, 7, 9, 11], 7, 3),\n        ([1, 3, 5, 7, 9, 11], 2, -1),\n        ([], 5, -1),\n        ([2, 2, 2, 2], 2, 0),          # left‑most index\n        ([-10, -5, 0, 5, 10], -5, 1),\n        ([1, 2, 2, 2, 3], 2, 1),       # left‑most index\n    ]\n\n    for nums, target, expected in test_cases:\n        result = binary_search(nums, target)\n        assert result == expected, (\n            f\"Failed for nums={nums}, target={target}: \"\n            f\"got {result}, expected {expected}\"\n        )\n    print(\"All tests passed.\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 217.8201675415039,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.78,
+                "issues": [
+                  "The implementation always returns the **left‑most** occurrence of `target` when duplicates exist. The problem statement only asks for *an* index of `target`; hidden tests may expect the index that a classic binary search would return (often the first match found, not necessarily the left‑most). This extra requirement can cause mismatches with the expected answer.",
+                  "The docstring explicitly mentions the left‑most behavior, which is not part of the original specification and may mislead users of the function.",
+                  "While the algorithm is safe (no infinite loops, O(log n) time, no resource exhaustion), it is more restrictive than needed and could be considered over‑engineered for the given task."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.26732697486877444,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.7821798324584961,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling",
+                  "fix_edge_cases"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 8,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "from typing import List\n\ndef binary_search(nums: List[int], target: int) -> int:\n    \"\"\"\n    Perform a binary search on a sorted list of integers and return the\n    **left‑most** index of ``target`` if it exists, otherwise ``-1``.\n\n    The classic binary‑search that stops at the first match may return any\n    occurrence when duplicates are present.  The tests for this kata expect\n    the first (smallest) index, so we continue searching the left half after\n    a match is found.\n\n    Args:\n        nums: A list of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        The smallest index ``i`` such that ``nums[i] == target``, or ``-1`` if\n        ``target`` is not present.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n    answer = -1                     # store the best (left‑most) match seen so far\n\n    while left <= right:\n        mid = (left + right) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            answer = mid            # a match – remember it\n            right = mid - 1         # keep looking to the left for an earlier one\n        elif mid_val < target:\n            left = mid + 1\n        else:  # mid_val > target\n            right = mid - 1\n\n    return answer\n\n\n# ----------------------------------------------------------------------\n# Simple self‑test (can be removed when the function is imported elsewhere)\nif __name__ == \"__main__\":\n    test_cases = [\n        ([1, 3, 5, 7, 9, 11], 7, 3),\n        ([1, 3, 5, 7, 9, 11], 2, -1),\n        ([], 5, -1),\n        ([2, 2, 2, 2], 2, 0),          # left‑most index\n        ([-10, -5, 0, 5, 10], -5, 1),\n        ([1, 2, 2, 2, 3], 2, 1),       # left‑most index\n    ]\n\n    for nums, target, expected in test_cases:\n        result = binary_search(nums, target)\n        assert result == expected, (\n            f\"Failed for nums={nums}, target={target}: \"\n            f\"got {result}, expected {expected}\"\n        )\n    print(\"All tests passed.\")",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "from typing import List\n\ndef binary_search(nums: List[int], target: int) -> int:\n    \"\"\"\n    Perform a binary search on a sorted list of integers.\n\n    Returns the index of *any* occurrence of ``target`` if it exists,\n    otherwise returns -1.\n\n    Args:\n        nums: A list of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        The index of ``target`` in ``nums`` or -1 if ``target`` is not present.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = (left + right) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid                     # found\n        elif mid_val < target:\n            left = mid + 1\n        else:  # mid_val > target\n            right = mid - 1\n\n    return -1",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 228.5020351409912,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.99,
+                "issues": [
+                  "No functional issues detected. The implementation correctly handles empty lists, duplicates, and typical edge cases.",
+                  "The algorithm terminates properly; there is no risk of infinite loops or resource exhaustion.",
+                  "Midpoint calculation `(left + right) // 2` is safe in Python (no integer overflow concerns).",
+                  "Optional: could add input validation or type checking, but not required for the problem specification."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.2657246947288513,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.7714979648590088,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 9,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "from typing import List\n\ndef binary_search(nums: List[int], target: int) -> int:\n    \"\"\"\n    Perform a binary search on a sorted list of integers.\n\n    Returns the index of *any* occurrence of ``target`` if it exists,\n    otherwise returns -1.\n\n    Args:\n        nums: A list of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        The index of ``target`` in ``nums`` or -1 if ``target`` is not present.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = (left + right) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid                     # found\n        elif mid_val < target:\n            left = mid + 1\n        else:  # mid_val > target\n            right = mid - 1\n\n    return -1",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "from typing import List\n\ndef binary_search(nums: List[int], target: int) -> int:\n    \"\"\"\n    Perform a binary search on a sorted list of integers and return the\n    index of the *first* occurrence of ``target``. If ``target`` is not\n    present, return -1.\n\n    Args:\n        nums: A list of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        The smallest index i such that nums[i] == target, or -1 if the\n        target does not exist in the list.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n    result = -1                     # will hold the left‑most index found\n\n    while left <= right:\n        mid = (left + right) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            result = mid            # record a match, then keep searching left\n            right = mid - 1\n        elif mid_val < target:\n            left = mid + 1\n        else:  # mid_val > target\n            right = mid - 1\n\n    return result",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 157.5949192047119,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.98,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.2763607621192932,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.8424050807952881,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 10,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": "from typing import List\n\ndef binary_search(nums: List[int], target: int) -> int:\n    \"\"\"\n    Perform a binary search on a sorted list of integers and return the\n    index of the *first* occurrence of ``target``. If ``target`` is not\n    present, return -1.\n\n    Args:\n        nums: A list of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        The smallest index i such that nums[i] == target, or -1 if the\n        target does not exist in the list.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n    result = -1                     # will hold the left‑most index found\n\n    while left <= right:\n        mid = (left + right) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            result = mid            # record a match, then keep searching left\n            right = mid - 1\n        elif mid_val < target:\n            left = mid + 1\n        else:  # mid_val > target\n            right = mid - 1\n\n    return result",
+                "critic_feedback": "Failure type: Unknown\nIssues:\n- Unknown issues"
+              },
+              "generated_code": "from typing import List\n\ndef binary_search(nums: List[int], target: int) -> int:\n    \"\"\"\n    Perform a binary search on a sorted list of integers.\n\n    Args:\n        nums: A list of integers sorted in non‑decreasing order.\n        target: The integer value to search for.\n\n    Returns:\n        The index of ``target`` in ``nums`` if it exists; otherwise -1.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = (left + right) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid               # target found\n        elif mid_val < target:\n            left = mid + 1           # search right half\n        else:\n            right = mid - 1          # search left half\n\n    return -1                        # target not present",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 163.0868911743164,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.98,
+                "issues": [
+                  "None. The implementation correctly performs an iterative binary search, handles empty lists, and avoids infinite loops or resource exhaustion."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.27553696632385255,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.8369131088256836,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        }
+      ]
+    }
+  ],
+  "mode": "baseline_b",
+  "end_time": "2026-08-30T16:24:43.267559"
+}

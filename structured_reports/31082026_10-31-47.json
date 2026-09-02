@@ -1,0 +1,1953 @@
+{
+  "start_time": "2026-08-31T04:58:44.118879",
+  "pop_size": 5,
+  "problems_evaluated": [
+    {
+      "problem_id": 1,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "from typing import List\n\ndef two_sum(nums: List[int], target: int) -> List[int]:\n    \"\"\"\n    Returns the indices of the two numbers in `nums` that add up to `target`.\n\n    Parameters\n    ----------\n    nums : List[int]\n        List of integers.\n    target : int\n        The target sum.\n\n    Returns\n    -------\n    List[int]\n        A list [i, j] where i < j and nums[i] + nums[j] == target.\n        Exactly one solution is guaranteed to exist.\n\n    Example\n    -------\n    >>> two_sum([2, 7, 11, 15], 9)\n    [0, 1]\n    \"\"\"\n    # map from number -> its index\n    seen = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            # found the pair; ensure the smaller index comes first\n            return [seen[complement], i] if seen[complement] < i else [i, seen[complement]]\n        # store the current number with its index for future look‑ups\n        seen[num] = i\n\n    # According to the problem statement this line should never be reached,\n    # because a solution is guaranteed to exist.\n    raise ValueError(\"No two sum solution found\")\n\n# ----------------------------------------------------------------------\n# Simple test harness (you can remove or comment out when integrating elsewhere)\nif __name__ == \"__main__\":\n    test_cases = [\n        ([2, 7, 11, 15], 9, [0, 1]),\n        ([3, 2, 4], 6, [1, 2]),\n        ([3, 3], 6, [0, 1]),\n        ([-1, -2, -3, -4, -5], -8, [2, 4]),\n    ]\n\n    for nums, target, expected in test_cases:\n        result = two_sum(nums, target)\n        assert result == expected, f\"Failed for {nums} with target {target}: got {result}, expected {expected}\"\n    print(\"All test cases passed!\")",
+              "test_results": {
+                "passed_tests": 10,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 598.5209941864014,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 6,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 7,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 8,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 9,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.99,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.7324440730942621,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.40147900581359863,
+                  "memory": 1.0,
+                  "efficiency": 0.2222222222222222,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low"
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "from typing import List\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        Returns the indices of the two numbers in `nums` that add up to `target`.\n        Assumes exactly one solution exists and the same element cannot be used twice.\n        The returned list is ordered such that i < j.\n\n        Time Complexity: O(n)\n        Space Complexity: O(n)\n        \"\"\"\n        # Dictionary to store number -> its index while iterating\n        seen = {}\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # found the pair; ensure smaller index first\n                j = seen[complement]\n                return [j, i] if j < i else [i, j]\n            # store the current number with its index for future look‑ups\n            seen[num] = i\n\n        # According to the problem statement this line should never be reached\n        raise ValueError(\"No two sum solution exists for the given input.\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 621.5956211090088,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.98,
+                "issues": [
+                  "The fallback branch `else [i, j]` is unnecessary because `j` (the stored index) is always less than `i` in this algorithm, but it does not affect correctness.",
+                  "If the input list is extremely large, the O(n) extra space could be a concern, but this matches the intended solution constraints."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.2067606568336487,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.3784043788909912,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "from typing import List\n\ndef two_sum(nums: List[int], target: int) -> List[int]:\n    \"\"\"\n    Returns the indices of the two numbers in `nums` that add up to `target`.\n\n    Args:\n        nums: List of integers.\n        target: The target sum.\n\n    Returns:\n        A list [i, j] where i < j and nums[i] + nums[j] == target.\n        It is guaranteed that exactly one such pair exists.\n    \"\"\"\n    # Dictionary to store number -> its index while iterating.\n    seen = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            # Ensure the smaller index comes first.\n            j = seen[complement]\n            return [j, i] if j < i else [i, j]\n        seen[num] = i\n    # According to the problem statement this line should never be reached.\n    raise ValueError(\"No two sum solution found.\")\n\n# Example usage:\nif __name__ == \"__main__\":\n    # Sample test cases\n    print(two_sum([2, 7, 11, 15], 9))   # Output: [0, 1]\n    print(two_sum([3, 2, 4], 6))        # Output: [1, 2]\n    print(two_sum([3, 3], 6))           # Output: [0, 1]",
+              "test_results": {
+                "passed_tests": 10,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 733.1457138061523,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 6,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 7,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 8,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 9,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.98,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.7257424286433629,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.26685428619384766,
+                  "memory": 1.0,
+                  "efficiency": 0.35714285714285715,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low"
+              }
+            },
+            {
+              "genome_index": 3,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "from typing import List\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        Returns indices i, j (i < j) such that nums[i] + nums[j] == target.\n        Assumes exactly one solution exists and the same element cannot be used twice.\n        \"\"\"\n        # Dictionary to store value -> index seen so far\n        seen = {}\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # found the pair; ensure smaller index first\n                j = i\n                i = seen[complement]\n                return [i, j] if i < j else [j, i]\n            # store the current number's index for future look‑ups\n            seen[num] = i\n        # According to the problem statement this line is never reached\n        raise ValueError(\"No two sum solution exists\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 956.4330577850342,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.97,
+                "issues": [
+                  "The variable `i` is reused inside the `if complement in seen:` block, which shadows the loop variable. While it does not affect correctness because the function returns immediately, it may be slightly confusing to readers.",
+                  "The function assumes that a solution always exists, as guaranteed by the problem statement. If used outside that guarantee, it would raise a `ValueError`."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.15653504133224488,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.04356694221496582,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            },
+            {
+              "genome_index": 4,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "from typing import List\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        Returns the indices of the two numbers in `nums` that add up to `target`.\n\n        Uses a hash map to store each number and its index while iterating.\n        When we encounter a number `x`, we check if `target - x` has been seen\n        before. Because the problem guarantees exactly one solution, we can\n        return immediately when we find the pair.\n\n        The returned list always satisfies i < j.\n        \"\"\"\n        # value -> index\n        seen = {}\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # seen[complement] is the earlier index, i is the later one\n                return [seen[complement], i]\n            seen[num] = i\n        # According to the problem statement this line is never reached.\n        raise ValueError(\"No two sum solution exists\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 637.1021270751953,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.99,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.20443468093872072,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.3628978729248047,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 2,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": 0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "from typing import List\n\ndef two_sum(nums: List[int], target: int) -> List[int]:\n    \"\"\"\n    Returns indices of the two numbers such that they add up to `target`.\n    Assumes exactly one solution exists and the same element cannot be used twice.\n    The returned list is ordered as [i, j] with i < j.\n    \"\"\"\n    # Dictionary to store number -> its index as we iterate\n    seen = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            # We have found the pair; ensure the smaller index comes first\n            j = i\n            i = seen[complement]\n            return [i, j] if i < j else [j, i]\n        # Store the current number with its index for future look‑ups\n        seen[num] = i\n    # According to the problem statement this line should never be reached\n    raise ValueError(\"No two sum solution found\")\n    \n\n# Example usage (can be removed when integrating into a larger codebase)\nif __name__ == \"__main__\":\n    example_nums = [2, 7, 11, 15]\n    example_target = 9\n    print(two_sum(example_nums, example_target))  # Output: [0, 1]",
+              "test_results": {
+                "passed_tests": 10,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 904.2439460754395,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 6,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 7,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 8,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 9,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.98,
+                "issues": [
+                  "The variable `i` is reassigned inside the `if` block (shadowing the loop index). It works because the function returns immediately, but it can be confusing; using a different name for the stored index would improve readability.",
+                  "The implementation assumes exactly one solution as per the problem statement. If the input violated that guarantee (e.g., no solution or multiple solutions), the function would raise an exception or return the first found pair, which may not match caller expectations."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.7043634080886841,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.09575605392456055,
+                  "memory": 1.0,
+                  "efficiency": 0.4,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low"
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": 4,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "from typing import List\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        Returns indices [i, j] (i < j) such that nums[i] + nums[j] == target.\n        Assumes exactly one solution exists and the same element cannot be used twice.\n        \"\"\"\n        # Dictionary to store value -> index seen so far\n        seen = {}\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # found the pair; ensure smaller index first\n                j = i\n                i = seen[complement]\n                return [i, j] if i < j else [j, i]\n            # store the current number's index for future complement checks\n            seen[num] = i\n        # According to the problem statement this line should never be reached.\n        raise ValueError(\"No two sum solution found\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 560.016393661499,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.98,
+                "issues": [
+                  "The variable `i` is reassigned inside the loop before returning. While this does not affect correctness (the function returns immediately), it shadows the loop variable and could be confusing to readers.",
+                  "No handling for the (theoretically impossible) case where no solution exists beyond raising a ValueError, which matches the problem statement."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.21599754095077517,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.439983606338501,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": 1,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "from typing import List\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        Returns the indices of the two numbers in `nums` that add up to `target`.\n        Assumes exactly one solution exists and the same element cannot be used twice.\n        The returned list is ordered such that i < j.\n        \"\"\"\n        # Dictionary to store value -> index mapping for numbers we have seen so far.\n        seen = {}\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # Found the pair: return indices in increasing order.\n                j = seen[complement]\n                return [j, i] if j < i else [i, j]\n            # Store the current number's index for future complement checks.\n            seen[num] = i\n        # According to the problem statement, this line should never be reached.\n        raise ValueError(\"No two sum solution exists for the given input.\")\n\n# Example usage:\nif __name__ == \"__main__\":\n    sol = Solution()\n    print(sol.twoSum([2, 7, 11, 15], 9))   # Output: [0, 1]\n    print(sol.twoSum([3, 2, 4], 6))        # Output: [1, 2]\n    print(sol.twoSum([3, 3], 6))           # Output: [0, 1]",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 639.8897171020508,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.97,
+                "issues": [
+                  "None detected. The implementation correctly handles typical cases, duplicates, negative numbers, and returns indices in increasing order. It runs in O(n) time with O(n) extra space and has no infinite loops or resource‑exhaustion risks."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.2040165424346924,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.3601102828979492,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            },
+            {
+              "genome_index": 3,
+              "gen_genome_snapshot": {
+                "parent_id": 4,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "from typing import List\n\nclass Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        \"\"\"\n        Returns indices [i, j] such that nums[i] + nums[j] == target and i < j.\n        Assumes exactly one solution exists and the same element cannot be used twice.\n        \"\"\"\n        # Dictionary to store number -> its index while iterating\n        seen = {}\n        for i, num in enumerate(nums):\n            complement = target - num\n            if complement in seen:\n                # found the pair; ensure smaller index first\n                j = i\n                i = seen[complement]\n                return [i, j] if i < j else [j, i]\n            # store the current number with its index\n            seen[num] = i\n        # According to the problem statement this line should never be reached.\n        raise ValueError(\"No two sum solution found\")",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "execution_time_ms": 712.1753692626953,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 6,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 7,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 8,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  },
+                  {
+                    "id": 9,
+                    "status": "crash",
+                    "error": "name 'two_sum' is not defined"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.97,
+                "issues": [
+                  "The variable `i` is reused inside the `if` block (shadowed by the index of the complement). This does not affect correctness because the function returns immediately, but it may be confusing to readers. Renaming the inner variable (e.g., `first_idx`) would improve readability.",
+                  "No explicit handling for malformed inputs (e.g., empty list) is present, but the problem guarantees a solution exists, so this is acceptable."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.19317369461059572,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.2878246307373047,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high"
+              }
+            },
+            {
+              "genome_index": 4,
+              "gen_genome_snapshot": {
+                "parent_id": 4,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "from typing import List\n\ndef two_sum(nums: List[int], target: int) -> List[int]:\n    \"\"\"\n    Returns the indices of the two numbers in `nums` that add up to `target`.\n    Assumes exactly one solution exists and the same element cannot be used twice.\n    The returned list is sorted so that i < j.\n\n    Parameters\n    ----------\n    nums : List[int]\n        List of integers.\n    target : int\n        Desired sum of the two numbers.\n\n    Returns\n    -------\n    List[int]\n        A list containing the two indices [i, j] with i < j.\n    \"\"\"\n    # Dictionary to store number -> its index while iterating\n    seen = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            # Found the pair: ensure the smaller index comes first\n            j = i\n            i = seen[complement]\n            return [i, j] if i < j else [j, i]\n        # Store the index of the current number\n        seen[num] = i\n    # According to the problem statement, this line should never be reached\n    raise ValueError(\"No two sum solution exists\")\n\n# Example usage\nif __name__ == \"__main__\":\n    # Test cases\n    examples = [\n        ([2, 7, 11, 15], 9, [0, 1]),\n        ([3, 2, 4], 6, [1, 2]),\n        ([3, 3], 6, [0, 1]),\n        ([-1, -2, -3, -4, -5], -8, [2, 4]),\n    ]\n\n    for nums, target, expected in examples:\n        result = two_sum(nums, target)\n        assert result == expected, f\"Failed for {nums} with target {target}: got {result}, expected {expected}\"\n        print(f\"Input: nums={nums}, target={target} -> Output: {result}\")",
+              "test_results": {
+                "passed_tests": 10,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 564.7642612457275,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 6,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 7,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 8,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 9,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.98,
+                "issues": [
+                  "None detected. The implementation correctly handles duplicates, negative numbers, and returns sorted indices. It runs in O(n) time and O(n) space, has no infinite loops or resource exhaustion risks, and raises an error only in the impossible case where no solution exists (which contradicts the problem guarantee)."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.7385411747666293,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.43523573875427246,
+                  "memory": 1.0,
+                  "efficiency": 0.23255813953488372,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        }
+      ]
+    },
+    {
+      "problem_id": 2,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "def binary_search(nums, target):\n    \"\"\"\n    Perform binary search on a sorted list of integers.\n\n    Args:\n        nums (list[int]): A list of integers sorted in non‑decreasing order.\n        target (int): The integer value to search for.\n\n    Returns:\n        int: The index of `target` in `nums` if found; otherwise -1.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = left + (right - left) // 2  # avoid overflow in other languages\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid\n        elif mid_val < target:\n            left = mid + 1\n        else:  # mid_val > target\n            right = mid - 1\n\n    return -1\n\n\n# Example usage:\nif __name__ == \"__main__\":\n    # Test cases\n    print(binary_search([1, 2, 3, 4, 5, 6, 7, 8, 9], 5))   # Output: 4\n    print(binary_search([1, 2, 3, 4, 5, 6, 7, 8, 9], 10))  # Output: -1\n    print(binary_search([], 1))                           # Output: -1",
+              "test_results": {
+                "passed_tests": 10,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 512.0770931243896,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 6,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 7,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 8,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 9,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.99,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.76164997449288,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.48792290687561035,
+                  "memory": 1.0,
+                  "efficiency": 0.38461538461538464,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low"
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "def binary_search(nums, target):\n    \"\"\"\n    Perform binary search on a sorted list of integers.\n\n    Args:\n        nums (list[int]): A list of integers sorted in non‑decreasing order.\n        target (int): The integer value to search for.\n\n    Returns:\n        int: The index of `target` in `nums` if found; otherwise -1.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = left + (right - left) // 2  # avoid overflow for very large indices\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid\n        elif mid_val < target:\n            left = mid + 1\n        else:  # mid_val > target\n            right = mid - 1\n\n    return -1\n\n\n# Example usage\nif __name__ == \"__main__\":\n    # Sample sorted list\n    data = [-10, -3, 0, 1, 4, 7, 9, 12, 15]\n\n    # Test cases\n    tests = [7, -3, 15, 2, 0, 100]\n\n    for t in tests:\n        idx = binary_search(data, t)\n        print(f\"Target {t}: Index {idx}\")",
+              "test_results": {
+                "passed_tests": 10,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 610.1348400115967,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 6,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 7,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 8,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 9,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.99,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.7429625326189502,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.3898651599884033,
+                  "memory": 1.0,
+                  "efficiency": 0.3448275862068966,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low"
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "def binary_search(nums, target):\n    \"\"\"\n    Perform binary search on a sorted list of integers.\n\n    Parameters\n    ----------\n    nums : List[int]\n        A list of integers sorted in non‑decreasing order.\n    target : int\n        The integer value to search for.\n\n    Returns\n    -------\n    int\n        The index of `target` in `nums` if it exists; otherwise -1.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = left + (right - left) // 2  # avoid overflow in other languages\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid\n        elif mid_val < target:\n            left = mid + 1\n        else:  # mid_val > target\n            right = mid - 1\n\n    return -1\n\n\n# Example usage\nif __name__ == \"__main__\":\n    # Sample sorted list and target\n    nums = [1, 3, 5, 7, 9, 11, 13, 15]\n    target = 7\n\n    index = binary_search(nums, target)\n    print(f\"Target {target} found at index: {index}\")  # Output: 3\n\n    # Test a value that is not present\n    missing = 8\n    print(f\"Target {missing} found at index: {binary_search(nums, missing)}\")  # Output: -1",
+              "test_results": {
+                "passed_tests": 10,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 534.2953205108643,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 6,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 7,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 8,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 9,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.99,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.7484271304947989,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.46570467948913574,
+                  "memory": 1.0,
+                  "efficiency": 0.2857142857142857,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low"
+              }
+            },
+            {
+              "genome_index": 3,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "def binary_search(nums, target):\n    \"\"\"\n    Perform binary search on a sorted list of integers.\n\n    Args:\n        nums (list[int]): A list of integers sorted in ascending order.\n        target (int): The integer value to search for.\n\n    Returns:\n        int: The index of `target` in `nums` if found; otherwise, -1.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = left + (right - left) // 2  # avoid overflow in other languages\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid\n        elif mid_val < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n\n    return -1\n\n\n# Example usage:\nif __name__ == \"__main__\":\n    # Test cases\n    print(binary_search([1, 3, 5, 7, 9], 7))   # Output: 3\n    print(binary_search([1, 3, 5, 7, 9], 2))   # Output: -1\n    print(binary_search([], 10))              # Output: -1\n    print(binary_search([2], 2))              # Output: 0",
+              "test_results": {
+                "passed_tests": 10,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 768.7158584594727,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 6,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 7,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 8,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 9,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.99,
+                "issues": [
+                  "The function assumes `nums` is a list sorted in ascending order; if this precondition is violated the result is undefined, but this matches the problem specification.",
+                  "No explicit type or bounds checking is performed, which is acceptable for the given task but could be noted for production code."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.7217296582681162,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.23128414154052734,
+                  "memory": 1.0,
+                  "efficiency": 0.37037037037037035,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low"
+              }
+            },
+            {
+              "genome_index": 4,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "def binary_search(nums, target):\n    \"\"\"\n    Perform binary search on a sorted list of integers.\n\n    Parameters\n    ----------\n    nums : List[int]\n        A list of integers sorted in non‑decreasing order.\n    target : int\n        The integer value to search for.\n\n    Returns\n    -------\n    int\n        The index of `target` in `nums` if it exists; otherwise -1.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = (left + right) // 2\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid\n        elif mid_val < target:\n            left = mid + 1\n        else:               # mid_val > target\n            right = mid - 1\n\n    return -1\n\n\n# Example usage\nif __name__ == \"__main__\":\n    # Test cases\n    print(binary_search([1, 2, 3, 4, 5], 3))   # Output: 2\n    print(binary_search([1, 2, 3, 4, 5], 6))   # Output: -1\n    print(binary_search([], 1))                # Output: -1\n    print(binary_search([-10, -5, 0, 5, 10], -5))  # Output: 1",
+              "test_results": {
+                "passed_tests": 10,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 617.7170276641846,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 6,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 7,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 8,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 9,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.99,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.7385924458503723,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.38228297233581543,
+                  "memory": 1.0,
+                  "efficiency": 0.3125,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        },
+        {
+          "generation_id": 2,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": 3,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "from typing import List\n\ndef binary_search(nums: List[int], target: int) -> int:\n    \"\"\"\n    Perform binary search on a sorted list of integers.\n\n    Parameters\n    ----------\n    nums : List[int]\n        A list of integers sorted in non‑decreasing order.\n    target : int\n        The integer value to locate.\n\n    Returns\n    -------\n    int\n        The index of `target` in `nums` if it exists; otherwise -1.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = left + (right - left) // 2  # avoid overflow for very large indices\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid\n        elif mid_val < target:\n            left = mid + 1\n        else:  # mid_val > target\n            right = mid - 1\n\n    return -1\n\n\n# Example usage\nif __name__ == \"__main__\":\n    # Test cases\n    print(binary_search([1, 2, 3, 4, 5, 6, 7, 8, 9], 5))   # Output: 4\n    print(binary_search([1, 2, 3, 4, 5, 6, 7, 8, 9], 10))  # Output: -1\n    print(binary_search([], 1))                           # Output: -1",
+              "test_results": {
+                "passed_tests": 10,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 592.1149253845215,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 6,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 7,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 8,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 9,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.99,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.7424327611923218,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.4078850746154785,
+                  "memory": 1.0,
+                  "efficiency": 0.3125,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low"
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": 3,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "def binary_search(nums, target):\n    \"\"\"\n    Perform binary search on a sorted list of integers.\n\n    Parameters\n    ----------\n    nums : List[int]\n        A list of integers sorted in non‑decreasing order.\n    target : int\n        The integer value to search for.\n\n    Returns\n    -------\n    int\n        The index of `target` in `nums` if it exists; otherwise -1.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = left + (right - left) // 2  # avoid overflow in other languages\n        if nums[mid] == target:\n            return mid\n        elif nums[mid] < target:\n            left = mid + 1\n        else:  # nums[mid] > target\n            right = mid - 1\n\n    return -1\n\n\n# Example usage\nif __name__ == \"__main__\":\n    # Test cases\n    print(binary_search([1, 2, 3, 4, 5], 3))   # Output: 2\n    print(binary_search([1, 2, 3, 4, 5], 6))   # Output: -1\n    print(binary_search([], 1))                # Output: -1\n    print(binary_search([10], 10))             # Output: 0",
+              "test_results": {
+                "passed_tests": 10,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 565.1516914367676,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 6,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 7,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 8,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 9,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.99,
+                "issues": [
+                  "The function returns an arbitrary index for duplicate target values; if a specific occurrence (e.g., first) is required, additional logic would be needed.",
+                  "No explicit type or value validation is performed; passing non‑list or non‑integer elements will raise a TypeError, which is acceptable for typical usage but could be documented."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.7474853108006139,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.4348483085632324,
+                  "memory": 1.0,
+                  "efficiency": 0.3225806451612903,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low"
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": 3,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "def binary_search(nums, target):\n    \"\"\"\n    Perform binary search on a sorted list of integers.\n\n    Parameters\n    ----------\n    nums : List[int]\n        A list of integers sorted in non‑decreasing order.\n    target : int\n        The integer value to search for.\n\n    Returns\n    -------\n    int\n        The index of `target` in `nums` if it exists; otherwise -1.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = left + (right - left) // 2  # avoid overflow in other languages\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid\n        elif mid_val < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n\n    return -1\n\n\n# Example usage\nif __name__ == \"__main__\":\n    # Test cases\n    print(binary_search([1, 2, 3, 4, 5], 3))   # Output: 2\n    print(binary_search([1, 2, 3, 4, 5], 6))   # Output: -1\n    print(binary_search([], 1))                # Output: -1\n    print(binary_search([10], 10))             # Output: 0",
+              "test_results": {
+                "passed_tests": 10,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 509.59062576293945,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 6,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 7,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 8,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 9,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.99,
+                "issues": [
+                  "The implementation assumes `nums` is a sorted list of integers as per the problem statement; passing unsorted data will give undefined results, but this is outside the specified contract.",
+                  "No explicit type checking is performed, so passing non‑list or non‑integer elements could raise unexpected exceptions, though this does not affect correctness for the intended inputs.",
+                  "The comment about overflow avoidance is unnecessary in Python (which has arbitrary‑precision integers), but it does no harm."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.7548114061355591,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.49040937423706055,
+                  "memory": 1.0,
+                  "efficiency": 0.3125,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low"
+              }
+            },
+            {
+              "genome_index": 3,
+              "gen_genome_snapshot": {
+                "parent_id": 4,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "def binary_search(nums, target):\n    \"\"\"\n    Perform binary search on a sorted list of integers.\n\n    Args:\n        nums (List[int]): A list of integers sorted in ascending order.\n        target (int): The integer value to search for.\n\n    Returns:\n        int: The index of `target` in `nums` if found; otherwise -1.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = left + (right - left) // 2  # avoid overflow for large indices\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid\n        elif mid_val < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n\n    return -1\n\n\n# Example usage:\nif __name__ == \"__main__\":\n    # Test cases\n    print(binary_search([1, 2, 3, 4, 5, 6, 7, 8, 9], 5))   # Output: 4\n    print(binary_search([1, 2, 3, 4, 5, 6, 7, 8, 9], 10))  # Output: -1\n    print(binary_search([], 1))                           # Output: -1\n    print(binary_search([2], 2))                          # Output: 0",
+              "test_results": {
+                "passed_tests": 10,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 552.2587299346924,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 6,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 7,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 8,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 9,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.99,
+                "issues": [
+                  "The implementation assumes the input list is sorted in ascending order, but does not validate this. This is typical for binary search and not a functional bug.",
+                  "The comment about overflow avoidance is unnecessary in Python (integers have arbitrary precision), but it does no harm.",
+                  "No handling for duplicate values beyond returning any matching index, which matches the problem specification."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.7541982275468332,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.4477412700653076,
+                  "memory": 1.0,
+                  "efficiency": 0.37037037037037035,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low"
+              }
+            },
+            {
+              "genome_index": 4,
+              "gen_genome_snapshot": {
+                "parent_id": 4,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null
+              },
+              "generated_code": "def binary_search(nums, target):\n    \"\"\"\n    Perform binary search on a sorted list of integers.\n\n    Parameters\n    ----------\n    nums : List[int]\n        A list of integers sorted in non‑decreasing order.\n    target : int\n        The integer value to search for.\n\n    Returns\n    -------\n    int\n        The index of `target` in `nums` if it exists; otherwise -1.\n    \"\"\"\n    left, right = 0, len(nums) - 1\n\n    while left <= right:\n        mid = left + (right - left) // 2  # avoid overflow in other languages\n        mid_val = nums[mid]\n\n        if mid_val == target:\n            return mid\n        elif mid_val < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n\n    return -1\n\n\n# Example usage:\nif __name__ == \"__main__\":\n    # Test cases\n    print(binary_search([1, 2, 3, 4, 5, 6, 7, 8, 9], 5))   # Output: 4\n    print(binary_search([1, 2, 3, 4, 5, 6, 7, 8, 9], 10))  # Output: -1\n    print(binary_search([], 1))                           # Output: -1\n    print(binary_search([2], 2))                          # Output: 0",
+              "test_results": {
+                "passed_tests": 10,
+                "total_tests": 10,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 512.1824741363525,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 6,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 7,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 8,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 9,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 0.99,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.7544226288795471,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.48781752586364746,
+                  "memory": 1.0,
+                  "efficiency": 0.3125,
+                  "complexity": 0.5,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low"
+              }
+            }
+          ],
+          "selection_and_breeding": {}
+        }
+      ]
+    }
+  ],
+  "mode": "baseline_c",
+  "end_time": "2026-08-31T05:01:47.911853"
+}
