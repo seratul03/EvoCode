@@ -37,6 +37,10 @@ class GeneratorGenome(BaseGenome):
         default=None,
         description="Critic's diagnosis of the previous attempt (for reflection)."
     )
+    crossover_instruction: str | None = Field(
+        default=None,
+        description="Instruction containing the successful logic from a winning agent in another language."
+    )
 
 class CriticGenome(BaseGenome):
     """

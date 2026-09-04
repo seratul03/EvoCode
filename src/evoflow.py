@@ -204,7 +204,9 @@ class EvoFlowOrchestrator:
             "total_tests": total,
             "diagnosis": diagnosis,
             "gen_genome": gen_genome,
-            "mut_genome": mut_genome
+            "mut_genome": mut_genome,
+            "generated_code": code,
+            "language": generator.language
         }
         
         evaluation_item = {
@@ -336,8 +338,22 @@ class EvoFlowOrchestrator:
             parent_genome = parent_result["gen_genome"]
             mutator_genome = parent_result["mut_genome"]
             diagnosis = parent_result["diagnosis"]
+            child_index = len(new_pop_generator)
+            target_language = self.generators[child_index].language
             
-            child_genome = self.mutator.propose(diagnosis, parent_genome, mutator_genome)
+            # Identify the absolute winner (highest fitness overall)
+            winner_result = top_results[0]
+            winner_code = winner_result.get("generated_code")
+            winner_language = winner_result.get("language")
+            
+            child_genome = self.mutator.propose(
+                diagnosis, 
+                parent_genome, 
+                mutator_genome,
+                winner_code=winner_code,
+                winner_language=winner_language,
+                target_language=target_language
+            )
             child_genome.parent_id = parent_result["index"]
             child_genome.generation_id = generation_id
             
@@ -428,7 +444,7 @@ class EvoFlowOrchestrator:
         }
         return eval_report
 
-    async def run_generations(self, num_generations: int, problems: list[dict], mode: str = "evolve"):
+    async def run_generations(self, num_generations: int, problems: list[dict], mode: str = "evolve", disable_circuit_breaker: bool = False):
         print(f"--- Starting EvoFlow ({mode.upper()}) with {num_generations} generations on {len(problems)} problems ---")
         # Layer 4: Enable LLM validator only for the full evolutionary run
         self.use_validator = (mode == "evolve")
@@ -457,7 +473,7 @@ class EvoFlowOrchestrator:
                 best_fitness = max(r["fitness"] for r in results)
                 print(f"  -> Best fitness in Generation {gen+1}: {best_fitness:.2f}")
                 
-                if any(r.get("passed_tests", 0) == r.get("total_tests", -1) and r.get("total_tests", 0) > 0 for r in results):
+                if not disable_circuit_breaker and any(r.get("passed_tests", 0) == r.get("total_tests", -1) and r.get("total_tests", 0) > 0 for r in results):
                     print(f"  [Circuit Breaker] Perfect correctness reached for Problem {problem_id}. Stopping early.")
                     gen_report["circuit_breaker_triggered"] = True
                     break

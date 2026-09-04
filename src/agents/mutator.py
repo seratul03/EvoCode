@@ -13,12 +13,25 @@ class MutatorAgent:
     def __init__(self):
         pass
 
-    def propose(self, diagnosis: dict, current_genome: GeneratorGenome, mutator_genome: MutatorGenome) -> GeneratorGenome:
+    def propose(self, diagnosis: dict, current_genome: GeneratorGenome, mutator_genome: MutatorGenome,
+                winner_code: str = None, winner_language: str = None, target_language: str = None) -> GeneratorGenome:
         """
         Returns a newly mutated GeneratorGenome.
+        If winner_code is provided, injects a crossover instruction.
         """
         new_genome = copy.deepcopy(current_genome)
         recommendations = diagnosis.get("recommended_mutations", [])
+        
+        # 0. Crossover (Knowledge Sharing)
+        if winner_code and winner_language and target_language:
+            new_genome.crossover_instruction = (
+                f"Another agent wrote a highly successful solution in {winner_language}. "
+                f"Here is their code:\n\n```{winner_language.lower()}\n{winner_code}\n```\n\n"
+                f"Analyze their algorithmic approach and adapt its core logic into your {target_language} solution. "
+                "Do not copy syntax directly; translate the underlying strategy."
+            )
+        else:
+            new_genome.crossover_instruction = None
 
         # 1. Random mutation chance (applied BEFORE targeted mutations)
         if random.random() < mutator_genome.mutation_rate:

@@ -103,6 +103,9 @@ class GeneratorAgent:
                     f"Here is the Critic's feedback on why it failed:\n{genome.critic_feedback}\n\n"
                     "Please fix the code based on the feedback.\n\n"
                 )
+        
+        if genome.crossover_instruction:
+            prompt += f"--- CROSSOVER KNOWLEDGE SHARING ---\n{genome.crossover_instruction}\n\n"
 
         prompt += f"Provide your complete {self.language} solution in ```{self.language.lower()} code blocks."
         return prompt
