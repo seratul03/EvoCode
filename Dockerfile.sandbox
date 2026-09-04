@@ -1,10 +1,18 @@
 FROM python:3.12-slim
 
-# Install Java and C++ compilers
+# Install Java, C++, curl and JSON libraries
 RUN apt-get update && apt-get install -y \
     g++ \
     default-jdk \
+    nlohmann-json3-dev \
+    libjsoncpp-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
+
+# Download org.json jar for Java
+RUN mkdir -p /opt/java-libs && \
+    curl -sS -o /opt/java-libs/json.jar https://repo1.maven.org/maven2/org/json/json/20231013/json-20231013.jar && \
+    chmod 755 /opt/java-libs/json.jar
 
 # Create a non-root user for security
 RUN useradd -m sandbox_user

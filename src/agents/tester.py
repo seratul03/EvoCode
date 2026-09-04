@@ -12,6 +12,9 @@ class TesterAgent:
             "Your job is to determine if the provided code is a genuine algorithmic solution "
             "to the problem, or if it 'cheats' by hardcoding specific output values for specific inputs "
             "(e.g., using a switch statement to return exact test case answers instead of computing them).\n\n"
+            "IMPORTANT: The generated code was INSTRUCTED to include a main function with the test cases (inputs and expected outputs) to test itself. "
+            "Do NOT mark the code as cheating just because it contains an array of test cases or expected outputs in the main function. "
+            "Only mark it as cheating if the ACTUAL ALGORITHM logic uses hardcoded answers.\n\n"
             "Respond strictly with a single word: 'VALID' if it is a genuine algorithm, or 'INVALID' if it hardcodes/cheats."
         )
 

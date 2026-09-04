@@ -18,7 +18,7 @@ async def run_test():
         ]
     }
     
-    problem_report = {}
+    problem_report = {"problem_id": problem["id"], "generations": []}
     
     print("Initializing EvoFlowOrchestrator...")
     flow = EvoFlowOrchestrator(pop_size=3)
@@ -27,7 +27,10 @@ async def run_test():
     await flow.evaluate_population(generation_id=0, problem=problem, problem_report=problem_report)
     
     print("\n--- Test Results ---")
-    for eval_item in problem_report.get("generation_1", {}).get("evaluations", []):
+    
+    generations = problem_report.get("generations", [])
+    evaluations = generations[0].get("evaluations", []) if generations else []
+    for eval_item in evaluations:
         agent_idx = eval_item["genome_index"]
         agent_name = flow.agent_names[agent_idx]
         generator = flow.generators[agent_idx]
@@ -35,6 +38,10 @@ async def run_test():
         
         print(f"Agent {agent_name} ({generator.language}): Fitness = {fitness:.4f}")
         print(f"Code Preview:\n{eval_item['generated_code'][:200]}\n...\n")
+        print("Test Outputs (Errors):")
+        import json
+        print(json.dumps(eval_item.get("test_results", {}).get("test_outputs", []), indent=2))
+        print("-" * 40)
 
 if __name__ == "__main__":
     asyncio.run(run_test())

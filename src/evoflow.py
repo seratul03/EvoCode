@@ -13,6 +13,7 @@ from src.agents.generator import GeneratorAgent
 from src.agents.code_validator import CodeValidatorAgent
 from src.agents.critic import CriticAgent
 from src.agents.mutator import MutatorAgent
+from src.agents.template import TemplateAgent
 
 import ast
 from src.genome import GeneratorGenome, CriticGenome, MutatorGenome, EvaluatorGenome
@@ -52,6 +53,9 @@ class EvoFlowOrchestrator:
         from src.agents.tester import TesterAgent
         self.tester = TesterAgent(self.client)
 
+        # Template Agent — isolated call before any generator runs
+        self.template_agent = TemplateAgent(self.client)
+
         self.validator = CodeValidatorAgent(self.client)
         self.critic = CriticAgent()
         self.mutator = MutatorAgent()
@@ -76,7 +80,7 @@ class EvoFlowOrchestrator:
             "problems_evaluated": []
         }
 
-    async def _evaluate_single_genome(self, i: int, generation_id: int, problem: dict, problem_id: int):
+    async def _evaluate_single_genome(self, i: int, generation_id: int, problem: dict, problem_id: int, templates: dict | None = None):
         agent_name = self.agent_names[i]
         generator = self.generators[i]
         print(f"    Evaluating {agent_name} ({generator.language}) - Genome {i+1}/{self.pop_size}...")
@@ -86,8 +90,11 @@ class EvoFlowOrchestrator:
         mut_genome = self.pop_mutator[i]
         eval_genome = self.pop_evaluator[i]
 
+        # Pick the template for this agent's language (None = no template)
+        template = (templates or {}).get(generator.language)
+
         # 1. Generate
-        code = await generator.solve(problem, gen_genome)
+        code = await generator.solve(problem, gen_genome, template=template)
         safe_code = code[:100].replace(chr(10), ' ').encode('ascii', 'replace').decode('ascii')
         print(f"      [Code Generated] (Truncated): {safe_code}...")
         
@@ -122,7 +129,7 @@ class EvoFlowOrchestrator:
                 all_tests = problem.get("tests", []) + extra_tests
 
                 # 4. Sandbox with full test suite (fixed + ephemeral) wrapped in to_thread
-                test_results = await asyncio.to_thread(self.sandbox.run, code, all_tests, language=generator.language)
+                test_results = await asyncio.to_thread(self.sandbox.run, code, all_tests, language=generator.language, template=template)
                 passed = test_results["passed_tests"]
                 total = test_results["total_tests"]
                 print(f"      [Sandbox] Passed {passed}/{total} tests "
@@ -214,16 +221,32 @@ class EvoFlowOrchestrator:
 
     async def evaluate_population(self, generation_id: int, problem: dict, problem_report: dict):
         problem_id = problem.get("id", 0)
-        
+
         gen_report = {
             "generation_id": generation_id + 1,
             "evaluations": [],
             "selection_and_breeding": {}
         }
-        
+
+        # ── TemplateAgent: one isolated LLM call before any generator sees anything ──
+        # The templates are stored in the problem dict so they survive across generations
+        # for the same problem (we don't re-generate them every generation).
+        if "templates" not in problem:
+            print("    [TemplateAgent] Generating function scaffolds...")
+            try:
+                problem["templates"] = await self.template_agent.generate(problem)
+                for lang, tmpl in problem["templates"].items():
+                    preview = tmpl.splitlines()[0] if tmpl else "(empty)"
+                    print(f"      [{lang}] {preview}")
+            except Exception as e:
+                print(f"    [TemplateAgent] Failed to generate templates: {e}. Falling back to no-template mode.")
+                problem["templates"] = {}
+
+        templates = problem.get("templates", {})
+
         task_outputs = []
         for i in range(self.pop_size):
-            out = await self._evaluate_single_genome(i, generation_id, problem, problem_id)
+            out = await self._evaluate_single_genome(i, generation_id, problem, problem_id, templates)
             task_outputs.append(out)
 
         # Separate the results from the evaluation logs
