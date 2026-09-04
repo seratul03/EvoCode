@@ -34,14 +34,11 @@ class MemoryEvaluator(Evaluator):
 
 class CodeEfficiencyEvaluator(Evaluator):
     def score(self, code: str, test_results: dict, genome: EvaluatorGenome) -> float:
-        lines = len([l for l in code.splitlines() if l.strip()])
-        if lines == 0: return 0.0
-        # Normalizing passed tests / lines_of_code
-        # Example: 10 tests passed in 5 lines is very efficient
+        # Removed lines of code bias to ensure fair evaluation across Python, Java, and C++
+        if test_results["total_tests"] == 0:
+            return 0.0
         passed = test_results["passed_tests"]
-        efficiency = passed / lines
-        # scale to 0-1 (assuming passing 1 test per line is max score)
-        return min(1.0, efficiency * genome.sensitivity)
+        return min(1.0, (passed / test_results["total_tests"]) * genome.sensitivity)
 
 class ComplexityEvaluator(Evaluator):
     def score(self, code: str, genome: EvaluatorGenome) -> float:
@@ -53,7 +50,8 @@ class ComplexityEvaluator(Evaluator):
             score = 1.0 - (total_cc / 20.0)
             return max(0.0, min(1.0, score * genome.sensitivity))
         except Exception:
-            return 0.5 # Default if unparseable or radon not installed
+            # For Java, C++ or if radon fails, return 1.0 so they aren't penalized
+            return 1.0
 
 class RobustnessEvaluator(Evaluator):
     def score(self, code: str, genome: EvaluatorGenome) -> float:

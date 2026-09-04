@@ -33,26 +33,36 @@ class EvoFlowOrchestrator:
     The main orchestrator for the Co-Evolutionary system.
     Manages the 4 populations, runs the generations, and records everything via EventLogger and JSON run logs.
     """
-    def __init__(self, pop_size=5):
+    def __init__(self, pop_size=3):
         self.client = EvoClient()
         self.logger = EventLogger()
-        self.sandbox = Sandbox(timeout_seconds=5)
+        self.sandbox = Sandbox(timeout_seconds=15)
         self.fitness_scorer = FitnessScorer()
         self.property_tester = PropertyTester()   # Layer 2
 
-        # Agents
-        self.generator = GeneratorAgent(self.client)
+        # 3 distinct base agents for generation
+        self.agent_names = ["Evo_py", "Evo_java", "Evo_Cpp"]
+        self.generators = [
+            GeneratorAgent(self.client, language="Python"),
+            GeneratorAgent(self.client, language="Java"),
+            GeneratorAgent(self.client, language="C++")
+        ]
+        
+        # Testing Agent
+        from src.agents.tester import TesterAgent
+        self.tester = TesterAgent(self.client)
+
         self.validator = CodeValidatorAgent(self.client)
         self.critic = CriticAgent()
         self.mutator = MutatorAgent()
 
-        self.pop_size = pop_size
+        self.pop_size = 3 # Fixed to 3 for the 3 distinct agents
 
         # Populations
-        self.pop_generator = [GeneratorGenome() for _ in range(pop_size)]
-        self.pop_critic = [CriticGenome() for _ in range(pop_size)]
-        self.pop_mutator = [MutatorGenome() for _ in range(pop_size)]
-        self.pop_evaluator = [EvaluatorGenome() for _ in range(pop_size)]
+        self.pop_generator = [GeneratorGenome() for _ in range(self.pop_size)]
+        self.pop_critic = [CriticGenome() for _ in range(self.pop_size)]
+        self.pop_mutator = [MutatorGenome() for _ in range(self.pop_size)]
+        self.pop_evaluator = [EvaluatorGenome() for _ in range(self.pop_size)]
         
         self.code_cache = {}
 
@@ -62,19 +72,22 @@ class EvoFlowOrchestrator:
         # State tracking for the structured JSON report
         self.run_report = {
             "start_time": datetime.utcnow().isoformat(),
-            "pop_size": pop_size,
+            "pop_size": self.pop_size,
             "problems_evaluated": []
         }
 
     async def _evaluate_single_genome(self, i: int, generation_id: int, problem: dict, problem_id: int):
-        print(f"    Evaluating Genome {i+1}/{self.pop_size}...")
+        agent_name = self.agent_names[i]
+        generator = self.generators[i]
+        print(f"    Evaluating {agent_name} ({generator.language}) - Genome {i+1}/{self.pop_size}...")
+        
         gen_genome = self.pop_generator[i]
         crit_genome = self.pop_critic[i]
         mut_genome = self.pop_mutator[i]
         eval_genome = self.pop_evaluator[i]
 
         # 1. Generate
-        code = await self.generator.solve(problem, gen_genome)
+        code = await generator.solve(problem, gen_genome)
         safe_code = code[:100].replace(chr(10), ' ').encode('ascii', 'replace').decode('ascii')
         print(f"      [Code Generated] (Truncated): {safe_code}...")
         
@@ -91,17 +104,30 @@ class EvoFlowOrchestrator:
             if not any("WARNING: You generated this exact code" in str(iss) for iss in diagnosis.get("code_issues", [])):
                 diagnosis.setdefault("code_issues", []).append("WARNING: You generated this exact code previously and it failed. Try a fundamentally different approach.")
         else:
-            # 2. Layer 2 — Property-Based Tests: append ephemeral random cases
-            extra_tests = self.property_tester.generate(problem, n=5)
-            all_tests = problem.get("tests", []) + extra_tests
+            # 2. Evo_Tester (Anti-Cheating Check)
+            self.tester.language = generator.language
+            is_genuine = await self.tester.evaluate(problem, code)
+            if not is_genuine:
+                print(f"      [Tester] {agent_name} generated INVALID/cheating code. Fitness set to 0.0.")
+                test_results = {
+                    "passed_tests": 0, "total_tests": len(problem.get("tests", [])),
+                    "failed_test_ids": [], "timeout_tests": [], "crash_tests": [],
+                    "execution_time_ms": 0.0, "peak_memory_kb": 0.0, "test_outputs": [{"status": "crash", "error": "Code rejected by Evo_Tester as hardcoded/cheating."}]
+                }
+                passed = 0
+                total = test_results["total_tests"]
+            else:
+                # 3. Layer 2 — Property-Based Tests: append ephemeral random cases
+                extra_tests = self.property_tester.generate(problem, n=5)
+                all_tests = problem.get("tests", []) + extra_tests
 
-            # 3. Sandbox with full test suite (fixed + ephemeral) wrapped in to_thread
-            test_results = await asyncio.to_thread(self.sandbox.run, code, all_tests)
-            passed = test_results["passed_tests"]
-            total = test_results["total_tests"]
-            print(f"      [Sandbox] Passed {passed}/{total} tests "
-                  f"(+{len(extra_tests)} ephemeral). "
-                  f"Crashes: {len(test_results['crash_tests'])}")
+                # 4. Sandbox with full test suite (fixed + ephemeral) wrapped in to_thread
+                test_results = await asyncio.to_thread(self.sandbox.run, code, all_tests, language=generator.language)
+                passed = test_results["passed_tests"]
+                total = test_results["total_tests"]
+                print(f"      [Sandbox] Passed {passed}/{total} tests "
+                      f"(+{len(extra_tests)} ephemeral). "
+                      f"Crashes: {len(test_results['crash_tests'])}")
 
             self.logger.log_test_result(
                 problem_id, generation_id, i,
@@ -195,20 +221,19 @@ class EvoFlowOrchestrator:
             "selection_and_breeding": {}
         }
         
-        tasks = [
-            self._evaluate_single_genome(i, generation_id, problem, problem_id)
-            for i in range(self.pop_size)
-        ]
+        task_outputs = []
+        for i in range(self.pop_size):
+            out = await self._evaluate_single_genome(i, generation_id, problem, problem_id)
+            task_outputs.append(out)
+
+        # Separate the results from the evaluation logs
+        generation_results = [out[0] for out in task_outputs]
+        evaluation_logs = [out[1] for out in task_outputs]
         
-        task_outputs = await asyncio.gather(*tasks)
-        
-        results = []
-        for result_item, evaluation_item in task_outputs:
-            results.append(result_item)
-            gen_report["evaluations"].append(evaluation_item)
+        gen_report["evaluations"] = evaluation_logs
             
         problem_report["generations"].append(gen_report)
-        return results, gen_report
+        return generation_results, gen_report
 
     def select_and_breed(self, generation_id: int, results: list, problem_id: int, gen_report: dict, mode: str = "evolve"):
         if mode == "baseline_a":
