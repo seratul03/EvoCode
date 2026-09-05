@@ -278,6 +278,15 @@ if __name__ == '__main__':
 
     def _build_java_harness(self, solution_code: str, parsed_tests: list[dict]) -> str:
         """Java harness using org.json for generic input deserialization and true telemetry."""
+        
+        # Auto-wrap in class Solution if the LLM forgot (prevents unnamed class preview errors)
+        if "class Solution" not in solution_code:
+            # Extract imports to the top
+            lines = solution_code.split('\n')
+            imports = [line for line in lines if line.strip().startswith("import ")]
+            body = [line for line in lines if not line.strip().startswith("import ")]
+            solution_code = "\n".join(imports) + "\n\nclass Solution {\n" + "\n".join(body) + "\n}"
+            
         tests_json = json.dumps(parsed_tests)
         
         runner = f"""
@@ -285,7 +294,7 @@ if __name__ == '__main__':
 class SandboxRunner {{
     public static void main(String[] args) {{
         String jsonTests = {json.dumps(tests_json)};
-        StringBuilder sb = new StringBuilder("[");
+        org.json.JSONArray allResults = new org.json.JSONArray();
         try {{
             org.json.JSONArray cases = new org.json.JSONArray(jsonTests);
             for (int i = 0; i < cases.length(); i++) {{
@@ -294,10 +303,8 @@ class SandboxRunner {{
                 org.json.JSONArray tcArgs = tc.getJSONArray("args");
                 String expected = tc.get("expected").toString().trim();
                 
-                String status;
-                String extra = "";
-                double execMs = 0;
-                double memKb = 0;
+                org.json.JSONObject res = new org.json.JSONObject();
+                res.put("id", id);
                 
                 try {{
                     java.lang.reflect.Method solveMethod = null;
@@ -330,34 +337,36 @@ class SandboxRunner {{
                     long endTime = System.nanoTime();
                     long endMem = rt.totalMemory() - rt.freeMemory();
                     
-                    execMs = (endTime - startTime) / 1000000.0;
-                    memKb = Math.max(0, endMem - startMem) / 1024.0;
+                    double execMs = (endTime - startTime) / 1000000.0;
+                    double memKb = Math.max(0, endMem - startMem) / 1024.0;
+                    
+                    res.put("time_ms", execMs);
+                    res.put("mem_kb", memKb);
                     
                     String actual = convertResult(result).trim();
                     if (actual.equals(expected)) {{
-                        status = "pass";
+                        res.put("status", "pass");
                     }} else {{
-                        status = "fail";
-                        extra = ",\\"expected\\":\\"" + expected.replace("\\"", "\\\\\\"") + "\\",\\"actual\\":\\"" + actual.replace("\\"", "\\\\\\"") + "\\"";
+                        res.put("status", "fail");
+                        res.put("expected", expected);
+                        res.put("actual", actual);
                     }}
                 }} catch (Exception e) {{
-                    status = "crash";
+                    res.put("status", "crash");
                     String msg = e.getCause() != null ? e.getCause().toString() : e.toString();
-                    extra = ",\\"error\\":\\"" + msg.replace("\\"", "'").replace("\\n", " ") + "\\"";
+                    res.put("error", msg);
                 }}
                 
-                if (i > 0) sb.append(",");
-                sb.append("{{\\"id\\":").append(id)
-                  .append(",\\"status\\":\\"").append(status).append("\\"")
-                  .append(",\\"time_ms\\":").append(execMs)
-                  .append(",\\"mem_kb\\":").append(memKb)
-                  .append(extra).append("}}");
+                allResults.put(res);
             }}
         }} catch (Exception e) {{
-            sb.append("{{\\"id\\":-1,\\"status\\":\\"crash\\",\\"error\\":\\"Harness error: ").append(e.getMessage().replace("\\"", "'")).append("\\"}}");
+            org.json.JSONObject err = new org.json.JSONObject();
+            err.put("id", -1);
+            err.put("status", "crash");
+            err.put("error", "Harness error: " + e.getMessage());
+            allResults.put(err);
         }}
-        sb.append("]");
-        System.out.println(sb.toString());
+        System.out.println(allResults.toString());
     }}
     
     private static Object convertJson(Object jsonVal, Class<?> targetType) throws Exception {{
@@ -420,6 +429,14 @@ class SandboxRunner {{
                 if candidate not in ("if", "while", "for", "switch", "return", "class", "struct"):
                     fn_name = candidate
                     
+        # If the expected function isn't found, try to extract the real one from the code
+        if fn_name not in solution_code:
+            m = re.search(r'\b(\w+)\s*\([^)]*\)\s*\{', solution_code)
+            if m:
+                candidate = m.group(1)
+                if candidate not in ("if", "while", "for", "switch", "return", "main", "catch"):
+                    fn_name = candidate
+
         tests_json = json.dumps(parsed_tests).replace('\\\\', '\\\\\\\\')
 
         harness = f"""
@@ -438,9 +455,9 @@ int main() {{
     
     try {{
         json cases = json::parse(json_str);
-        std::cout << "[";
+        json all_results = json::array();
+        
         for (size_t i = 0; i < cases.size(); i++) {{
-            if (i > 0) std::cout << ",";
             int id = cases[i]["id"];
             json args = cases[i]["args"];
             std::string expected;
@@ -450,10 +467,8 @@ int main() {{
                 expected = cases[i]["expected"].dump();
             }}
             
-            std::string status;
-            std::string extra = "";
-            double execMs = 0;
-            double memKb = 0;
+            json test_res;
+            test_res["id"] = id;
             
             try {{
                 int num_args = args.size();
@@ -472,9 +487,12 @@ int main() {{
                 getrusage(RUSAGE_SELF, &usage_end);
                 
                 std::chrono::duration<double, std::milli> diff = t_end - t_start;
-                execMs = diff.count();
-                memKb = usage_end.ru_maxrss - usage_start.ru_maxrss;
+                double execMs = diff.count();
+                double memKb = usage_end.ru_maxrss - usage_start.ru_maxrss;
                 if (memKb < 0) memKb = 0;
+                
+                test_res["time_ms"] = execMs;
+                test_res["mem_kb"] = memKb;
                 
                 std::string actual;
                 if (result_json.is_string()) actual = result_json.get<std::string>();
@@ -490,27 +508,19 @@ int main() {{
                 if (s3 != std::string::npos) actual = actual.substr(s3, e3 - s3 + 1);
                 
                 if (actual == expected || result_json == cases[i]["expected"]) {{
-                    status = "pass";
+                    test_res["status"] = "pass";
                 }} else {{
-                    status = "fail";
-                    
-                    std::string exp_safe = expected;
-                    for(size_t pos = 0; (pos = exp_safe.find("\\"", pos)) != std::string::npos; pos += 2) exp_safe.replace(pos, 1, "\\\\\\\\"");
-                    
-                    std::string act_safe = actual;
-                    for(size_t pos = 0; (pos = act_safe.find("\\"", pos)) != std::string::npos; pos += 2) act_safe.replace(pos, 1, "\\\\\\\\"");
-                    
-                    extra = ",\\"expected\\":\\"" + exp_safe + "\\",\\"actual\\":\\"" + act_safe + "\\"";
+                    test_res["status"] = "fail";
+                    test_res["expected"] = expected;
+                    test_res["actual"] = actual;
                 }}
             }} catch (const std::exception& ex) {{
-                status = "crash";
-                std::string em = ex.what();
-                for(size_t pos = 0; (pos = em.find("\\"", pos)) != std::string::npos; pos += 2) em.replace(pos, 1, "'");
-                extra = std::string(",\\"error\\":\\"") + em + "\\"";
+                test_res["status"] = "crash";
+                test_res["error"] = ex.what();
             }}
-            std::cout << "{{\\"id\\":" << id << ",\\"status\\":\\"" << status << "\\",\\"time_ms\\":" << execMs << ",\\"mem_kb\\":" << memKb << extra << "}}";
+            all_results.push_back(test_res);
         }}
-        std::cout << "]" << std::endl;
+        std::cout << all_results.dump() << std::endl;
     }} catch (const std::exception& e) {{
         std::cout << "[{{\\"id\\":-1,\\"status\\":\\"crash\\",\\"error\\":\\"Harness setup failed\\"}}]" << std::endl;
     }}
