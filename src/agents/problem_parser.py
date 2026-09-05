@@ -38,8 +38,9 @@ class ProblemParserAgent:
             "CRITICAL RULES FOR TESTS:\n"
             "1. Generate at least 5 distinct test cases, including edge cases.\n"
             "2. The 'input' field MUST be a string representing the EXACT Python function call (e.g. \"my_func([1, 2], 'a')\").\n"
-            "3. The 'expected' field MUST be a string representation of the expected Python output (e.g. \"True\", \"[1, 2, 3]\", \"'hello'\").\n"
+            "3. The 'expected' field MUST be a string representation of the expected Python RETURN value (e.g. \"True\", \"[1, 2, 3]\", \"'hello'\").\n"
             "4. Make sure the function name in 'input' matches the function name in 'function_signature'.\n"
+            "5. IMPORTANT: The evaluation sandbox evaluates RETURN values, not standard output. If the user asks to 'print' something, you MUST rewrite the description to say 'return a string' or 'return a list' and generate test cases that expect that returned value.\n"
         )
 
         user_prompt = f"Convert this query into the required problem JSON format:\n\n{user_query}"
