@@ -16,6 +16,24 @@ class TemplateAgent:
     containing one pre-filled function skeleton per language.
     """
 
+    SYSTEM_PROMPT_WITH_SIGNATURE = (
+        "You are a function signature designer. "
+        "Given a problem description and an EXACT function/class signature, output ONLY the function skeleton — "
+        "no explanations, no logic, just the empty scaffolds.\n\n"
+        "Rules:\n"
+        "1. For Python: use the EXACT function/class name and signature provided. Use type hints. "
+        "Include any necessary imports above the function.\n"
+        "2. For Java: adapt the Python signature to Java. The class MUST be named `Solution`. "
+        "Include no main() method.\n"
+        "3. For C++: CRITICAL — write a FREE FUNCTION (no class, no struct wrapper). "
+        "Include necessary headers at the top. No main() function. "
+        "If the Python signature is a class, still write a free function named `solve` in C++.\n"
+        "4. Output in EXACTLY this format — nothing else:\n\n"
+        "```python\n<python skeleton>\n```\n\n"
+        "```java\n<java skeleton>\n```\n\n"
+        "```cpp\n<cpp skeleton>\n```"
+    )
+
     SYSTEM_PROMPT = (
         "You are a function signature designer. "
         "Given a problem description, output ONLY function skeletons — "
@@ -45,16 +63,30 @@ class TemplateAgent:
         """
         description = problem.get("description", "")
         title = problem.get("title", "Unknown Problem")
+        function_signature = problem.get("function_signature", "")
 
-        user_prompt = (
-            f"Problem: {title}\n\n"
-            f"{description}\n\n"
-            "Generate function skeletons in Python, Java, and C++ following the rules."
-        )
+        if function_signature:
+            # Use the exact signature from the problem data — this ensures the
+            # generated code matches what the test harness expects to call.
+            user_prompt = (
+                f"Problem: {title}\n\n"
+                f"{description}\n\n"
+                f"Use this EXACT Python function/class signature:\n"
+                f"```python\n{function_signature}\n```\n\n"
+                "Generate skeletons in Python (using the exact signature above), Java, and C++."
+            )
+            system_prompt = self.SYSTEM_PROMPT_WITH_SIGNATURE
+        else:
+            user_prompt = (
+                f"Problem: {title}\n\n"
+                f"{description}\n\n"
+                "Generate function skeletons in Python, Java, and C++ following the rules."
+            )
+            system_prompt = self.SYSTEM_PROMPT
 
         response = await self.client.create_completion(
             messages=[
-                {"role": "system", "content": self.SYSTEM_PROMPT},
+                {"role": "system", "content": system_prompt},
                 {"role": "user",   "content": user_prompt},
             ],
             temperature=0.0,   # We want deterministic, consistent signatures

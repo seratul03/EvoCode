@@ -39,19 +39,20 @@ class GeneratorAgent:
             return base_prompt + (
                 "Provide only the robust, clean, and fully correct code implementation. "
                 "Pay close attention to ALL edge cases including empty inputs, negative values, "
-                "and cases where no solution exists — always return the correct value rather than raising exceptions."
+                "and cases where no solution exists — always return the correct value rather than raising exceptions. "
+                "If no valid solution exists, return None/null UNLESS the description explicitly asks for something else."
             )
         if genome.system_instruction_variant == "pedantic_reviewer":
             return base_prompt + (
                 "You are a meticulous code reviewer and software engineer. "
                 "Before writing any code, carefully reason about every edge case: "
                 "empty inputs, negative values, no-solution cases, duplicate values, and boundary conditions. "
-                "For functions that may have no valid result, ALWAYS return None/null rather than raising exceptions."
+                "For functions that may have no valid result, ALWAYS return None/null rather than raising exceptions, UNLESS the problem description explicitly asks for something else."
             )
         # standard
         return base_prompt + (
             "You are a code generation assistant. Output code for the given problem. "
-            "If the problem has no valid answer for certain inputs, return None/null instead of raising an exception."
+            "If the problem has no valid answer for certain inputs, return None/null instead of raising an exception, UNLESS the problem description explicitly specifies otherwise."
         )
 
     def _build_user_prompt(self, problem: dict, genome: GeneratorGenome, template: str | None) -> str:
@@ -69,7 +70,7 @@ class GeneratorAgent:
                 "3. Do NOT change the structure — if the template is a free function, keep it as a free function. "
                 "If it is a class, keep it as a class. Do NOT add or remove class wrappers.\n"
                 "4. Handle ALL edge cases (empty inputs, negative numbers, zero, duplicates).\n"
-                "5. If the problem has no valid answer for certain inputs, return None/null.\n\n"
+                "5. If the problem has no valid answer for certain inputs, return None/null UNLESS the problem description explicitly specifies a different return value for those inputs.\n\n"
                 f"Fill in this template:\n"
                 f"```{self.language.lower()}\n{template}\n```\n\n"
             )
@@ -78,7 +79,7 @@ class GeneratorAgent:
             prompt += (
                 "CRITICAL RULES:\n"
                 "1. Write ONLY the solution function/class. Do NOT write a main() function.\n"
-                "2. If the problem has no valid answer for the given inputs, return None/null.\n"
+                "2. If the problem has no valid answer for the given inputs, return None/null UNLESS the problem description explicitly specifies a different return value for those inputs.\n"
                 "3. Handle ALL edge cases (empty inputs, negative numbers, zero, duplicates).\n"
                 "4. If writing Java, your public class MUST be named exactly `Solution`.\n"
                 "5. If writing C++, do NOT include a main() function, and your solution "

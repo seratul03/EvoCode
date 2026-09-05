@@ -97,12 +97,15 @@ class PropertyTester:
         return results
 
     def _safe_call(self, func, args: list, timeout: float = 1.0):
-        with ThreadPoolExecutor(max_workers=1) as ex:
-            future = ex.submit(func, *args)
-            try:
-                return future.result(timeout=timeout)
-            except (FuturesTimeoutError, Exception):
-                return _TIMEOUT_SENTINEL
+        ex = ThreadPoolExecutor(max_workers=1)
+        future = ex.submit(func, *args)
+        try:
+            res = future.result(timeout=timeout)
+            ex.shutdown(wait=False, cancel_futures=True)
+            return res
+        except (FuturesTimeoutError, Exception):
+            ex.shutdown(wait=False, cancel_futures=True)
+            return _TIMEOUT_SENTINEL
 
     # -------------------------------------------------------------------------
     # Signature Parsing (mirrors TestAugmentor — intentionally standalone)

@@ -40,6 +40,77 @@ class Sandbox:
             })
         return parsed
 
+    def _detect_test_mode(self, test_cases: list[dict]) -> str:
+        """
+        Detects whether tests use 'script' mode or 'function' mode.
+        Script mode: inputs are imperative Python statements (contain '=' or ';').
+        Function mode: inputs are simple function calls like solve(args...).
+        """
+        for tc in test_cases:
+            inp = str(tc.get("input", ""))
+            # If any test has assignment or semicolons, it's a script-style problem
+            if "=" in inp or ";" in inp:
+                return "script"
+        return "function"
+
+    def _build_python_harness_script_mode(self, solution_code: str, test_cases: list[dict]) -> str:
+        """
+        Builds a Python test harness for class-based or named-function problems.
+        Each test input is a semicolon-separated Python script; we exec() the body
+        statements and eval() the final expression to get the result.
+        """
+        # Serialize raw test inputs/expecteds as strings
+        raw_tests = [{"id": tc["id"], "input": str(tc.get("input", "")), "expected": str(tc.get("expected", ""))} for tc in test_cases]
+        tests_json = json.dumps(raw_tests)
+
+        harness = textwrap.dedent(f"""
+# === INJECTED TEST HARNESS (SCRIPT MODE) ===
+import json as _json
+import traceback as _tb
+import time as _time
+import tracemalloc as _tm
+
+def _run_tests():
+    test_cases = _json.loads({repr(tests_json)})
+    results = []
+
+    for tc in test_cases:
+        tid = tc["id"]
+        script = tc["input"]
+        expected = str(tc["expected"]).strip()
+        try:
+            _tm.start()
+            start_time = _time.perf_counter()
+
+            # Split the script on ';' — exec all but the last, eval the last
+            parts = [p.strip() for p in script.split(";") if p.strip()]
+            local_ns = dict(globals())  # give access to the solution classes/functions
+            for stmt in parts[:-1]:
+                exec(stmt, local_ns)
+            actual = str(eval(parts[-1], local_ns)).strip()
+
+            end_time = _time.perf_counter()
+            _, peak = _tm.get_traced_memory()
+            _tm.stop()
+
+            exec_ms = (end_time - start_time) * 1000
+            mem_kb = peak / 1024.0
+
+            if actual == expected:
+                results.append({{"id": tid, "status": "pass", "time_ms": exec_ms, "mem_kb": mem_kb}})
+            else:
+                results.append({{"id": tid, "status": "fail", "expected": expected, "actual": actual, "time_ms": exec_ms, "mem_kb": mem_kb}})
+        except Exception:
+            if _tm.is_tracing(): _tm.stop()
+            results.append({{"id": tid, "status": "crash", "error": _tb.format_exc(limit=3)}})
+
+    print(_json.dumps(results))
+
+if __name__ == '__main__':
+    _run_tests()
+""")
+        return solution_code + "\n" + harness
+
     def run(self, code: str, test_cases: list[dict], language: str = "Python", template: str | None = None) -> dict:
         results = {
             "passed_tests": 0,
@@ -56,7 +127,11 @@ class Sandbox:
             parsed_tests = self._parse_tests_to_json(test_cases)
             
             if language == "Python":
-                full_code = self._build_python_harness(code, parsed_tests)
+                test_mode = self._detect_test_mode(test_cases)
+                if test_mode == "script":
+                    full_code = self._build_python_harness_script_mode(code, test_cases)
+                else:
+                    full_code = self._build_python_harness(code, parsed_tests)
                 filename = "solution.py"
                 docker_cmd = ["python", filename]
             elif language == "Java":
@@ -163,7 +238,7 @@ def _run_tests():
     # Find the first callable in the module that isn't a builtin
     fn = None
     for name, obj in list(globals().items()):
-        if callable(obj) and not name.startswith("_") and name not in ("main", "ast"):
+        if callable(obj) and getattr(obj, "__module__", None) == "__main__" and not name.startswith("_") and name not in ("main", "ast"):
             fn = obj
             break
 
@@ -199,7 +274,7 @@ def _run_tests():
 if __name__ == '__main__':
     _run_tests()
 """)
-        return solution_code + "\\n" + harness
+        return solution_code + "\n" + harness
 
     def _build_java_harness(self, solution_code: str, parsed_tests: list[dict]) -> str:
         """Java harness using org.json for generic input deserialization and true telemetry."""
@@ -332,14 +407,14 @@ class SandboxRunner {{
     }}
 }}
 """
-        return solution_code + "\\n" + runner
+        return solution_code + "\n" + runner
 
     def _build_cpp_harness(self, solution_code: str, parsed_tests: list[dict], template: str | None = None) -> str:
         """C++ harness using nlohmann::json implicit conversions and true telemetry."""
         import re
         fn_name = "solve"
         if template:
-            m = re.search(r'\\b(\\w+)\\s*\\(', template)
+            m = re.search(r'\b(\w+)\s*\(', template)
             if m:
                 candidate = m.group(1)
                 if candidate not in ("if", "while", "for", "switch", "return", "class", "struct"):
@@ -442,4 +517,4 @@ int main() {{
     return 0;
 }}
 """
-        return solution_code + "\\n" + harness
+        return solution_code + "\n" + harness
