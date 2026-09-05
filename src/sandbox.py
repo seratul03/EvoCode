@@ -12,7 +12,7 @@ class Sandbox:
     Executes generated code in a restricted Docker environment with timeouts and resource limits.
     The sandbox injects its own test harness so the LLM only needs to write the solution function.
     """
-    def __init__(self, timeout_seconds: int = 15):
+    def __init__(self, timeout_seconds: int = 30):
         self.timeout_seconds = timeout_seconds
 
     def _parse_tests_to_json(self, test_cases: list[dict]) -> list[dict]:
@@ -264,17 +264,156 @@ def _run_tests():
 
             if actual == expected:
                 results.append({{"id": tid, "status": "pass", "time_ms": exec_ms, "mem_kb": mem_kb}})
+def _run_tests():
+    test_cases = _json.loads({repr(tests_json)})
+    results = []
+
+    for tc in test_cases:
+        tid = tc["id"]
+        script = tc["input"]
+        expected = str(tc["expected"]).strip()
+        try:
+            _tm.start()
+            start_time = _time.perf_counter()
+
+            # Split the script on ';' — exec all but the last, eval the last
+            parts = [p.strip() for p in script.split(";") if p.strip()]
+            local_ns = dict(globals())  # give access to the solution classes/functions
+            for stmt in parts[:-1]:
+                exec(stmt, local_ns)
+            actual = str(eval(parts[-1], local_ns)).strip()
+
+            end_time = _time.perf_counter()
+            _, peak = _tm.get_traced_memory()
+            _tm.stop()
+
+            exec_ms = (end_time - start_time) * 1000
+            mem_kb = peak / 1024.0
+
+            if actual == expected:
+                results.append({{"id": tid, "status": "pass", "time_ms": exec_ms, "mem_kb": mem_kb}})
             else:
                 results.append({{"id": tid, "status": "fail", "expected": expected, "actual": actual, "time_ms": exec_ms, "mem_kb": mem_kb}})
-        except Exception as ex:
+        except Exception:
             if _tm.is_tracing(): _tm.stop()
-            results.append({{"id": tid, "status": "crash", "error": _tb.format_exc(limit=2)}})
+            results.append({{"id": tid, "status": "crash", "error": _tb.format_exc(limit=3)}})
+
     print(_json.dumps(results))
 
 if __name__ == '__main__':
     _run_tests()
 """)
         return solution_code + "\n" + harness
+
+    def run(self, code: str, test_cases: list[dict], language: str = "Python", template: str | None = None) -> dict:
+        results = {
+            "passed_tests": 0,
+            "total_tests": len(test_cases),
+            "failed_test_ids": [],
+            "timeout_tests": [],
+            "crash_tests": [],
+            "execution_time_ms": 0.0,
+            "peak_memory_kb": 0.0,
+            "test_outputs": []
+        }
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            parsed_tests = self._parse_tests_to_json(test_cases)
+            
+            if language == "Python":
+                test_mode = self._detect_test_mode(test_cases)
+                if test_mode == "script":
+                    full_code = self._build_python_harness_script_mode(code, test_cases)
+                else:
+                    full_code = self._build_python_harness(code, parsed_tests)
+                filename = "solution.py"
+                docker_cmd = ["python", filename]
+            elif language == "Java":
+                full_code = self._build_java_harness(code, parsed_tests)
+                filename = "Solution.java"
+                docker_cmd = ["sh", "-c", "javac -cp /opt/java-libs/json.jar Solution.java && java -cp .:/opt/java-libs/json.jar SandboxRunner"]
+            elif language == "C++":
+                full_code = self._build_cpp_harness(code, parsed_tests, template=template)
+                filename = "solution.cpp"
+                docker_cmd = ["sh", "-c", "g++ -std=c++17 -I/usr/include solution.cpp -o sol && ./sol"]
+            else:
+                filename = "solution.txt"
+                docker_cmd = ["echo", "unsupported language"]
+                full_code = code
+
+            solution_path = os.path.join(temp_dir, filename)
+            with open(solution_path, 'w', encoding='utf-8') as f:
+                f.write(full_code)
+
+            start_time = time.time()
+            cmd = [
+                'docker', 'run', '--rm',
+                '--network', 'none',
+                '--memory', '256m',
+                '--cpus', '0.5',
+                '-v', f"{os.path.abspath(temp_dir)}:/workspace",
+                '-w', '/workspace',
+                'evocode-sandbox'
+            ] + docker_cmd
+
+            try:
+                process = subprocess.run(cmd, capture_output=True, timeout=self.timeout_seconds)
+                
+                stdout = process.stdout.decode('utf-8', errors='ignore').strip()
+                stderr = process.stderr.decode('utf-8', errors='ignore').strip()
+
+                try:
+                    start_idx = stdout.find('[')
+                    end_idx = stdout.rfind(']')
+                    if start_idx == -1 or end_idx < start_idx:
+                        raise ValueError(f"No JSON array in stdout.\nStdout: {stdout[:300]}\nStderr: {stderr[:300]}")
+
+                    json_out = json.loads(stdout[start_idx:end_idx + 1])
+                    
+                    max_time = 0.0
+                    max_mem = 0.0
+
+                    for test_res in json_out:
+                        tid = test_res.get("id")
+                        status = test_res.get("status")
+                        t_ms = float(test_res.get("time_ms", 0.0))
+                        m_kb = float(test_res.get("mem_kb", 0.0))
+                        
+                        max_time += t_ms
+                        max_mem = max(max_mem, m_kb)
+                        
+                        results["test_outputs"].append(test_res)
+                        if status == "pass":
+                            results["passed_tests"] += 1
+                        elif status == "fail":
+                            results["failed_test_ids"].append(tid)
+                        elif status == "crash":
+                            results["crash_tests"].append(tid)
+                            
+                    results["execution_time_ms"] = max_time
+                    results["peak_memory_kb"] = max_mem
+
+                except Exception as e:
+                    err_msg = str(e)
+                    for test in test_cases:
+                        tid = test.get("id")
+                        results["crash_tests"].append(tid)
+                        results["test_outputs"].append({"id": tid, "status": "crash", "error": err_msg})
+                    # Use outer time as fallback
+                    end_time = time.time()
+                    results["execution_time_ms"] = (end_time - start_time) * 1000
+
+            except subprocess.TimeoutExpired:
+                end_time = time.time()
+                results["execution_time_ms"] = (end_time - start_time) * 1000
+                for test in test_cases:
+                    tid = test.get("id")
+                    results["timeout_tests"].append(tid)
+                    results["test_outputs"].append({"id": tid, "status": "timeout"})
+
+        return results
+
+    # ─── Test Harness Builders ─────────────────────────────────────────────────
 
     def _build_java_harness(self, solution_code: str, parsed_tests: list[dict]) -> str:
         """Java harness using org.json for generic input deserialization and true telemetry."""
@@ -419,8 +558,10 @@ class SandboxRunner {{
         return solution_code + "\n" + runner
 
     def _build_cpp_harness(self, solution_code: str, parsed_tests: list[dict], template: str | None = None) -> str:
-        """C++ harness using nlohmann::json implicit conversions and true telemetry."""
+        """C++ harness using nlohmann::json and compile-time-correct arity dispatch."""
         import re
+
+        # ── Step 1: Determine the function name ──────────────────────────────
         fn_name = "solve"
         if template:
             m = re.search(r'\b(\w+)\s*\(', template)
@@ -428,7 +569,7 @@ class SandboxRunner {{
                 candidate = m.group(1)
                 if candidate not in ("if", "while", "for", "switch", "return", "class", "struct"):
                     fn_name = candidate
-                    
+
         # If the expected function isn't found, try to extract the real one from the code
         if fn_name not in solution_code:
             m = re.search(r'\b(\w+)\s*\([^)]*\)\s*\{', solution_code)
@@ -437,7 +578,25 @@ class SandboxRunner {{
                 if candidate not in ("if", "while", "for", "switch", "return", "main", "catch"):
                     fn_name = candidate
 
-        tests_json = json.dumps(parsed_tests).replace('\\\\', '\\\\\\\\')
+        # ── Step 2: Determine the ACTUAL arity of the C++ function ───────────
+        # We read the function signature directly from the solution code so the
+        # harness's call site is ALWAYS compile-time-correct, regardless of what
+        # the test cases claim.
+        sig_pattern = re.compile(r'\b' + re.escape(fn_name) + r'\s*\(([^)]*)\)')
+        arity = 1  # safe default
+        m = sig_pattern.search(solution_code)
+        if m:
+            params_str = m.group(1).strip()
+            if params_str == "" or params_str == "void":
+                arity = 0
+            else:
+                arity = len(params_str.split(','))
+
+        # ── Step 3: Build a compile-time-correct call ─────────────────────────
+        args_call = ", ".join(f"args[{i}]" for i in range(arity))
+        dispatch_call = f"result_json = {fn_name}({args_call});"
+
+        tests_json = json.dumps(parsed_tests)
 
         harness = f"""
 // === INJECTED TEST HARNESS ===
@@ -452,11 +611,11 @@ using json = nlohmann::json;
 
 int main() {{
     const char* json_str = R"RAWJSON({tests_json})RAWJSON";
-    
+
     try {{
         json cases = json::parse(json_str);
         json all_results = json::array();
-        
+
         for (size_t i = 0; i < cases.size(); i++) {{
             int id = cases[i]["id"];
             json args = cases[i]["args"];
@@ -466,47 +625,42 @@ int main() {{
             }} else {{
                 expected = cases[i]["expected"].dump();
             }}
-            
+
             json test_res;
             test_res["id"] = id;
-            
+
             try {{
-                int num_args = args.size();
                 struct rusage usage_start, usage_end;
                 getrusage(RUSAGE_SELF, &usage_start);
                 auto t_start = std::chrono::high_resolution_clock::now();
-                
+
                 json result_json;
-                if (num_args == 1) result_json = {fn_name}(args[0]);
-                else if (num_args == 2) result_json = {fn_name}(args[0], args[1]);
-                else if (num_args == 3) result_json = {fn_name}(args[0], args[1], args[2]);
-                else if (num_args == 4) result_json = {fn_name}(args[0], args[1], args[2], args[3]);
-                else throw std::runtime_error("Unsupported number of arguments");
-                
+                {dispatch_call}
+
                 auto t_end = std::chrono::high_resolution_clock::now();
                 getrusage(RUSAGE_SELF, &usage_end);
-                
+
                 std::chrono::duration<double, std::milli> diff = t_end - t_start;
                 double execMs = diff.count();
                 double memKb = usage_end.ru_maxrss - usage_start.ru_maxrss;
                 if (memKb < 0) memKb = 0;
-                
+
                 test_res["time_ms"] = execMs;
                 test_res["mem_kb"] = memKb;
-                
+
                 std::string actual;
                 if (result_json.is_string()) actual = result_json.get<std::string>();
                 else actual = result_json.dump();
-                
-                // trim
-                size_t s2 = expected.find_first_not_of(" \\t\\r\\n");
-                size_t e2 = expected.find_last_not_of(" \\t\\r\\n");
-                if (s2 != std::string::npos) expected = expected.substr(s2, e2 - s2 + 1);
-                
-                size_t s3 = actual.find_first_not_of(" \\t\\r\\n");
-                size_t e3 = actual.find_last_not_of(" \\t\\r\\n");
-                if (s3 != std::string::npos) actual = actual.substr(s3, e3 - s3 + 1);
-                
+
+                // trim whitespace
+                auto trim = [](std::string& s) {{
+                    size_t l = s.find_first_not_of(" \\t\\r\\n");
+                    size_t r = s.find_last_not_of(" \\t\\r\\n");
+                    if (l != std::string::npos) s = s.substr(l, r - l + 1);
+                }};
+                trim(expected);
+                trim(actual);
+
                 if (actual == expected || result_json == cases[i]["expected"]) {{
                     test_res["status"] = "pass";
                 }} else {{
@@ -522,7 +676,8 @@ int main() {{
         }}
         std::cout << all_results.dump() << std::endl;
     }} catch (const std::exception& e) {{
-        std::cout << "[{{\\"id\\":-1,\\"status\\":\\"crash\\",\\"error\\":\\"Harness setup failed\\"}}]" << std::endl;
+        std::cerr << "Harness parse error: " << e.what() << std::endl;
+        std::cout << "[{{\"id\":-1,\"status\":\"crash\",\"error\":\"Harness setup failed\"}}]" << std::endl;
     }}
     return 0;
 }}
