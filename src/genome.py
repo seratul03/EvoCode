@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 class BaseGenome(BaseModel):
     """Base class for all evolving genomes."""
     parent_id: int | None = Field(default=None, description="Lineage tracking: ID of the parent genome.")
+    parent_fitness: float = Field(default=0.0, description="Fitness of the parent genome.")
     generation_id: int = Field(default=0, description="The generation in which this genome was created.")
 
 class GeneratorGenome(BaseGenome):

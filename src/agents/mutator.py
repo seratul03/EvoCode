@@ -1,4 +1,6 @@
+import json
 from src.genome import GeneratorGenome, MutatorGenome
+from src.client import EvoClient
 import random
 import copy
 
@@ -7,17 +9,18 @@ _SYSTEM_VARIANTS = ["standard", "expert_coder", "pedantic_reviewer"]
 
 class MutatorAgent:
     """
-    Rule-based Mutator.
+    Hybrid Mutator (LLM + Rule-based).
     Proposes changes to the GeneratorGenome based on the Critic's diagnosis.
+    Uses the LLM to dynamically generate structural/prompt updates if possible,
+    falling back to rule-based mutations.
     """
-    def __init__(self):
-        pass
+    def __init__(self, client: EvoClient = None):
+        self.client = client
 
-    def propose(self, diagnosis: dict, current_genome: GeneratorGenome, mutator_genome: MutatorGenome,
+    async def propose(self, diagnosis: dict, current_genome: GeneratorGenome, mutator_genome: MutatorGenome,
                 winner_code: str = None, winner_language: str = None, target_language: str = None) -> GeneratorGenome:
         """
-        Returns a newly mutated GeneratorGenome.
-        If winner_code is provided, injects a crossover instruction.
+        Returns a newly mutated GeneratorGenome using the LLM (or fallback rules).
         """
         new_genome = copy.deepcopy(current_genome)
         recommendations = diagnosis.get("recommended_mutations", [])
@@ -33,18 +36,27 @@ class MutatorAgent:
         else:
             new_genome.crossover_instruction = None
 
-        # 1. Random mutation chance (applied BEFORE targeted mutations)
         if random.random() < mutator_genome.mutation_rate:
             new_genome.temperature = max(0.0, min(1.0, new_genome.temperature + random.uniform(-0.2, 0.2)))
-            # On a random jolt, also randomly rotate prompt style for more diversity
             if random.random() < 0.5:
                 new_genome.prompt_style = random.choice(_PROMPT_STYLES)
             return new_genome
 
         if not recommendations:
-            return new_genome  # No changes needed if no issues
+            return new_genome
 
-        # 2. Break cache loop — HIGHEST priority: force structural genome change
+        # If LLM client is provided, try LLM-based mutation
+        if self.client and "break_cache_loop" not in recommendations and "fix_crash" not in recommendations:
+            try:
+                llm_genome = await self._llm_mutate(diagnosis, current_genome)
+                if llm_genome:
+                    llm_genome.crossover_instruction = new_genome.crossover_instruction
+                    return llm_genome
+            except Exception as e:
+                print(f"      [Mutator] LLM mutation failed: {e}. Falling back to rule-based.")
+
+        # Fallback: Rule-based Targeted mutations
+        # Break cache loop — HIGHEST priority: force structural genome change
         if "break_cache_loop" in recommendations:
             # Rotate to a different prompt style
             other_styles = [s for s in _PROMPT_STYLES if s != current_genome.prompt_style]
@@ -104,3 +116,52 @@ class MutatorAgent:
             new_genome.system_instruction_variant = random.choice(other_variants)
 
         return new_genome
+
+    async def _llm_mutate(self, diagnosis: dict, current_genome: GeneratorGenome) -> GeneratorGenome | None:
+        """
+        Uses Ollama to dynamically propose a mutated GeneratorGenome based on the diagnosis.
+        """
+        prompt = f"""
+        You are an AI Evolutionary Mutator.
+        Your job is to mutate the prompt engineering parameters (the 'genome') of a Generator Agent that failed to solve a problem.
+
+        CURRENT GENOME:
+        {json.dumps(current_genome.model_dump(), indent=2)}
+        
+        CRITIC DIAGNOSIS (Why it failed):
+        {json.dumps(diagnosis, indent=2)}
+        
+        Your task: Return a JSON object with updated parameters for the genome.
+        You may change 'temperature' (0.0 to 1.0), 'prompt_style' (direct, chain_of_thought, test_first, step_by_step), 
+        'system_instruction_variant' (standard, expert_coder, pedantic_reviewer), and 'reasoning_steps' (int).
+        You can also append specific advice to 'critic_feedback' to guide the agent next time.
+
+        Respond ONLY with a valid JSON object matching the current genome structure. Do not include markdown formatting or extra text.
+        """
+        
+        response = await self.client.create_completion(
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7
+        )
+        
+        try:
+            content = response["content"].strip()
+            if content.startswith("```json"):
+                content = content[7:-3]
+            elif content.startswith("```"):
+                content = content[3:-3]
+                
+            data = json.loads(content)
+            
+            # Merge with current
+            new_genome_data = current_genome.model_dump()
+            for k in ["temperature", "prompt_style", "system_instruction_variant", "reasoning_steps"]:
+                if k in data:
+                    new_genome_data[k] = data[k]
+                    
+            if "critic_feedback" in data and data["critic_feedback"]:
+                new_genome_data["critic_feedback"] = data["critic_feedback"]
+                
+            return GeneratorGenome(**new_genome_data)
+        except Exception as e:
+            return None

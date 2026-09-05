@@ -14,6 +14,7 @@ from src.agents.code_validator import CodeValidatorAgent
 from src.agents.critic import CriticAgent
 from src.agents.mutator import MutatorAgent
 from src.agents.template import TemplateAgent
+from src.canary import CanaryPipeline
 
 import ast
 from src.genome import GeneratorGenome, CriticGenome, MutatorGenome, EvaluatorGenome
@@ -58,9 +59,10 @@ class EvoFlowOrchestrator:
 
         self.validator = CodeValidatorAgent(self.client)
         self.critic = CriticAgent()
-        self.mutator = MutatorAgent()
+        self.mutator = MutatorAgent(self.client)
+        self.canary_pipeline = CanaryPipeline(self.client)
 
-        self.pop_size = 3 # Fixed to 3 for the 3 distinct agents
+        self.pop_size = pop_size 
 
         # Populations
         self.pop_generator = [GeneratorGenome() for _ in range(self.pop_size)]
@@ -81,8 +83,8 @@ class EvoFlowOrchestrator:
         }
 
     async def _evaluate_single_genome(self, i: int, generation_id: int, problem: dict, problem_id: int, templates: dict | None = None):
-        agent_name = self.agent_names[i]
-        generator = self.generators[i]
+        generator = self.generators[i % len(self.generators)]
+        agent_name = f"Evo_{generator.language}_{i}"
         print(f"    Evaluating {agent_name} ({generator.language}) - Genome {i+1}/{self.pop_size}...")
         
         gen_genome = self.pop_generator[i]
@@ -106,10 +108,12 @@ class EvoFlowOrchestrator:
             passed, total = test_results["passed_tests"], test_results["total_tests"]
             
             # Inject a warning so mutator forces a change if it gets this diagnosis
-            if "break_cache_loop" not in diagnosis.get("recommended_mutations", []):
-                diagnosis.setdefault("recommended_mutations", []).append("break_cache_loop")
-            if not any("WARNING: You generated this exact code" in str(iss) for iss in diagnosis.get("code_issues", [])):
-                diagnosis.setdefault("code_issues", []).append("WARNING: You generated this exact code previously and it failed. Try a fundamentally different approach.")
+            # Only inject a warning if the code actually failed some tests
+            if passed < total or total == 0 or len(test_results.get("crash_tests", [])) > 0:
+                if "break_cache_loop" not in diagnosis.get("recommended_mutations", []):
+                    diagnosis.setdefault("recommended_mutations", []).append("break_cache_loop")
+                if not any("WARNING: You generated this exact code" in str(iss) for iss in diagnosis.get("code_issues", [])):
+                    diagnosis.setdefault("code_issues", []).append("WARNING: You generated this exact code previously and it failed. Try a fundamentally different approach.")
         else:
             # 2. Evo_Tester (Anti-Cheating Check)
             self.tester.language = generator.language
@@ -197,14 +201,32 @@ class EvoFlowOrchestrator:
             severity, diagnosis.get("code_issues", []), rec_mutations
         )
 
+        # Critic Fitness: Correlation with real failure
+        if total > 0:
+            actual_failure = (passed < total) or len(test_results.get("crash_tests", [])) > 0
+            predicted_failure = (severity > 0.5)
+            critic_fitness = 1.0 if actual_failure == predicted_failure else -1.0
+        else:
+            critic_fitness = 0.0
+
+        # Mutator Fitness: Did this genome improve upon its parent?
+        mutator_fitness = 0.0
+        if gen_genome.parent_id is not None:
+            # Child's fitness compared to parent's fitness
+            mutator_fitness = fitness["fitness_value"] - gen_genome.parent_fitness
+
         result_item = {
             "index": i,
             "fitness": fitness["fitness_value"],
+            "critic_fitness": critic_fitness,
+            "mutator_fitness": mutator_fitness,
             "passed_tests": passed,        # Layer 3A: needed for viability gate
             "total_tests": total,
             "diagnosis": diagnosis,
             "gen_genome": gen_genome,
+            "crit_genome": crit_genome,
             "mut_genome": mut_genome,
+            "eval_genome": eval_genome,
             "generated_code": code,
             "language": generator.language
         }
@@ -260,7 +282,7 @@ class EvoFlowOrchestrator:
         problem_report["generations"].append(gen_report)
         return generation_results, gen_report
 
-    def select_and_breed(self, generation_id: int, results: list, problem_id: int, gen_report: dict, mode: str = "evolve"):
+    async def select_and_breed(self, generation_id: int, results: list, problem_id: int, gen_report: dict, mode: str = "evolve"):
         if mode == "baseline_a":
             # Zero-shot: No feedback, no mutation. Keep same blank slate genomes.
             self.pop_generator = [GeneratorGenome() for _ in range(self.pop_size)]
@@ -304,7 +326,7 @@ class EvoFlowOrchestrator:
                 mutator_genome = parent_result["mut_genome"]
                 # Blank diagnosis forces the mutator to act randomly without guided direction
                 blank_diagnosis = {"severity": 0.0, "primary_failure": "none", "code_issues": [], "recommended_mutations": []}
-                child_genome = self.mutator.propose(blank_diagnosis, parent_genome, mutator_genome)
+                child_genome = await self.mutator.propose(blank_diagnosis, parent_genome, mutator_genome)
                 child_genome.parent_id = parent_result["index"]
                 child_genome.generation_id = generation_id
                 new_pop_generator.append(child_genome)
@@ -317,6 +339,9 @@ class EvoFlowOrchestrator:
         top_results = results[:top_k]
         
         new_pop_generator = []
+        new_pop_critic = []
+        new_pop_mutator = []
+        new_pop_evaluator = []
         
         survivors = [r["index"] for r in top_results]
         killed = [r["index"] for r in results[top_k:]]
@@ -326,27 +351,52 @@ class EvoFlowOrchestrator:
         gen_report["selection_and_breeding"]["killed"] = killed
         gen_report["selection_and_breeding"]["mutations"] = []
         
-        # Keep top K
-        for r in top_results:
-            new_pop_generator.append(r["gen_genome"])
-            self.logger.log_genome("generator", r["index"], generation_id, r["gen_genome"].model_dump(), r["gen_genome"].parent_id or -1)
+        # Sort the results independently to find the best Critic and Mutator!
+        top_gen_results = top_results
+        
+        critic_results = sorted(results, key=lambda x: x["critic_fitness"], reverse=True)
+        top_crit_results = critic_results[:top_k] if critic_results else top_results
+        
+        mutator_results = sorted(results, key=lambda x: x["mutator_fitness"], reverse=True)
+        top_mut_results = mutator_results[:top_k] if mutator_results else top_results
+        
+        # Keep top K for each population
+        for i in range(len(top_results)):
+            gen_r = top_gen_results[i]
+            new_pop_generator.append(gen_r["gen_genome"])
+            self.logger.log_genome("generator", gen_r["index"], generation_id, gen_r["gen_genome"].model_dump(), gen_r["gen_genome"].parent_id or -1)
+            
+            crit_r = top_crit_results[i % len(top_crit_results)]
+            new_pop_critic.append(crit_r["crit_genome"])
+            
+            mut_r = top_mut_results[i % len(top_mut_results)]
+            new_pop_mutator.append(mut_r["mut_genome"])
+            
+            new_pop_evaluator.append(gen_r["eval_genome"])
             
         # Breed the rest to fill pop_size
         while len(new_pop_generator) < self.pop_size:
-            # Pick a parent from the top K
-            parent_result = top_results[len(new_pop_generator) % top_k]
-            parent_genome = parent_result["gen_genome"]
-            mutator_genome = parent_result["mut_genome"]
-            diagnosis = parent_result["diagnosis"]
+            idx = len(new_pop_generator)
+            
+            # Pick parents from the top K
+            parent_gen_result = top_gen_results[idx % len(top_gen_results)]
+            parent_crit_result = top_crit_results[idx % len(top_crit_results)]
+            parent_mut_result = top_mut_results[idx % len(top_mut_results)]
+            
+            parent_genome = parent_gen_result["gen_genome"]
+            mutator_genome = parent_mut_result["mut_genome"]
+            diagnosis = parent_gen_result["diagnosis"]
+            
             child_index = len(new_pop_generator)
-            target_language = self.generators[child_index].language
+            target_language = self.generators[child_index % len(self.generators)].language
             
             # Identify the absolute winner (highest fitness overall)
-            winner_result = top_results[0]
+            winner_result = top_gen_results[0]
             winner_code = winner_result.get("generated_code")
             winner_language = winner_result.get("language")
             
-            child_genome = self.mutator.propose(
+            # Use Mutator to propose new genome
+            child_genome = await self.mutator.propose(
                 diagnosis, 
                 parent_genome, 
                 mutator_genome,
@@ -354,17 +404,47 @@ class EvoFlowOrchestrator:
                 winner_language=winner_language,
                 target_language=target_language
             )
-            child_genome.parent_id = parent_result["index"]
+            
+            # Validate proposed genome using Canary Pipeline
+            is_valid = await self.canary_pipeline.validate_mutation(child_genome, language=target_language)
+            
+            if not is_valid:
+                print(f"      [Breeding] Canary validation failed. Rejecting mutation and keeping parent genome.")
+                child_genome = parent_genome.model_copy(deep=True)
+                
+            child_genome.parent_id = parent_gen_result["index"]
+            child_genome.parent_fitness = parent_gen_result["fitness"]
             child_genome.generation_id = generation_id
             
             new_pop_generator.append(child_genome)
             
-            child_index = len(new_pop_generator) - 1
-            print(f"      Mutated child {child_index} from parent {parent_result['index']}.")
+            # Mutate and append non-generator genomes
+            child_crit = parent_crit_result["crit_genome"].model_copy(deep=True)
+            child_crit.strictness_threshold = max(0.0, min(1.0, child_crit.strictness_threshold + random.uniform(-0.1, 0.1)))
+            child_crit.parent_id = parent_crit_result["index"]
+            child_crit.parent_fitness = parent_crit_result["critic_fitness"]
+            child_crit.generation_id = generation_id
+            new_pop_critic.append(child_crit)
+            
+            child_mut = mutator_genome.model_copy(deep=True)
+            child_mut.mutation_rate = max(0.0, min(1.0, child_mut.mutation_rate + random.uniform(-0.1, 0.1)))
+            child_mut.parent_id = parent_mut_result["index"]
+            child_mut.parent_fitness = parent_mut_result["mutator_fitness"]
+            child_mut.generation_id = generation_id
+            new_pop_mutator.append(child_mut)
+            
+            child_eval = parent_gen_result["eval_genome"].model_copy(deep=True)
+            child_eval.sensitivity = max(0.1, child_eval.sensitivity + random.uniform(-0.1, 0.1))
+            child_eval.parent_id = parent_gen_result["index"]
+            child_eval.parent_fitness = parent_gen_result["fitness"]
+            child_eval.generation_id = generation_id
+            new_pop_evaluator.append(child_eval)
+            
+            print(f"      Mutated child {child_index} from gen-parent {parent_gen_result['index']}.")
             print(f"        Changes: {child_genome.model_dump()}")
             
             gen_report["selection_and_breeding"]["mutations"].append({
-                "parent_index": parent_result["index"],
+                "parent_index": parent_gen_result["index"],
                 "child_index": child_index,
                 "parent_genome": parent_genome.model_dump(),
                 "child_genome": child_genome.model_dump()
@@ -374,10 +454,13 @@ class EvoFlowOrchestrator:
             self.logger.log_mutation(
                 "generator", child_index, generation_id,
                 parent_genome.model_dump(), child_genome.model_dump(),
-                "critic_guided", "breeding", parent_result["fitness"], 0.0
+                "critic_guided", "breeding", parent_gen_result["fitness"], 0.0
             )
             
         self.pop_generator = new_pop_generator
+        self.pop_critic = new_pop_critic
+        self.pop_mutator = new_pop_mutator
+        self.pop_evaluator = new_pop_evaluator
 
     def _save_structured_report(self):
         self.run_report["end_time"] = datetime.utcnow().isoformat()
@@ -480,7 +563,7 @@ class EvoFlowOrchestrator:
                     
                 # Otherwise, select and breed
                 if gen < num_generations - 1:
-                    self.select_and_breed(gen, results, problem_id, gen_report, mode)
+                    await self.select_and_breed(gen, results, problem_id, gen_report, mode)
                     
             self.run_report["problems_evaluated"].append(problem_report)
             
