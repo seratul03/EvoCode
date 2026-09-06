@@ -264,34 +264,6 @@ def _run_tests():
 
             if actual == expected:
                 results.append({{"id": tid, "status": "pass", "time_ms": exec_ms, "mem_kb": mem_kb}})
-def _run_tests():
-    test_cases = _json.loads({repr(tests_json)})
-    results = []
-
-    for tc in test_cases:
-        tid = tc["id"]
-        script = tc["input"]
-        expected = str(tc["expected"]).strip()
-        try:
-            _tm.start()
-            start_time = _time.perf_counter()
-
-            # Split the script on ';' — exec all but the last, eval the last
-            parts = [p.strip() for p in script.split(";") if p.strip()]
-            local_ns = dict(globals())  # give access to the solution classes/functions
-            for stmt in parts[:-1]:
-                exec(stmt, local_ns)
-            actual = str(eval(parts[-1], local_ns)).strip()
-
-            end_time = _time.perf_counter()
-            _, peak = _tm.get_traced_memory()
-            _tm.stop()
-
-            exec_ms = (end_time - start_time) * 1000
-            mem_kb = peak / 1024.0
-
-            if actual == expected:
-                results.append({{"id": tid, "status": "pass", "time_ms": exec_ms, "mem_kb": mem_kb}})
             else:
                 results.append({{"id": tid, "status": "fail", "expected": expected, "actual": actual, "time_ms": exec_ms, "mem_kb": mem_kb}})
         except Exception:
