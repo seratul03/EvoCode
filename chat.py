@@ -69,7 +69,7 @@ async def run_chat():
             
             # Run the generations. 
             # Note: The logging in evoflow.py will print directly to the terminal, acting as our "live stream"
-            await orchestrator.run_generations(num_generations=3, problems=[problem], mode="evolve")
+            await orchestrator.run_generations(num_generations=3, problems=[problem], mode="evolve", disable_circuit_breaker=True)
             
             print("\n==================================================")
             print("Pipeline Complete! The final code and run details ")

@@ -100,7 +100,10 @@ class EvoFlowOrchestrator:
         safe_code = code[:100].replace(chr(10), ' ').encode('ascii', 'replace').decode('ascii')
         print(f"      [Code Generated] (Truncated): {safe_code}...")
         
-        code_hash = hash(_normalize_code(code))
+        # Include language in the cache key so identical code text in different
+        # languages doesn't collide, and never let a flaky (non-deterministic)
+        # Docker timeout get permanently cached and replayed.
+        code_hash = hash((generator.language, _normalize_code(code)))
         if code_hash in self.code_cache:
             print(f"      [CACHE HIT] Generated code is identical to a previous run. Reusing results.")
             cached = self.code_cache[code_hash]
@@ -181,12 +184,16 @@ class EvoFlowOrchestrator:
             else:
                 diagnosis = self.critic.critique(code, test_results, validation, crit_genome)
             
-            self.code_cache[code_hash] = {
-                "test_results": test_results,
-                "validation": validation,
-                "fitness": fitness,
-                "diagnosis": diagnosis
-            }
+            # Only cache deterministic outcomes (pass/crash). A timeout can be a
+            # one-off Docker cold-start fluke rather than a property of the code,
+            # so caching it would permanently replay a false failure.
+            if len(test_results.get("timeout_tests", [])) == 0:
+                self.code_cache[code_hash] = {
+                    "test_results": test_results,
+                    "validation": validation,
+                    "fitness": fitness,
+                    "diagnosis": diagnosis
+                }
 
         severity = diagnosis.get("severity", 0.0)
         primary_fail = diagnosis.get("primary_failure", "none")
@@ -338,10 +345,15 @@ class EvoFlowOrchestrator:
         top_k = min(2, len(results))
         top_results = results[:top_k]
         
-        new_pop_generator = []
-        new_pop_critic = []
-        new_pop_mutator = []
-        new_pop_evaluator = []
+        # NOTE: slot i is permanently bound to self.generators[i]'s language.
+        # Survivors and bred children below are placed back into their ORIGINAL
+        # slot index (not appended in fitness-rank order), so a winning genome
+        # never drifts into a slot whose language it doesn't match. Cross-language
+        # "inspiration" is still carried over via winner_code/winner_language.
+        new_pop_generator = [None] * self.pop_size
+        new_pop_critic = [None] * self.pop_size
+        new_pop_mutator = [None] * self.pop_size
+        new_pop_evaluator = [None] * self.pop_size
         
         survivors = [r["index"] for r in top_results]
         killed = [r["index"] for r in results[top_k:]]
@@ -360,34 +372,34 @@ class EvoFlowOrchestrator:
         mutator_results = sorted(results, key=lambda x: x["mutator_fitness"], reverse=True)
         top_mut_results = mutator_results[:top_k] if mutator_results else top_results
         
-        # Keep top K for each population
+        # Keep top K, placed back into their ORIGINAL slot index
         for i in range(len(top_results)):
             gen_r = top_gen_results[i]
-            new_pop_generator.append(gen_r["gen_genome"])
+            slot = gen_r["index"]
+            new_pop_generator[slot] = gen_r["gen_genome"]
             self.logger.log_genome("generator", gen_r["index"], generation_id, gen_r["gen_genome"].model_dump(), gen_r["gen_genome"].parent_id or -1)
             
             crit_r = top_crit_results[i % len(top_crit_results)]
-            new_pop_critic.append(crit_r["crit_genome"])
+            new_pop_critic[slot] = crit_r["crit_genome"]
             
             mut_r = top_mut_results[i % len(top_mut_results)]
-            new_pop_mutator.append(mut_r["mut_genome"])
+            new_pop_mutator[slot] = mut_r["mut_genome"]
             
-            new_pop_evaluator.append(gen_r["eval_genome"])
+            new_pop_evaluator[slot] = gen_r["eval_genome"]
             
-        # Breed the rest to fill pop_size
-        while len(new_pop_generator) < self.pop_size:
-            idx = len(new_pop_generator)
+        # Breed to fill the remaining (killed) slots, each keeping its own language
+        empty_slots = [s for s in range(self.pop_size) if new_pop_generator[s] is None]
+        for n, child_index in enumerate(empty_slots):
             
             # Pick parents from the top K
-            parent_gen_result = top_gen_results[idx % len(top_gen_results)]
-            parent_crit_result = top_crit_results[idx % len(top_crit_results)]
-            parent_mut_result = top_mut_results[idx % len(top_mut_results)]
+            parent_gen_result = top_gen_results[n % len(top_gen_results)]
+            parent_crit_result = top_crit_results[n % len(top_crit_results)]
+            parent_mut_result = top_mut_results[n % len(top_mut_results)]
             
             parent_genome = parent_gen_result["gen_genome"]
             mutator_genome = parent_mut_result["mut_genome"]
             diagnosis = parent_gen_result["diagnosis"]
             
-            child_index = len(new_pop_generator)
             target_language = self.generators[child_index % len(self.generators)].language
             
             # Identify the absolute winner (highest fitness overall)
@@ -416,29 +428,29 @@ class EvoFlowOrchestrator:
             child_genome.parent_fitness = parent_gen_result["fitness"]
             child_genome.generation_id = generation_id
             
-            new_pop_generator.append(child_genome)
+            new_pop_generator[child_index] = child_genome
             
-            # Mutate and append non-generator genomes
+            # Mutate non-generator genomes, placed into the same slot
             child_crit = parent_crit_result["crit_genome"].model_copy(deep=True)
             child_crit.strictness_threshold = max(0.0, min(1.0, child_crit.strictness_threshold + random.uniform(-0.1, 0.1)))
             child_crit.parent_id = parent_crit_result["index"]
             child_crit.parent_fitness = parent_crit_result["critic_fitness"]
             child_crit.generation_id = generation_id
-            new_pop_critic.append(child_crit)
+            new_pop_critic[child_index] = child_crit
             
             child_mut = mutator_genome.model_copy(deep=True)
             child_mut.mutation_rate = max(0.0, min(1.0, child_mut.mutation_rate + random.uniform(-0.1, 0.1)))
             child_mut.parent_id = parent_mut_result["index"]
             child_mut.parent_fitness = parent_mut_result["mutator_fitness"]
             child_mut.generation_id = generation_id
-            new_pop_mutator.append(child_mut)
+            new_pop_mutator[child_index] = child_mut
             
             child_eval = parent_gen_result["eval_genome"].model_copy(deep=True)
             child_eval.sensitivity = max(0.1, child_eval.sensitivity + random.uniform(-0.1, 0.1))
             child_eval.parent_id = parent_gen_result["index"]
             child_eval.parent_fitness = parent_gen_result["fitness"]
             child_eval.generation_id = generation_id
-            new_pop_evaluator.append(child_eval)
+            new_pop_evaluator[child_index] = child_eval
             
             print(f"      Mutated child {child_index} from gen-parent {parent_gen_result['index']}.")
             print(f"        Changes: {child_genome.model_dump()}")
@@ -569,4 +581,3 @@ class EvoFlowOrchestrator:
             
         # Write the final JSON report at the end of the run
         self._save_structured_report()
-

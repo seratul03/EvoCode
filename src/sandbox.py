@@ -277,116 +277,6 @@ if __name__ == '__main__':
 """)
         return solution_code + "\n" + harness
 
-    def run(self, code: str, test_cases: list[dict], language: str = "Python", template: str | None = None) -> dict:
-        results = {
-            "passed_tests": 0,
-            "total_tests": len(test_cases),
-            "failed_test_ids": [],
-            "timeout_tests": [],
-            "crash_tests": [],
-            "execution_time_ms": 0.0,
-            "peak_memory_kb": 0.0,
-            "test_outputs": []
-        }
-
-        with tempfile.TemporaryDirectory() as temp_dir:
-            parsed_tests = self._parse_tests_to_json(test_cases)
-            
-            if language == "Python":
-                test_mode = self._detect_test_mode(test_cases)
-                if test_mode == "script":
-                    full_code = self._build_python_harness_script_mode(code, test_cases)
-                else:
-                    full_code = self._build_python_harness(code, parsed_tests)
-                filename = "solution.py"
-                docker_cmd = ["python", filename]
-            elif language == "Java":
-                full_code = self._build_java_harness(code, parsed_tests)
-                filename = "Solution.java"
-                docker_cmd = ["sh", "-c", "javac -cp /opt/java-libs/json.jar Solution.java && java -cp .:/opt/java-libs/json.jar SandboxRunner"]
-            elif language == "C++":
-                full_code = self._build_cpp_harness(code, parsed_tests, template=template)
-                filename = "solution.cpp"
-                docker_cmd = ["sh", "-c", "g++ -std=c++17 -I/usr/include solution.cpp -o sol && ./sol"]
-            else:
-                filename = "solution.txt"
-                docker_cmd = ["echo", "unsupported language"]
-                full_code = code
-
-            solution_path = os.path.join(temp_dir, filename)
-            with open(solution_path, 'w', encoding='utf-8') as f:
-                f.write(full_code)
-
-            start_time = time.time()
-            cmd = [
-                'docker', 'run', '--rm',
-                '--network', 'none',
-                '--memory', '256m',
-                '--cpus', '0.5',
-                '-v', f"{os.path.abspath(temp_dir)}:/workspace",
-                '-w', '/workspace',
-                'evocode-sandbox'
-            ] + docker_cmd
-
-            try:
-                process = subprocess.run(cmd, capture_output=True, timeout=self.timeout_seconds)
-                
-                stdout = process.stdout.decode('utf-8', errors='ignore').strip()
-                stderr = process.stderr.decode('utf-8', errors='ignore').strip()
-
-                try:
-                    start_idx = stdout.find('[')
-                    end_idx = stdout.rfind(']')
-                    if start_idx == -1 or end_idx < start_idx:
-                        raise ValueError(f"No JSON array in stdout.\nStdout: {stdout[:300]}\nStderr: {stderr[:300]}")
-
-                    json_out = json.loads(stdout[start_idx:end_idx + 1])
-                    
-                    max_time = 0.0
-                    max_mem = 0.0
-
-                    for test_res in json_out:
-                        tid = test_res.get("id")
-                        status = test_res.get("status")
-                        t_ms = float(test_res.get("time_ms", 0.0))
-                        m_kb = float(test_res.get("mem_kb", 0.0))
-                        
-                        max_time += t_ms
-                        max_mem = max(max_mem, m_kb)
-                        
-                        results["test_outputs"].append(test_res)
-                        if status == "pass":
-                            results["passed_tests"] += 1
-                        elif status == "fail":
-                            results["failed_test_ids"].append(tid)
-                        elif status == "crash":
-                            results["crash_tests"].append(tid)
-                            
-                    results["execution_time_ms"] = max_time
-                    results["peak_memory_kb"] = max_mem
-
-                except Exception as e:
-                    err_msg = str(e)
-                    for test in test_cases:
-                        tid = test.get("id")
-                        results["crash_tests"].append(tid)
-                        results["test_outputs"].append({"id": tid, "status": "crash", "error": err_msg})
-                    # Use outer time as fallback
-                    end_time = time.time()
-                    results["execution_time_ms"] = (end_time - start_time) * 1000
-
-            except subprocess.TimeoutExpired:
-                end_time = time.time()
-                results["execution_time_ms"] = (end_time - start_time) * 1000
-                for test in test_cases:
-                    tid = test.get("id")
-                    results["timeout_tests"].append(tid)
-                    results["test_outputs"].append({"id": tid, "status": "timeout"})
-
-        return results
-
-    # ─── Test Harness Builders ─────────────────────────────────────────────────
-
     def _build_java_harness(self, solution_code: str, parsed_tests: list[dict]) -> str:
         """Java harness using org.json for generic input deserialization and true telemetry."""
         
@@ -649,7 +539,13 @@ int main() {{
         std::cout << all_results.dump() << std::endl;
     }} catch (const std::exception& e) {{
         std::cerr << "Harness parse error: " << e.what() << std::endl;
-        std::cout << "[{{\"id\":-1,\"status\":\"crash\",\"error\":\"Harness setup failed\"}}]" << std::endl;
+        json fallback = json::array();
+        json err_obj;
+        err_obj["id"] = -1;
+        err_obj["status"] = "crash";
+        err_obj["error"] = "Harness setup failed";
+        fallback.push_back(err_obj);
+        std::cout << fallback.dump() << std::endl;
     }}
     return 0;
 }}

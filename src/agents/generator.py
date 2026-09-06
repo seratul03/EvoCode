@@ -12,6 +12,15 @@ class GeneratorAgent:
         self.client = client
         self.language = language
 
+    def _get_invalid_input_instruction(self) -> str:
+        if self.language.lower() == "python":
+            return "If no valid solution exists for an input, return None instead of raising an exception."
+        elif self.language.lower() == "java":
+            return "If no valid solution exists for an input, and you are returning an object (like Integer), return null. If you MUST return a primitive (like int), throw an IllegalArgumentException."
+        elif self.language.lower() == "c++":
+            return "If no valid solution exists for an input, and you are returning a pointer or std::optional, return nullptr or std::nullopt. If you MUST return a primitive (like int), throw std::invalid_argument. Do NOT return nullptr for primitive types."
+        return "If no valid solution exists, return None/null."
+
     async def solve(self, problem: dict, genome: GeneratorGenome, template: str | None = None) -> str:
         """
         Args:
@@ -35,29 +44,31 @@ class GeneratorAgent:
 
     def _build_system_prompt(self, genome: GeneratorGenome) -> str:
         base_prompt = f"You are an expert software engineer specializing in {self.language}.\n"
+        invalid_rule = self._get_invalid_input_instruction()
+        
         if genome.system_instruction_variant == "expert_coder":
             return base_prompt + (
                 "Provide only the robust, clean, and fully correct code implementation. "
                 "Pay close attention to ALL edge cases including empty inputs, negative values, "
-                "and cases where no solution exists — always return the correct value rather than raising exceptions. "
-                "If no valid solution exists, return None/null UNLESS the description explicitly asks for something else."
+                f"and cases where no solution exists. {invalid_rule}"
             )
         if genome.system_instruction_variant == "pedantic_reviewer":
             return base_prompt + (
                 "You are a meticulous code reviewer and software engineer. "
                 "Before writing any code, carefully reason about every edge case: "
                 "empty inputs, negative values, no-solution cases, duplicate values, and boundary conditions. "
-                "For functions that may have no valid result, ALWAYS return None/null rather than raising exceptions, UNLESS the problem description explicitly asks for something else."
+                f"{invalid_rule}"
             )
         # standard
         return base_prompt + (
             "You are a code generation assistant. Output code for the given problem. "
-            "If the problem has no valid answer for certain inputs, return None/null instead of raising an exception, UNLESS the problem description explicitly specifies otherwise."
+            f"{invalid_rule}"
         )
 
     def _build_user_prompt(self, problem: dict, genome: GeneratorGenome, template: str | None) -> str:
         prompt = f"Problem: {problem.get('title', 'Unknown')}\n{problem.get('description', '')}\n\n"
 
+        invalid_rule = self._get_invalid_input_instruction()
         if template:
             # ── Template Mode ──────────────────────────────────────────────────
             # The generator only sees the skeleton — it fills in the body.
@@ -70,7 +81,7 @@ class GeneratorAgent:
                 "3. Do NOT change the structure — if the template is a free function, keep it as a free function. "
                 "If it is a class, keep it as a class. Do NOT add or remove class wrappers.\n"
                 "4. Handle ALL edge cases (empty inputs, negative numbers, zero, duplicates).\n"
-                "5. If the problem has no valid answer for certain inputs, return None/null UNLESS the problem description explicitly specifies a different return value for those inputs.\n\n"
+                f"5. {invalid_rule}\n\n"
                 f"Fill in this template:\n"
                 f"```{self.language.lower()}\n{template}\n```\n\n"
             )
@@ -79,7 +90,7 @@ class GeneratorAgent:
             prompt += (
                 "CRITICAL RULES:\n"
                 "1. Write ONLY the solution function/class. Do NOT write a main() function.\n"
-                "2. If the problem has no valid answer for the given inputs, return None/null UNLESS the problem description explicitly specifies a different return value for those inputs.\n"
+                f"2. {invalid_rule}\n"
                 "3. Handle ALL edge cases (empty inputs, negative numbers, zero, duplicates).\n"
                 "4. If writing Java, your public class MUST be named exactly `Solution`.\n"
                 "5. If writing C++, do NOT include a main() function, and your solution "
