@@ -36,9 +36,9 @@ async def run_chat():
 
     client = EvoClient()
     
-    # 2. Enforce Ollama ONLY (Disable cloud APIs)
-    client.groq_clients = []
-    client.openrouter_client = None
+    # Allow cloud APIs (Groq and OpenRouter)
+    # client.groq_clients = []
+    # client.openrouter_client = None
     
     parser = ProblemParserAgent(client)
 
@@ -79,6 +79,15 @@ async def run_chat():
             
         except Exception as e:
             print(f"\n[Error]: An error occurred during the pipeline execution: {e}")
+            
+        try:
+            continue_choice = input("\nDo you want to run another query? (Y/n): ").strip().lower()
+            if continue_choice in ['n', 'no', 'exit', 'quit', 'stop', 'nah', 'no thanks', 'nope', 'nah man', 'nah mannn', 'nah mannnn', 'nah mannnnn']:
+                print("Exiting chat. Goodbye!")
+                break
+        except (KeyboardInterrupt, EOFError):
+            print("\nExiting chat. Goodbye!")
+            break
 
 if __name__ == "__main__":
     asyncio.run(run_chat())
