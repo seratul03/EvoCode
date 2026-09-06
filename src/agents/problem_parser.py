@@ -115,6 +115,10 @@ class ProblemParserAgent:
             if not sig.endswith(":"):
                 # Strip return type annotation if present
                 sig = sig.split("->")[0].strip() + ":"
+            
+            # ast.parse requires a complete function definition, including a body
+            sig += "\n    pass"
+            
             tree = ast.parse(sig)
             func_def = tree.body[0]
             # Count only positional args (args), not *args, **kwargs, or self
