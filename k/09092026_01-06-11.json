@@ -1,0 +1,320 @@
+{
+  "start_time": "2026-09-08T19:35:42.391886",
+  "pop_size": 3,
+  "problems_evaluated": [
+    {
+      "problem_id": 1045,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "def reverse_words(sentence: str) -> str:\n    if not sentence:\n        return \"\"\n    \n    words = sentence.split()\n    reversed_words = words[::-1]\n    return ' '.join(reversed_words)",
+              "test_results": {
+                "passed_tests": 8,
+                "total_tests": 8,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.030925999453756958,
+                "peak_memory_kb": 0.4375,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass",
+                    "time_ms": 0.013943999874754809,
+                    "mem_kb": 0.2109375
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass",
+                    "time_ms": 0.0015589994291076437,
+                    "mem_kb": 0.0234375
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass",
+                    "time_ms": 0.0027339992811903358,
+                    "mem_kb": 0.1240234375
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass",
+                    "time_ms": 0.0026230009098071605,
+                    "mem_kb": 0.17578125
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass",
+                    "time_ms": 0.004368001100374386,
+                    "mem_kb": 0.4375
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass",
+                    "time_ms": 0.0016979993233690038,
+                    "mem_kb": 0.046875
+                  },
+                  {
+                    "id": 6,
+                    "status": "pass",
+                    "time_ms": 0.0013999997463542968,
+                    "mem_kb": 0.0390625
+                  },
+                  {
+                    "id": 7,
+                    "status": "pass",
+                    "time_ms": 0.002599999788799323,
+                    "mem_kb": 0.271484375
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.899989,
+                "correctness_rate": 1.0,
+                "quality_score": 0.9,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "public String reverseWords(String sentence) {\n    if (sentence == null || sentence.isEmpty()) {\n        return sentence;\n    }\n    \n    String[] words = sentence.split(\" \");\n    int left = 0;\n    int right = words.length - 1;\n    \n    while (left < right) {\n        // Swap the words at left and right indices\n        String temp = words[left];\n        words[left] = words[right];\n        words[right] = temp;\n        \n        // Move towards the middle\n        left++;\n        right--;\n    }\n    \n    return String.join(\" \", words);\n}",
+              "test_results": {
+                "passed_tests": 8,
+                "total_tests": 8,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 2.7803299999999993,
+                "peak_memory_kb": 138.390625,
+                "test_outputs": [
+                  {
+                    "mem_kb": 138.390625,
+                    "time_ms": 2.445829,
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.022534,
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.051042,
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.078606,
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.046934,
+                    "id": 4,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.051926,
+                    "id": 5,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.036475,
+                    "id": 6,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.046984,
+                    "id": 7,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.898612,
+                "correctness_rate": 1.0,
+                "quality_score": 0.8986,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.9972,
+                  "memory": 0.9972,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "#include <string>\n#include <sstream>\n#include <vector>\n#include <algorithm>\n\nstd::string reverseWords(const std::string& sentence) {\n    if (sentence.empty()) {\n        return sentence;\n    }\n\n    std::istringstream iss(sentence);\n    std::vector<std::string> words;\n    std::string word;\n\n    // Extract words from the sentence\n    while (iss >> word) {\n        words.push_back(word);\n    }\n\n    // Reverse the order of words\n    std::reverse(words.begin(), words.end());\n\n    // Join the words back into a single string\n    std::ostringstream oss;\n    for (size_t i = 0; i < words.size(); ++i) {\n        if (i != 0) {\n            oss << \" \";\n        }\n        oss << words[i];\n    }\n\n    return oss.str();\n}",
+              "test_results": {
+                "passed_tests": 8,
+                "total_tests": 8,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.027535999999999998,
+                "peak_memory_kb": 128.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "mem_kb": 128.0,
+                    "status": "pass",
+                    "time_ms": 0.017952
+                  },
+                  {
+                    "id": 1,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000351
+                  },
+                  {
+                    "id": 2,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.001162
+                  },
+                  {
+                    "id": 3,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.002063
+                  },
+                  {
+                    "id": 4,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.003104
+                  },
+                  {
+                    "id": 5,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000837
+                  },
+                  {
+                    "id": 6,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000654
+                  },
+                  {
+                    "id": 7,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.001413
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.94948,
+                "correctness_rate": 1.0,
+                "quality_score": 0.9495,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 1.0,
+                  "memory": 0.9974,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            }
+          ],
+          "selection_and_breeding": {},
+          "circuit_breaker_triggered": true
+        }
+      ]
+    }
+  ],
+  "mode": "evolve",
+  "end_time": "2026-09-08T19:36:11.647210"
+}

@@ -1,0 +1,273 @@
+{
+  "start_time": "2026-09-08T16:25:33.565143",
+  "pop_size": 3,
+  "problems_evaluated": [
+    {
+      "problem_id": 1003,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "def count_set_bits(n: int) -> int:\n    if n < 0:\n        return None\n    return bin(n).count('1')",
+              "test_results": {
+                "passed_tests": 5,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.02280800003973127,
+                "peak_memory_kb": 0.0966796875,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass",
+                    "time_ms": 0.010844999906112207,
+                    "mem_kb": 0.072265625
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass",
+                    "time_ms": 0.004117000116821146,
+                    "mem_kb": 0.095703125
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass",
+                    "time_ms": 0.002651999920999515,
+                    "mem_kb": 0.095703125
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass",
+                    "time_ms": 0.0023009999949863413,
+                    "mem_kb": 0.091796875
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass",
+                    "time_ms": 0.00289300010081206,
+                    "mem_kb": 0.0966796875
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.949993,
+                "correctness_rate": 1.0,
+                "quality_score": 0.95,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "public int countSetBits(int n) {\n    if (n < 0) {\n        throw new IllegalArgumentException(\"Input must be a non-negative integer.\");\n    }\n    int count = 0;\n    while (n > 0) {\n        count += n & 1;\n        n >>>= 1;\n    }\n    return count;\n}",
+              "test_results": {
+                "passed_tests": 5,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 5.940991,
+                "peak_memory_kb": 279.828125,
+                "test_outputs": [
+                  {
+                    "mem_kb": 279.828125,
+                    "time_ms": 5.852224,
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.03112,
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.017731,
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.022566,
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.01735,
+                    "id": 4,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.947098,
+                "correctness_rate": 1.0,
+                "quality_score": 0.9471,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.9941,
+                  "memory": 0.9944,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "int countSetBits(int n) {\n    if (n < 0) {\n        throw std::invalid_argument(\"Input must be a non-negative integer.\");\n    }\n\n    int count = 0;\n    while (n > 0) {\n        count += n & 1;\n        n >>= 1;\n    }\n    return count;\n}",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "execution_time_ms": 2412.5609397888184,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int countSetBits(int)’:\nsolution.cpp:3:20: error: ‘invalid_argument’ is not a member of ‘std’\n    3 |         throw std::invalid_argument(\"Input must be a non-negative integer.\");\n      |                    ^~~~~~~~~~~~~~~~\nsolution.cpp:1:1: note: ‘std::invalid_argument’ i"
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int countSetBits(int)’:\nsolution.cpp:3:20: error: ‘invalid_argument’ is not a member of ‘std’\n    3 |         throw std::invalid_argument(\"Input must be a non-negative integer.\");\n      |                    ^~~~~~~~~~~~~~~~\nsolution.cpp:1:1: note: ‘std::invalid_argument’ i"
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int countSetBits(int)’:\nsolution.cpp:3:20: error: ‘invalid_argument’ is not a member of ‘std’\n    3 |         throw std::invalid_argument(\"Input must be a non-negative integer.\");\n      |                    ^~~~~~~~~~~~~~~~\nsolution.cpp:1:1: note: ‘std::invalid_argument’ i"
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int countSetBits(int)’:\nsolution.cpp:3:20: error: ‘invalid_argument’ is not a member of ‘std’\n    3 |         throw std::invalid_argument(\"Input must be a non-negative integer.\");\n      |                    ^~~~~~~~~~~~~~~~\nsolution.cpp:1:1: note: ‘std::invalid_argument’ i"
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int countSetBits(int)’:\nsolution.cpp:3:20: error: ‘invalid_argument’ is not a member of ‘std’\n    3 |         throw std::invalid_argument(\"Input must be a non-negative integer.\");\n      |                    ^~~~~~~~~~~~~~~~\nsolution.cpp:1:1: note: ‘std::invalid_argument’ i"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.0,
+                "issues": [
+                  "The code crashes on all tests.",
+                  "The code raises an exception instead of returning None for invalid inputs."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.0,
+                "correctness_rate": 0.0,
+                "quality_score": 0.45,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.0,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "severity": 1.0,
+                "primary_failure": "runtime_crash",
+                "code_issues": [
+                  "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int countSetBits(int)’:\nsolution.cpp:3:20: error: ‘invalid_argument’ is not a member of ‘std’\n    3 |         throw std::invalid_argument(\"Input must be a non-negative integer.\");\n      |                    ^~~~~~~~~~~~~~~~\nsolution.cpp:1:1: note: ‘std::invalid_argument’ i"
+                ],
+                "recommended_mutations": [
+                  "fix_crash"
+                ]
+              }
+            }
+          ],
+          "selection_and_breeding": {},
+          "circuit_breaker_triggered": true
+        }
+      ]
+    }
+  ],
+  "mode": "evolve",
+  "end_time": "2026-09-08T16:25:54.732651"
+}

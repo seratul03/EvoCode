@@ -1,0 +1,225 @@
+{
+  "start_time": "2026-09-08T16:39:59.517910",
+  "pop_size": 3,
+  "problems_evaluated": [
+    {
+      "problem_id": 1006,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "def sum_positive_integers(numbers: list[int]) -> int:\n    if not numbers:\n        return 0\n    \n    return sum(num for num in numbers if num > 0)",
+              "test_results": {
+                "passed_tests": 5,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.052333999974507606,
+                "peak_memory_kb": 0.421875,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass",
+                    "time_ms": 0.02556499998718209,
+                    "mem_kb": 0.3984375
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass",
+                    "time_ms": 0.008457999911115621,
+                    "mem_kb": 0.421875
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass",
+                    "time_ms": 0.00642800000605348,
+                    "mem_kb": 0.421875
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass",
+                    "time_ms": 0.0059720000535889994,
+                    "mem_kb": 0.421875
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass",
+                    "time_ms": 0.005911000016567414,
+                    "mem_kb": 0.421875
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.949983,
+                "correctness_rate": 1.0,
+                "quality_score": 0.95,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.9999,
+                  "memory": 1.0,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "import java.util.List;\n\npublic int sumPositiveIntegers(List<Integer> numbers) {\n    if (numbers == null || numbers.isEmpty()) {\n        return 0;\n    }\n\n    int sum = 0;\n    for (Integer number : numbers) {\n        if (number > 0) {\n            sum += number;\n        }\n    }\n\n    return sum;\n}",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.0,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "status": "crash",
+                    "error": "Code rejected by Evo_Tester as hardcoded/cheating."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.0,
+                "issues": [
+                  "The code is written in Java, but the problem description and sandbox results are for Python."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.0,
+                "correctness_rate": 0.0,
+                "quality_score": 0.75,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "algorithmic_error",
+                "severity": 0.0,
+                "recommended_mutations": [
+                  "change_prompt_style",
+                  "fix_edge_cases"
+                ],
+                "priority": "high",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "#include <vector>\n#include <numeric>\n#include <stdexcept>\n\nint sumPositiveIntegers(const std::vector<int>& numbers) {\n    if (numbers.empty()) {\n        throw std::invalid_argument(\"Input vector is empty\");\n    }\n\n    int sum = std::accumulate(numbers.begin(), numbers.end(), 0);\n    if (sum < 0) {\n        throw std::invalid_argument(\"Sum of positive integers is negative\");\n    }\n\n    return sum;\n}",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.0,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "status": "crash",
+                    "error": "Code rejected by Evo_Tester as hardcoded/cheating."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.0,
+                "issues": [
+                  "The code crashes on all tests.",
+                  "The code raises exceptions instead of returning None for unsolvable inputs."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.0,
+                "correctness_rate": 0.0,
+                "quality_score": 0.75,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "algorithmic_error",
+                "severity": 0.0,
+                "recommended_mutations": [
+                  "change_prompt_style",
+                  "fix_edge_cases"
+                ],
+                "priority": "high",
+                "code_issues": []
+              }
+            }
+          ],
+          "selection_and_breeding": {},
+          "circuit_breaker_triggered": true
+        }
+      ]
+    }
+  ],
+  "mode": "evolve",
+  "end_time": "2026-09-08T16:40:17.976027"
+}

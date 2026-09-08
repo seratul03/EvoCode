@@ -1,0 +1,230 @@
+{
+  "start_time": "2026-09-08T18:06:55.068918",
+  "pop_size": 3,
+  "problems_evaluated": [
+    {
+      "problem_id": 1027,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "def reverse_words(s: str) -> str:\n    if not s:\n        return \"\"\n    \n    words = s.split()\n    reversed_words = words[::-1]\n    return \" \".join(reversed_words)",
+              "test_results": {
+                "passed_tests": 3,
+                "total_tests": 3,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.048827999307832215,
+                "peak_memory_kb": 0.2109375,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass",
+                    "time_ms": 0.04430899934959598,
+                    "mem_kb": 0.2109375
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass",
+                    "time_ms": 0.002052000127150677,
+                    "mem_kb": 0.0234375
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass",
+                    "time_ms": 0.002466999831085559,
+                    "mem_kb": 0.046875
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.899985,
+                "correctness_rate": 1.0,
+                "quality_score": 0.9,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "public String reverseWords(String s) {\n    if (s == null) {\n        throw new IllegalArgumentException(\"Input string cannot be null\");\n    }\n\n    // Split the string into words based on spaces\n    String[] words = s.trim().split(\"\\\\s+\");\n\n    // If the string is empty or contains only spaces, return an empty string\n    if (words.length == 0) {\n        return \"\";\n    }\n\n    // Initialize a StringBuilder to build the result\n    StringBuilder result = new StringBuilder();\n\n    // Iterate through the words array from the end to the beginning\n    for (int i = words.length - 1; i >= 0; i--) {\n        result.append(words[i]);\n        if (i > 0) {\n            result.append(\" \");\n        }\n    }\n\n    return result.toString();\n}",
+              "test_results": {
+                "passed_tests": 3,
+                "total_tests": 3,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 2.8376900000000003,
+                "peak_memory_kb": 138.390625,
+                "test_outputs": [
+                  {
+                    "mem_kb": 138.390625,
+                    "time_ms": 2.713725,
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.048105,
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.07586,
+                    "id": 2,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.948595,
+                "correctness_rate": 1.0,
+                "quality_score": 0.9486,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.9972,
+                  "memory": 0.9972,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "#include <string>\n#include <sstream>\n#include <vector>\n#include <algorithm>\n\nstd::string reverseWords(const std::string& s) {\n    if (s.empty()) {\n        return \"\";\n    }\n\n    std::istringstream iss(s);\n    std::vector<std::string> words;\n    std::string word;\n    while (iss >> word) {\n        words.push_back(word);\n    }\n\n    std::reverse(words.begin(), words.end());\n    std::ostringstream oss;\n    for (size_t i = 0; i < words.size(); ++i) {\n        if (i != 0) {\n            oss << \" \";\n        }\n        oss << words[i];\n    }\n\n    return oss.str();\n}",
+              "test_results": {
+                "passed_tests": 3,
+                "total_tests": 3,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.038430000000000006,
+                "peak_memory_kb": 128.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "mem_kb": 128.0,
+                    "status": "pass",
+                    "time_ms": 0.036561
+                  },
+                  {
+                    "id": 1,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000474
+                  },
+                  {
+                    "id": 2,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.001395
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.949476,
+                "correctness_rate": 1.0,
+                "quality_score": 0.9495,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 1.0,
+                  "memory": 0.9974,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            }
+          ],
+          "selection_and_breeding": {},
+          "circuit_breaker_triggered": true
+        }
+      ]
+    }
+  ],
+  "mode": "evolve",
+  "end_time": "2026-09-08T18:07:25.313075"
+}

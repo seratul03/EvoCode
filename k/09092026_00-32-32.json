@@ -1,0 +1,281 @@
+{
+  "start_time": "2026-09-08T19:02:06.052189",
+  "pop_size": 3,
+  "problems_evaluated": [
+    {
+      "problem_id": 1033,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "from typing import List\n\ndef reverse_string_in_place(s: List[str]) -> None:\n    if not s:\n        return\n    left, right = 0, len(s) - 1\n    while left < right:\n        s[left], s[right] = s[right], s[left]\n        left += 1\n        right -= 1",
+              "test_results": {
+                "passed_tests": 5,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.018245000319438986,
+                "peak_memory_kb": 0.0673828125,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass",
+                    "time_ms": 0.011114001608802937,
+                    "mem_kb": 0.0439453125
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass",
+                    "time_ms": 0.002095999661833048,
+                    "mem_kb": 0.0673828125
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass",
+                    "time_ms": 0.0014189990906743333,
+                    "mem_kb": 0.0673828125
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass",
+                    "time_ms": 0.0017740003386279568,
+                    "mem_kb": 0.0673828125
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass",
+                    "time_ms": 0.0018419996195007116,
+                    "mem_kb": 0.0673828125
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.899994,
+                "correctness_rate": 1.0,
+                "quality_score": 0.9,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "public class Solution {\n    public static void reverseStringInPlace(char[] s) {\n        if (s == null) {\n            throw new IllegalArgumentException(\"Input array cannot be null\");\n        }\n        int start = 0;\n        int end = s.length - 1;\n        while (start < end) {\n            // Swap characters at start and end\n            char temp = s[start];\n            s[start] = s[end];\n            s[end] = temp;\n            // Move towards the middle\n            start++;\n            end--;\n        }\n    }\n}",
+              "test_results": {
+                "passed_tests": 1,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  3,
+                  4
+                ],
+                "execution_time_ms": 2.98506,
+                "peak_memory_kb": 138.390625,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "error": "java.lang.IllegalArgumentException: argument type mismatch",
+                    "status": "crash"
+                  },
+                  {
+                    "id": 1,
+                    "error": "java.lang.IllegalArgumentException: argument type mismatch",
+                    "status": "crash"
+                  },
+                  {
+                    "mem_kb": 138.390625,
+                    "time_ms": 2.98506,
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "id": 3,
+                    "error": "java.lang.IllegalArgumentException: argument type mismatch",
+                    "status": "crash"
+                  },
+                  {
+                    "id": 4,
+                    "error": "java.lang.IllegalArgumentException: argument type mismatch",
+                    "status": "crash"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.2,
+                "issues": [
+                  "The code crashes on 80% of tests, which exceeds the 20% threshold for acceptable crash rate."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.14771,
+                "correctness_rate": 0.2,
+                "quality_score": 0.7386,
+                "breakdown": {
+                  "correctness": 0.2,
+                  "runtime": 0.997,
+                  "memory": 0.9972,
+                  "efficiency": 0.2,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling",
+                  "change_prompt_style"
+                ],
+                "priority": "high",
+                "code_issues": [
+                  "High crash rate (4/5 tests). The current algorithm approach is fundamentally broken for many inputs. Try a completely different approach."
+                ]
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "#include <vector>\n\nvoid reverseStringInPlace(std::vector<char>& s) {\n    int left = 0;\n    int right = s.size() - 1;\n    \n    while (left < right) {\n        // Swap the characters at left and right indices\n        std::swap(s[left], s[right]);\n        \n        // Move the pointers towards the center\n        left++;\n        right--;\n    }\n}",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "execution_time_ms": 2223.0429649353027,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:53:51: error: cannot bind non-const lvalue reference of type ‘std::vector<char>&’ to an rvalue of type ‘std::vector<char>’\n   53 |                 result_json = reverseStringInPlace(args[0]);\n      |                               ~~~~~~~~~~~~~~~~~"
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:53:51: error: cannot bind non-const lvalue reference of type ‘std::vector<char>&’ to an rvalue of type ‘std::vector<char>’\n   53 |                 result_json = reverseStringInPlace(args[0]);\n      |                               ~~~~~~~~~~~~~~~~~"
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:53:51: error: cannot bind non-const lvalue reference of type ‘std::vector<char>&’ to an rvalue of type ‘std::vector<char>’\n   53 |                 result_json = reverseStringInPlace(args[0]);\n      |                               ~~~~~~~~~~~~~~~~~"
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:53:51: error: cannot bind non-const lvalue reference of type ‘std::vector<char>&’ to an rvalue of type ‘std::vector<char>’\n   53 |                 result_json = reverseStringInPlace(args[0]);\n      |                               ~~~~~~~~~~~~~~~~~"
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:53:51: error: cannot bind non-const lvalue reference of type ‘std::vector<char>&’ to an rvalue of type ‘std::vector<char>’\n   53 |                 result_json = reverseStringInPlace(args[0]);\n      |                               ~~~~~~~~~~~~~~~~~"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.0,
+                "issues": [
+                  "The code crashes on all tests.",
+                  "The function does not handle the input correctly."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.0,
+                "correctness_rate": 0.0,
+                "quality_score": 0.4,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.0,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "severity": 1.0,
+                "primary_failure": "runtime_crash",
+                "code_issues": [
+                  "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:53:51: error: cannot bind non-const lvalue reference of type ‘std::vector<char>&’ to an rvalue of type ‘std::vector<char>’\n   53 |                 result_json = reverseStringInPlace(args[0]);\n      |                               ~~~~~~~~~~~~~~~~~"
+                ],
+                "recommended_mutations": [
+                  "fix_crash"
+                ]
+              }
+            }
+          ],
+          "selection_and_breeding": {},
+          "circuit_breaker_triggered": true
+        }
+      ]
+    }
+  ],
+  "mode": "evolve",
+  "end_time": "2026-09-08T19:02:32.122317"
+}

@@ -1,0 +1,266 @@
+{
+  "start_time": "2026-09-08T17:34:42.904406",
+  "pop_size": 3,
+  "problems_evaluated": [
+    {
+      "problem_id": 1020,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "def remove_vowels(s: str) -> str:\n    if not isinstance(s, str):\n        return None\n    \n    vowels = \"aeiouAEIOU\"\n    result = ''.join([char for char in s if char not in vowels])\n    return result",
+              "test_results": {
+                "passed_tests": 5,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.016902000425034203,
+                "peak_memory_kb": 0.1015625,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass",
+                    "time_ms": 0.009365000551042613,
+                    "mem_kb": 0.078125
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass",
+                    "time_ms": 0.0025560002541169524,
+                    "mem_kb": 0.0703125
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass",
+                    "time_ms": 0.0018060000002151355,
+                    "mem_kb": 0.0703125
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass",
+                    "time_ms": 0.0012729997251881287,
+                    "mem_kb": 0.0703125
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass",
+                    "time_ms": 0.0019019998944713734,
+                    "mem_kb": 0.1015625
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.899995,
+                "correctness_rate": 1.0,
+                "quality_score": 0.9,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "public String removeVowels(String s) {\n    if (s == null) {\n        throw new IllegalArgumentException(\"Input string cannot be null\");\n    }\n\n    StringBuilder result = new StringBuilder();\n    for (char c : s.toCharArray()) {\n        if (!isVowel(c)) {\n            result.append(c);\n        }\n    }\n    return result.toString();\n}\n\nprivate boolean isVowel(char c) {\n    return \"AEIOUaeiou\".indexOf(c) != -1;\n}",
+              "test_results": {
+                "passed_tests": 5,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 44.051801999999995,
+                "peak_memory_kb": 138.390625,
+                "test_outputs": [
+                  {
+                    "mem_kb": 138.390625,
+                    "time_ms": 43.93427,
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.035866,
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.025235,
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.027114,
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.029317,
+                    "id": 4,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.886231,
+                "correctness_rate": 1.0,
+                "quality_score": 0.8862,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.9559,
+                  "memory": 0.9972,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "#include <string>\n\nstd::string remove_vowels(const std::string& s) {\n    std::string result;\n    for (char c : s) {\n        char lower_c = tolower(c);\n        if (lower_c != 'a' && lower_c != 'e' && lower_c != 'i' && lower_c != 'o' && lower_c != 'u') {\n            result += c;\n        }\n    }\n    return result;\n}",
+              "test_results": {
+                "passed_tests": 5,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.004927,
+                "peak_memory_kb": 128.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "mem_kb": 128.0,
+                    "status": "pass",
+                    "time_ms": 0.003555
+                  },
+                  {
+                    "id": 1,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.00035
+                  },
+                  {
+                    "id": 2,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000426
+                  },
+                  {
+                    "id": 3,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000271
+                  },
+                  {
+                    "id": 4,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000325
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.899487,
+                "correctness_rate": 1.0,
+                "quality_score": 0.8995,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 1.0,
+                  "memory": 0.9974,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            }
+          ],
+          "selection_and_breeding": {},
+          "circuit_breaker_triggered": true
+        }
+      ]
+    }
+  ],
+  "mode": "evolve",
+  "end_time": "2026-09-08T17:35:08.998573"
+}

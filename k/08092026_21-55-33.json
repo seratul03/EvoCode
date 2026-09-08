@@ -1,0 +1,272 @@
+{
+  "start_time": "2026-09-08T16:25:08.945292",
+  "pop_size": 3,
+  "problems_evaluated": [
+    {
+      "problem_id": 1002,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "def count_consonants(text: str) -> int:\n    if not isinstance(text, str):\n        return None\n    \n    vowels = \"aeiouAEIOU\"\n    consonants = [char for char in text if char.isalpha() and char not in vowels]\n    \n    return len(consonants)",
+              "test_results": {
+                "passed_tests": 5,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.04538899997896806,
+                "peak_memory_kb": 0.2578125,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass",
+                    "time_ms": 0.03126799992969609,
+                    "mem_kb": 0.109375
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass",
+                    "time_ms": 0.004595000064000487,
+                    "mem_kb": 0.091796875
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass",
+                    "time_ms": 0.004549000095721567,
+                    "mem_kb": 0.2578125
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass",
+                    "time_ms": 0.0025439999262744095,
+                    "mem_kb": 0.091796875
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass",
+                    "time_ms": 0.002432999963275506,
+                    "mem_kb": 0.091796875
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.899985,
+                "correctness_rate": 1.0,
+                "quality_score": 0.9,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "public int countConsonants(String text) {\n    if (text == null || text.isEmpty()) {\n        return 0;\n    }\n\n    int count = 0;\n    String vowels = \"aeiouAEIOU\";\n\n    for (char c : text.toCharArray()) {\n        if (Character.isLetter(c) && !vowels.contains(String.valueOf(c))) {\n            count++;\n        }\n    }\n\n    return count;\n}",
+              "test_results": {
+                "passed_tests": 5,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 44.29645000000001,
+                "peak_memory_kb": 184.5,
+                "test_outputs": [
+                  {
+                    "mem_kb": 184.5,
+                    "time_ms": 43.968003,
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.108195,
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.07536,
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.114744,
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.030148,
+                    "id": 4,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.885973,
+                "correctness_rate": 1.0,
+                "quality_score": 0.886,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.9557,
+                  "memory": 0.9963,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "int count_consonants(const std::string& text) {\n    if (text.empty()) {\n        return 0;\n    }\n\n    int count = 0;\n    for (char c : text) {\n        if (isalpha(c)) {\n            char lower_c = tolower(c);\n            if (lower_c != 'a' && lower_c != 'e' && lower_c != 'i' && lower_c != 'o' && lower_c != 'u') {\n                ++count;\n            }\n        }\n    }\n    return count;\n}",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "execution_time_ms": 2259.070634841919,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp:1:33: error: ‘string’ in namespace ‘std’ does not name a type\n    1 | int count_consonants(const std::string& text) {\n      |                                 ^~~~~~\nsolution.cpp:1:1: note: ‘std::string’ is defined in header ‘<string>’; this is probably fixable by adding ‘#include <strin"
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp:1:33: error: ‘string’ in namespace ‘std’ does not name a type\n    1 | int count_consonants(const std::string& text) {\n      |                                 ^~~~~~\nsolution.cpp:1:1: note: ‘std::string’ is defined in header ‘<string>’; this is probably fixable by adding ‘#include <strin"
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp:1:33: error: ‘string’ in namespace ‘std’ does not name a type\n    1 | int count_consonants(const std::string& text) {\n      |                                 ^~~~~~\nsolution.cpp:1:1: note: ‘std::string’ is defined in header ‘<string>’; this is probably fixable by adding ‘#include <strin"
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp:1:33: error: ‘string’ in namespace ‘std’ does not name a type\n    1 | int count_consonants(const std::string& text) {\n      |                                 ^~~~~~\nsolution.cpp:1:1: note: ‘std::string’ is defined in header ‘<string>’; this is probably fixable by adding ‘#include <strin"
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp:1:33: error: ‘string’ in namespace ‘std’ does not name a type\n    1 | int count_consonants(const std::string& text) {\n      |                                 ^~~~~~\nsolution.cpp:1:1: note: ‘std::string’ is defined in header ‘<string>’; this is probably fixable by adding ‘#include <strin"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.0,
+                "issues": [
+                  "The code is written in C++, but the provided code snippet is in Python."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.0,
+                "correctness_rate": 0.0,
+                "quality_score": 0.4,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.0,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "severity": 1.0,
+                "primary_failure": "runtime_crash",
+                "code_issues": [
+                  "No JSON array in stdout.\nStdout: \nStderr: solution.cpp:1:33: error: ‘string’ in namespace ‘std’ does not name a type\n    1 | int count_consonants(const std::string& text) {\n      |                                 ^~~~~~\nsolution.cpp:1:1: note: ‘std::string’ is defined in header ‘<string>’; this is probably fixable by adding ‘#include <strin"
+                ],
+                "recommended_mutations": [
+                  "fix_crash"
+                ]
+              }
+            }
+          ],
+          "selection_and_breeding": {},
+          "circuit_breaker_triggered": true
+        }
+      ]
+    }
+  ],
+  "mode": "evolve",
+  "end_time": "2026-09-08T16:25:33.561560"
+}

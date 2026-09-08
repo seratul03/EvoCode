@@ -1,0 +1,292 @@
+{
+  "start_time": "2026-09-08T16:50:57.806430",
+  "pop_size": 3,
+  "problems_evaluated": [
+    {
+      "problem_id": 1008,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "def flip_bits(arr) -> list:\n    if not arr:\n        return []\n    \n    flipped_arr = []\n    for num in arr:\n        if num == 0:\n            flipped_arr.append(1)\n        elif num == 1:\n            flipped_arr.append(0)\n        else:\n            return None  # Handle invalid input (non-binary values)\n    \n    return flipped_arr",
+              "test_results": {
+                "passed_tests": 6,
+                "total_tests": 6,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.04756900034408318,
+                "peak_memory_kb": 0.2099609375,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass",
+                    "time_ms": 0.022341999738273444,
+                    "mem_kb": 0.1865234375
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass",
+                    "time_ms": 0.002253000275231898,
+                    "mem_kb": 0.0654296875
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass",
+                    "time_ms": 0.004585000169754494,
+                    "mem_kb": 0.201171875
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass",
+                    "time_ms": 0.003992000074504176,
+                    "mem_kb": 0.197265625
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass",
+                    "time_ms": 0.007217000074888347,
+                    "mem_kb": 0.2099609375
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass",
+                    "time_ms": 0.0071800000114308205,
+                    "mem_kb": 0.2060546875
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.949985,
+                "correctness_rate": 1.0,
+                "quality_score": 0.95,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "public List<Integer> flipBits(int[] arr) {\n    if (arr == null) {\n        throw new IllegalArgumentException(\"Input array cannot be null\");\n    }\n    \n    List<Integer> result = new ArrayList<>();\n    for (int num : arr) {\n        if (num == 0 || num == 1) {\n            result.add(1 - num);\n        } else {\n            return null; // Invalid input\n        }\n    }\n    return result;\n}",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 6,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5
+                ],
+                "execution_time_ms": 2115.957736968994,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> flipBits(int[] arr) {\n       ^\n  symbol:   class List\n  location: class Solution\nSolution.java:9: error: cannot find symbol\n    List<Integer> result = new ArrayList<>();\n    ^\n  symbol:   class List\n  location: class Solution\nSolution.j"
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> flipBits(int[] arr) {\n       ^\n  symbol:   class List\n  location: class Solution\nSolution.java:9: error: cannot find symbol\n    List<Integer> result = new ArrayList<>();\n    ^\n  symbol:   class List\n  location: class Solution\nSolution.j"
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> flipBits(int[] arr) {\n       ^\n  symbol:   class List\n  location: class Solution\nSolution.java:9: error: cannot find symbol\n    List<Integer> result = new ArrayList<>();\n    ^\n  symbol:   class List\n  location: class Solution\nSolution.j"
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> flipBits(int[] arr) {\n       ^\n  symbol:   class List\n  location: class Solution\nSolution.java:9: error: cannot find symbol\n    List<Integer> result = new ArrayList<>();\n    ^\n  symbol:   class List\n  location: class Solution\nSolution.j"
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> flipBits(int[] arr) {\n       ^\n  symbol:   class List\n  location: class Solution\nSolution.java:9: error: cannot find symbol\n    List<Integer> result = new ArrayList<>();\n    ^\n  symbol:   class List\n  location: class Solution\nSolution.j"
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> flipBits(int[] arr) {\n       ^\n  symbol:   class List\n  location: class Solution\nSolution.java:9: error: cannot find symbol\n    List<Integer> result = new ArrayList<>();\n    ^\n  symbol:   class List\n  location: class Solution\nSolution.j"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.0,
+                "issues": [
+                  "The code contains syntax errors and cannot be compiled.",
+                  "The code does not handle invalid inputs correctly.",
+                  "The code crashes on all tests."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.0,
+                "correctness_rate": 0.0,
+                "quality_score": 0.45,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.0,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "severity": 1.0,
+                "primary_failure": "runtime_crash",
+                "code_issues": [
+                  "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> flipBits(int[] arr) {\n       ^\n  symbol:   class List\n  location: class Solution\nSolution.java:9: error: cannot find symbol\n    List<Integer> result = new ArrayList<>();\n    ^\n  symbol:   class List\n  location: class Solution\nSolution.j"
+                ],
+                "recommended_mutations": [
+                  "fix_crash"
+                ]
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "#include <vector>\n#include <algorithm>\n\nstd::vector<int> flipBits(const std::vector<int>& arr) {\n    if (arr.empty()) {\n        return {};\n    }\n\n    std::vector<int> result(arr.size());\n    std::transform(arr.begin(), arr.end(), result.begin(), [](int bit) {\n        return bit == 0 ? 1 : 0;\n    });\n\n    return result;\n}",
+              "test_results": {
+                "passed_tests": 6,
+                "total_tests": 6,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.008727,
+                "peak_memory_kb": 128.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "mem_kb": 128.0,
+                    "status": "pass",
+                    "time_ms": 0.003192
+                  },
+                  {
+                    "id": 1,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000678
+                  },
+                  {
+                    "id": 2,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.001023
+                  },
+                  {
+                    "id": 3,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000962
+                  },
+                  {
+                    "id": 4,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.001479
+                  },
+                  {
+                    "id": 5,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.001393
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.899485,
+                "correctness_rate": 1.0,
+                "quality_score": 0.8995,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 1.0,
+                  "memory": 0.9974,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            }
+          ],
+          "selection_and_breeding": {},
+          "circuit_breaker_triggered": true
+        }
+      ]
+    }
+  ],
+  "mode": "evolve",
+  "end_time": "2026-09-08T16:51:26.735495"
+}

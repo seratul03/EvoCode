@@ -1,0 +1,284 @@
+{
+  "start_time": "2026-09-08T17:20:37.538716",
+  "pop_size": 3,
+  "problems_evaluated": [
+    {
+      "problem_id": 1013,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "def is_power_of_two(n: int) -> bool:\n    if n <= 0:\n        return False\n    return n & (n - 1) == 0",
+              "test_results": {
+                "passed_tests": 6,
+                "total_tests": 6,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.009394999324285891,
+                "peak_memory_kb": 0.0859375,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass",
+                    "time_ms": 0.0021440000637085177,
+                    "mem_kb": 0.0
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass",
+                    "time_ms": 0.0018629998521646485,
+                    "mem_kb": 0.0234375
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass",
+                    "time_ms": 0.001047999830916524,
+                    "mem_kb": 0.0234375
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass",
+                    "time_ms": 0.0008429997251369059,
+                    "mem_kb": 0.0234375
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass",
+                    "time_ms": 0.0008260003596660681,
+                    "mem_kb": 0.0234375
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass",
+                    "time_ms": 0.002670999492693227,
+                    "mem_kb": 0.0859375
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.949997,
+                "correctness_rate": 1.0,
+                "quality_score": 0.95,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "public boolean isPowerOfTwo(int n) {\n    if (n <= 0) {\n        return false;\n    }\n    return (n & (n - 1)) == 0;\n}",
+              "test_results": {
+                "passed_tests": 6,
+                "total_tests": 6,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 5.984767999999999,
+                "peak_memory_kb": 279.3359375,
+                "test_outputs": [
+                  {
+                    "mem_kb": 279.3359375,
+                    "time_ms": 5.87566,
+                    "id": 0,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.029514,
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.016856,
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.018132,
+                    "id": 3,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.020374,
+                    "id": 4,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.024232,
+                    "id": 5,
+                    "status": "pass"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.947087,
+                "correctness_rate": 1.0,
+                "quality_score": 0.9471,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.994,
+                  "memory": 0.9944,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "#include <iostream>\n\nbool is_power_of_two(int n) {\n    if (n <= 0) {\n        return false;\n    }\n    return (n & (n - 1)) == 0;\n}",
+              "test_results": {
+                "passed_tests": 6,
+                "total_tests": 6,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.00092,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000299
+                  },
+                  {
+                    "id": 1,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000122
+                  },
+                  {
+                    "id": 2,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000131
+                  },
+                  {
+                    "id": 3,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000125
+                  },
+                  {
+                    "id": 4,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000127
+                  },
+                  {
+                    "id": 5,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000116
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.95,
+                "correctness_rate": 1.0,
+                "quality_score": 0.95,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            }
+          ],
+          "selection_and_breeding": {},
+          "circuit_breaker_triggered": true
+        }
+      ]
+    }
+  ],
+  "mode": "evolve",
+  "end_time": "2026-09-08T17:20:58.673579"
+}

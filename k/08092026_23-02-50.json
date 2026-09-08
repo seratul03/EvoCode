@@ -1,0 +1,281 @@
+{
+  "start_time": "2026-09-08T17:32:22.093777",
+  "pop_size": 3,
+  "problems_evaluated": [
+    {
+      "problem_id": 1015,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "def alternate_elements_swap(arr: list) -> list:\n    if not arr:\n        return arr\n    \n    n = len(arr)\n    for i in range(0, n - 1, 2):\n        arr[i], arr[i + 1] = arr[i + 1], arr[i]\n    \n    return arr",
+              "test_results": {
+                "passed_tests": 5,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.04193600034341216,
+                "peak_memory_kb": 0.1884765625,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass",
+                    "time_ms": 0.018095000086759683,
+                    "mem_kb": 0.1552734375
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass",
+                    "time_ms": 0.00513199938723119,
+                    "mem_kb": 0.169921875
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass",
+                    "time_ms": 0.001525000698165968,
+                    "mem_kb": 0.0654296875
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass",
+                    "time_ms": 0.008130999958666507,
+                    "mem_kb": 0.18359375
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass",
+                    "time_ms": 0.009053000212588813,
+                    "mem_kb": 0.1884765625
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.899987,
+                "correctness_rate": 1.0,
+                "quality_score": 0.9,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "import java.util.List;\n\npublic List<Integer> alternateElementsSwap(List<Integer> arr) {\n    if (arr == null || arr.isEmpty()) {\n        return arr; // Return the original list if it is null or empty\n    }\n\n    for (int i = 0; i < arr.size() - 1; i += 2) {\n        // Swap adjacent elements\n        int temp = arr.get(i);\n        arr.set(i, arr.get(i + 1));\n        arr.set(i + 1, temp);\n    }\n\n    return arr;\n}",
+              "test_results": {
+                "passed_tests": 2,
+                "total_tests": 5,
+                "failed_test_ids": [
+                  0,
+                  3,
+                  4
+                ],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 2.515242,
+                "peak_memory_kb": 138.3984375,
+                "test_outputs": [
+                  {
+                    "actual": "[2, 1, 4, 3]",
+                    "mem_kb": 138.3984375,
+                    "time_ms": 2.385767,
+                    "expected": "[2,1,4,3]",
+                    "id": 0,
+                    "status": "fail"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.022078,
+                    "id": 1,
+                    "status": "pass"
+                  },
+                  {
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.022417,
+                    "id": 2,
+                    "status": "pass"
+                  },
+                  {
+                    "actual": "[-2, -1, -4, -3]",
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.060077,
+                    "expected": "[-2,-1,-4,-3]",
+                    "id": 3,
+                    "status": "fail"
+                  },
+                  {
+                    "actual": "[20, 10, 40, 30, 50]",
+                    "mem_kb": 46.1015625,
+                    "time_ms": 0.024903,
+                    "expected": "[20,10,40,30,50]",
+                    "id": 4,
+                    "status": "fail"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.4,
+                "issues": [
+                  "The code does not handle the case where the list has an odd number of elements correctly. The last element should remain unchanged."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.311477,
+                "correctness_rate": 0.4,
+                "quality_score": 0.7787,
+                "breakdown": {
+                  "correctness": 0.4,
+                  "runtime": 0.9975,
+                  "memory": 0.9972,
+                  "efficiency": 0.4,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "wrong_output",
+                "severity": 0.5,
+                "recommended_mutations": [
+                  "increase_reasoning_steps",
+                  "fix_edge_cases"
+                ],
+                "priority": "medium",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "#include <vector>\n\nstd::vector<int> alternate_elements_swap(const std::vector<int>& arr) {\n    if (arr.empty()) {\n        return arr;\n    }\n\n    std::vector<int> result(arr);\n    for (size_t i = 0; i + 1 < result.size(); i += 2) {\n        std::swap(result[i], result[i + 1]);\n    }\n\n    return result;\n}",
+              "test_results": {
+                "passed_tests": 5,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.009375,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.004603
+                  },
+                  {
+                    "id": 1,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.001111
+                  },
+                  {
+                    "id": 2,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000745
+                  },
+                  {
+                    "id": 3,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.001501
+                  },
+                  {
+                    "id": 4,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.001415
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.899997,
+                "correctness_rate": 1.0,
+                "quality_score": 0.9,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            }
+          ],
+          "selection_and_breeding": {},
+          "circuit_breaker_triggered": true
+        }
+      ]
+    }
+  ],
+  "mode": "evolve",
+  "end_time": "2026-09-08T17:32:50.840868"
+}

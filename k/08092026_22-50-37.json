@@ -1,0 +1,250 @@
+{
+  "start_time": "2026-09-08T17:20:09.095151",
+  "pop_size": 3,
+  "problems_evaluated": [
+    {
+      "problem_id": 1012,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "from typing import List\n\ndef bitwise_and(nums: List[int]) -> int:\n    if not nums:\n        return 0\n    \n    result = nums[0]\n    for num in nums[1:]:\n        result &= num\n        if result == 0:\n            return 0\n    \n    return result",
+              "test_results": {
+                "passed_tests": 5,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.02909099930548109,
+                "peak_memory_kb": 0.09765625,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass",
+                    "time_ms": 0.01611399966350291,
+                    "mem_kb": 0.068359375
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass",
+                    "time_ms": 0.005050999789091293,
+                    "mem_kb": 0.091796875
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass",
+                    "time_ms": 0.0029780003387713805,
+                    "mem_kb": 0.09765625
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass",
+                    "time_ms": 0.0020379993657115847,
+                    "mem_kb": 0.091796875
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass",
+                    "time_ms": 0.002910000148403924,
+                    "mem_kb": 0.091796875
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.949991,
+                "correctness_rate": 1.0,
+                "quality_score": 0.95,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "import java.util.List;\n\npublic class Solution {\n    public int bitwiseAnd(List<Integer> nums) {\n        if (nums == null || nums.isEmpty()) {\n            return 0; // Return 0 for empty input\n        }\n\n        int result = nums.get(0);\n        for (int i = 1; i < nums.size(); i++) {\n            result &= nums.get(i);\n        }\n        return result;\n    }\n}",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.0,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "status": "crash",
+                    "error": "Code rejected by Evo_Tester as hardcoded/cheating."
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.0,
+                "issues": [
+                  "The code is written in Java, but the problem description and sandbox results are for Python."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.0,
+                "correctness_rate": 0.0,
+                "quality_score": 0.7,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 1.0,
+                  "robustness": 0.0
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "algorithmic_error",
+                "severity": 0.0,
+                "recommended_mutations": [
+                  "change_prompt_style",
+                  "fix_edge_cases"
+                ],
+                "priority": "high",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "#include <vector>\n#include <optional>\n#include <stdexcept>\n\nint solve(const std::vector<int>& nums) {\n    if (nums.empty()) {\n        throw std::invalid_argument(\"Input list cannot be empty\");\n    }\n\n    int result = nums[0];\n    for (size_t i = 1; i < nums.size(); ++i) {\n        result &= nums[i];\n        if (result == 0) {\n            // Early exit if result becomes 0\n            return 0;\n        }\n    }\n    return result;\n}",
+              "test_results": {
+                "passed_tests": 4,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  3
+                ],
+                "execution_time_ms": 0.007619,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.002776
+                  },
+                  {
+                    "id": 1,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.001209
+                  },
+                  {
+                    "id": 2,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.00085
+                  },
+                  {
+                    "error": "Input list cannot be empty",
+                    "id": 3,
+                    "status": "crash"
+                  },
+                  {
+                    "id": 4,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.002784
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.8,
+                "issues": [
+                  "The code crashes when the input list is empty, which is an exception rather than returning None."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.727998,
+                "correctness_rate": 0.8,
+                "quality_score": 0.91,
+                "breakdown": {
+                  "correctness": 0.8,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 0.8,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "crash",
+                "severity": 0.8,
+                "recommended_mutations": [
+                  "add_error_handling"
+                ],
+                "priority": "high",
+                "code_issues": []
+              }
+            }
+          ],
+          "selection_and_breeding": {},
+          "circuit_breaker_triggered": true
+        }
+      ]
+    }
+  ],
+  "mode": "evolve",
+  "end_time": "2026-09-08T17:20:37.529618"
+}

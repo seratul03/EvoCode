@@ -1,0 +1,1012 @@
+{
+  "start_time": "2026-09-08T19:33:16.644799",
+  "pop_size": 3,
+  "problems_evaluated": [
+    {
+      "problem_id": 1044,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "def rotate_array(arr: list[int], k: int) -> list[int]:\n    if not arr or k < 0:\n        return None\n    \n    n = len(arr)\n    k = k % n  # Handle rotations greater than the array length\n    \n    if k == 0:\n        return arr\n    \n    # Function to reverse a portion of the array\n    def reverse(start: int, end: int) -> None:\n        while start < end:\n            arr[start], arr[end] = arr[end], arr[start]\n            start += 1\n            end -= 1\n    \n    # Reverse the entire array\n    reverse(0, n - 1)\n    # Reverse the first k elements\n    reverse(0, k - 1)\n    # Reverse the rest of the array\n    reverse(k, n - 1)\n    \n    return arr",
+              "test_results": {
+                "passed_tests": 5,
+                "total_tests": 6,
+                "failed_test_ids": [
+                  4
+                ],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.0805120034783613,
+                "peak_memory_kb": 0.21875,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass",
+                    "time_ms": 0.0363770013791509,
+                    "mem_kb": 0.1953125
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass",
+                    "time_ms": 0.010818001101142727,
+                    "mem_kb": 0.181640625
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass",
+                    "time_ms": 0.008262999472208321,
+                    "mem_kb": 0.181640625
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass",
+                    "time_ms": 0.010245001249131747,
+                    "mem_kb": 0.21875
+                  },
+                  {
+                    "id": 4,
+                    "status": "fail",
+                    "expected": "[]",
+                    "actual": "None",
+                    "time_ms": 0.010048001058748923,
+                    "mem_kb": 0.0673828125
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass",
+                    "time_ms": 0.004760999217978679,
+                    "mem_kb": 0.169921875
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.83,
+                "issues": [
+                  "The code does not handle the case where the input array is empty or the rotation count is negative, which should return None."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.763868,
+                "correctness_rate": 0.8333,
+                "quality_score": 0.9166,
+                "breakdown": {
+                  "correctness": 0.8333,
+                  "runtime": 0.9999,
+                  "memory": 1.0,
+                  "efficiency": 0.8333,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "wrong_output",
+                "severity": 0.5,
+                "recommended_mutations": [
+                  "increase_reasoning_steps",
+                  "fix_edge_cases"
+                ],
+                "priority": "medium",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "public List<Integer> rotateArray(List<Integer> arr, int k) {\n    if (arr == null || arr.isEmpty()) {\n        return arr;\n    }\n\n    int n = arr.size();\n    k = k % n; // Handle cases where k is greater than the array length\n\n    if (k == 0) {\n        return arr;\n    }\n\n    List<Integer> result = new ArrayList<>(n);\n    for (int i = 0; i < n; i++) {\n        result.add(arr.get((n - k + i) % n));\n    }\n\n    return result;\n}",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 6,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5
+                ],
+                "execution_time_ms": 1991.5664196014404,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.0,
+                "issues": [
+                  "The code contains syntax errors and cannot be compiled.",
+                  "The code does not handle the case where the input array is null or empty.",
+                  "The code does not handle the case where the input array is not a list."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.0,
+                "correctness_rate": 0.0,
+                "quality_score": 0.45,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.0,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "severity": 1.0,
+                "primary_failure": "runtime_crash",
+                "code_issues": [
+                  "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                ],
+                "recommended_mutations": [
+                  "fix_crash"
+                ]
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "#include <vector>\n#include <algorithm>\n#include <stdexcept>\n\nstd::vector<int> rotateArray(std::vector<int>& arr, int k) {\n    if (arr.empty()) {\n        return arr;\n    }\n\n    int n = arr.size();\n    k = k % n; // Handle cases where k is greater than the array size\n\n    if (k == 0) {\n        return arr;\n    }\n\n    std::rotate(arr.rbegin(), arr.rbegin() + k, arr.rend());\n    return arr;\n}",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 6,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5
+                ],
+                "execution_time_ms": 2339.6589756011963,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:57:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   57 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:57:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   57 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:57:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   57 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:57:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   57 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:57:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   57 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:57:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   57 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.0,
+                "issues": [
+                  "The code crashes on all tests.",
+                  "The error message indicates a type mismatch issue with the function signature."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.0,
+                "correctness_rate": 0.0,
+                "quality_score": 0.45,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.0,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "severity": 1.0,
+                "primary_failure": "runtime_crash",
+                "code_issues": [
+                  "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:57:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   57 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                ],
+                "recommended_mutations": [
+                  "fix_crash"
+                ]
+              }
+            }
+          ],
+          "selection_and_breeding": {
+            "survivors": [
+              0
+            ],
+            "killed": [],
+            "mutations": [
+              {
+                "parent_index": 0,
+                "child_index": 1,
+                "parent_genome": {
+                  "parent_id": null,
+                  "parent_fitness": 0.0,
+                  "generation_id": 0,
+                  "prompt_style": "direct",
+                  "temperature": 0.5,
+                  "reasoning_steps": 3,
+                  "system_instruction_variant": "standard",
+                  "past_code": null,
+                  "critic_feedback": null,
+                  "crossover_instruction": null
+                },
+                "child_genome": {
+                  "parent_id": 0,
+                  "parent_fitness": 0.763868,
+                  "generation_id": 0,
+                  "prompt_style": "direct",
+                  "temperature": 0.5,
+                  "reasoning_steps": 3,
+                  "system_instruction_variant": "standard",
+                  "past_code": null,
+                  "critic_feedback": null,
+                  "crossover_instruction": null
+                }
+              },
+              {
+                "parent_index": 0,
+                "child_index": 2,
+                "parent_genome": {
+                  "parent_id": null,
+                  "parent_fitness": 0.0,
+                  "generation_id": 0,
+                  "prompt_style": "direct",
+                  "temperature": 0.5,
+                  "reasoning_steps": 3,
+                  "system_instruction_variant": "standard",
+                  "past_code": null,
+                  "critic_feedback": null,
+                  "crossover_instruction": null
+                },
+                "child_genome": {
+                  "parent_id": 0,
+                  "parent_fitness": 0.763868,
+                  "generation_id": 0,
+                  "prompt_style": "direct",
+                  "temperature": 0.5,
+                  "reasoning_steps": 3,
+                  "system_instruction_variant": "standard",
+                  "past_code": null,
+                  "critic_feedback": null,
+                  "crossover_instruction": null
+                }
+              }
+            ]
+          }
+        },
+        {
+          "generation_id": 2,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "def rotate_array(arr: list[int], k: int) -> list[int]:\n    if not arr or k < 0:\n        return None\n    \n    n = len(arr)\n    k = k % n  # Handle cases where k is greater than the array length\n    \n    if k == 0:\n        return arr\n    \n    # Reverse the entire array\n    arr.reverse()\n    \n    # Reverse the first k elements\n    arr[:k] = reversed(arr[:k])\n    \n    # Reverse the remaining elements\n    arr[k:] = reversed(arr[k:])\n    \n    return arr",
+              "test_results": {
+                "passed_tests": 5,
+                "total_tests": 6,
+                "failed_test_ids": [
+                  4
+                ],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.113286998384865,
+                "peak_memory_kb": 0.181640625,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass",
+                    "time_ms": 0.04855899896938354,
+                    "mem_kb": 0.158203125
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass",
+                    "time_ms": 0.019328999769641086,
+                    "mem_kb": 0.181640625
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass",
+                    "time_ms": 0.014102000932325609,
+                    "mem_kb": 0.181640625
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass",
+                    "time_ms": 0.022798998543294147,
+                    "mem_kb": 0.181640625
+                  },
+                  {
+                    "id": 4,
+                    "status": "fail",
+                    "expected": "[]",
+                    "actual": "None",
+                    "time_ms": 0.002980001227115281,
+                    "mem_kb": 0.0673828125
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass",
+                    "time_ms": 0.00551799894310534,
+                    "mem_kb": 0.169921875
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.83,
+                "issues": [
+                  "The code does not handle the case where k is 0 correctly. It should return the array as is without any modifications."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.76386,
+                "correctness_rate": 0.8333,
+                "quality_score": 0.9166,
+                "breakdown": {
+                  "correctness": 0.8333,
+                  "runtime": 0.9999,
+                  "memory": 1.0,
+                  "efficiency": 0.8333,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "wrong_output",
+                "severity": 0.5,
+                "recommended_mutations": [
+                  "increase_reasoning_steps",
+                  "fix_edge_cases"
+                ],
+                "priority": "medium",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": 0,
+                "parent_fitness": 0.763868,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "public List<Integer> rotateArray(List<Integer> arr, int k) {\n    if (arr == null || arr.isEmpty()) {\n        return arr;\n    }\n\n    int n = arr.size();\n    k = k % n; // Handle cases where k is greater than the length of the array\n\n    if (k == 0) {\n        return arr;\n    }\n\n    List<Integer> result = new ArrayList<>(n);\n    for (int i = 0; i < n; i++) {\n        result.add(arr.get((i + k) % n));\n    }\n\n    return result;\n}",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 6,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5
+                ],
+                "execution_time_ms": 2039.2980575561523,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.0,
+                "issues": [
+                  "The code is written in Java, but the sandbox results indicate that it is being run as Python code.",
+                  "The code contains syntax errors and cannot be compiled or executed.",
+                  "The code does not handle the case where the input array is null or empty, which could lead to a crash."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.0,
+                "correctness_rate": 0.0,
+                "quality_score": 0.4455,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.0,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 1.0,
+                  "robustness": 0.4551
+                }
+              },
+              "critic_diagnosis": {
+                "severity": 1.0,
+                "primary_failure": "runtime_crash",
+                "code_issues": [
+                  "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                ],
+                "recommended_mutations": [
+                  "fix_crash"
+                ]
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": 0,
+                "parent_fitness": 0.763868,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "#include <vector>\n#include <algorithm>\n#include <stdexcept>\n\nstd::vector<int> rotateArray(std::vector<int>& arr, int k) {\n    if (arr.empty() || k == 0) {\n        return arr;\n    }\n\n    int n = arr.size();\n    k = k % n; // Handle cases where k is greater than the array size\n\n    if (k == 0) {\n        return arr;\n    }\n\n    std::rotate(arr.rbegin(), arr.rbegin() + k, arr.rend());\n    return arr;\n}",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 6,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5
+                ],
+                "execution_time_ms": 2320.496082305908,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:57:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   57 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:57:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   57 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:57:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   57 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:57:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   57 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:57:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   57 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:57:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   57 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.0,
+                "issues": [
+                  "The code crashes on all tests.",
+                  "The error message indicates a type mismatch issue with the function signature."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.0,
+                "correctness_rate": 0.0,
+                "quality_score": 0.4491,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.0,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 1.0,
+                  "robustness": 0.4906
+                }
+              },
+              "critic_diagnosis": {
+                "severity": 1.0,
+                "primary_failure": "runtime_crash",
+                "code_issues": [
+                  "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:57:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   57 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                ],
+                "recommended_mutations": [
+                  "fix_crash"
+                ]
+              }
+            }
+          ],
+          "selection_and_breeding": {
+            "survivors": [
+              0
+            ],
+            "killed": [],
+            "mutations": [
+              {
+                "parent_index": 0,
+                "child_index": 1,
+                "parent_genome": {
+                  "parent_id": null,
+                  "parent_fitness": 0.0,
+                  "generation_id": 0,
+                  "prompt_style": "direct",
+                  "temperature": 0.5,
+                  "reasoning_steps": 3,
+                  "system_instruction_variant": "standard",
+                  "past_code": null,
+                  "critic_feedback": null,
+                  "crossover_instruction": null
+                },
+                "child_genome": {
+                  "parent_id": 0,
+                  "parent_fitness": 0.76386,
+                  "generation_id": 1,
+                  "prompt_style": "direct",
+                  "temperature": 0.5,
+                  "reasoning_steps": 3,
+                  "system_instruction_variant": "standard",
+                  "past_code": null,
+                  "critic_feedback": null,
+                  "crossover_instruction": null
+                }
+              },
+              {
+                "parent_index": 0,
+                "child_index": 2,
+                "parent_genome": {
+                  "parent_id": null,
+                  "parent_fitness": 0.0,
+                  "generation_id": 0,
+                  "prompt_style": "direct",
+                  "temperature": 0.5,
+                  "reasoning_steps": 3,
+                  "system_instruction_variant": "standard",
+                  "past_code": null,
+                  "critic_feedback": null,
+                  "crossover_instruction": null
+                },
+                "child_genome": {
+                  "parent_id": 0,
+                  "parent_fitness": 0.76386,
+                  "generation_id": 1,
+                  "prompt_style": "direct",
+                  "temperature": 0.5,
+                  "reasoning_steps": 3,
+                  "system_instruction_variant": "standard",
+                  "past_code": null,
+                  "critic_feedback": null,
+                  "crossover_instruction": null
+                }
+              }
+            ]
+          }
+        },
+        {
+          "generation_id": 3,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "def rotate_array(arr: list[int], k: int) -> list[int]:\n    if not arr:\n        return []\n    \n    n = len(arr)\n    k = k % n  # Handle cases where k is greater than the array length\n    \n    if k == 0:\n        return arr\n    \n    # Reverse the entire array\n    arr.reverse()\n    \n    # Reverse the first k elements\n    arr[:k] = reversed(arr[:k])\n    \n    # Reverse the remaining elements\n    arr[k:] = reversed(arr[k:])\n    \n    return arr",
+              "test_results": {
+                "passed_tests": 6,
+                "total_tests": 6,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.1070949983841274,
+                "peak_memory_kb": 0.181640625,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "pass",
+                    "time_ms": 0.05061699994257651,
+                    "mem_kb": 0.158203125
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass",
+                    "time_ms": 0.01442099892301485,
+                    "mem_kb": 0.181640625
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass",
+                    "time_ms": 0.01306200101680588,
+                    "mem_kb": 0.181640625
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass",
+                    "time_ms": 0.021163999917916954,
+                    "mem_kb": 0.181640625
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass",
+                    "time_ms": 0.0025379995349794626,
+                    "mem_kb": 0.0654296875
+                  },
+                  {
+                    "id": 5,
+                    "status": "pass",
+                    "time_ms": 0.005292999048833735,
+                    "mem_kb": 0.169921875
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.949967,
+                "correctness_rate": 1.0,
+                "quality_score": 0.95,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.9999,
+                  "memory": 1.0,
+                  "efficiency": 1.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": 0,
+                "parent_fitness": 0.76386,
+                "generation_id": 1,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "public List<Integer> rotateArray(List<Integer> arr, int k) {\n    if (arr == null || arr.isEmpty()) {\n        return arr;\n    }\n\n    int n = arr.size();\n    k = k % n; // Handle cases where k is greater than the array length\n    if (k == 0) {\n        return arr;\n    }\n\n    List<Integer> rotated = new ArrayList<>(n);\n    for (int i = 0; i < n; i++) {\n        rotated.add(arr.get((i + k) % n));\n    }\n\n    return rotated;\n}",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 6,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5
+                ],
+                "execution_time_ms": 1989.2609119415283,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.0,
+                "issues": [
+                  "The code is written in Java, but the sandbox results indicate that it is being run as Python code.",
+                  "The code contains syntax errors and cannot be compiled or executed."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.0,
+                "correctness_rate": 0.0,
+                "quality_score": 0.4479,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.0,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 1.0,
+                  "robustness": 0.4794
+                }
+              },
+              "critic_diagnosis": {
+                "severity": 1.0,
+                "primary_failure": "runtime_crash",
+                "code_issues": [
+                  "No JSON array in stdout.\nStdout: \nStderr: Solution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n                                 ^\n  symbol:   class List\n  location: class Solution\nSolution.java:4: error: cannot find symbol\npublic List<Integer> rotateArray(List<Integer> arr, int k) {\n       "
+                ],
+                "recommended_mutations": [
+                  "fix_crash"
+                ]
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": 0,
+                "parent_fitness": 0.76386,
+                "generation_id": 1,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "#include <vector>\n#include <algorithm>\n\nstd::vector<int> rotateArray(std::vector<int>& arr, int k) {\n    if (arr.empty()) {\n        return arr;\n    }\n\n    int n = arr.size();\n    k = k % n; // Handle cases where k is greater than the array size\n\n    if (k == 0) {\n        return arr;\n    }\n\n    // Rotate the array using std::rotate\n    std::rotate(arr.rbegin(), arr.rbegin() + k, arr.rend());\n\n    return arr;\n}",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 6,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5
+                ],
+                "execution_time_ms": 2260.653495788574,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:58:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   58 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:58:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   58 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:58:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   58 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:58:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   58 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:58:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   58 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  },
+                  {
+                    "id": 5,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:58:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   58 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.0,
+                "issues": [
+                  "The code crashes on all tests.",
+                  "The error message indicates a type mismatch issue with the function signature."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.0,
+                "correctness_rate": 0.0,
+                "quality_score": 0.4508,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.0,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5076
+                }
+              },
+              "critic_diagnosis": {
+                "severity": 1.0,
+                "primary_failure": "runtime_crash",
+                "code_issues": [
+                  "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int main()’:\nsolution.cpp:58:42: error: cannot bind non-const lvalue reference of type ‘std::vector<int>&’ to an rvalue of type ‘std::vector<int>’\n   58 |                 result_json = rotateArray(args[0], args[1]);\n      |                               ~~~~~~~~~~~^~~~~~~~"
+                ],
+                "recommended_mutations": [
+                  "fix_crash"
+                ]
+              }
+            }
+          ],
+          "selection_and_breeding": {},
+          "circuit_breaker_triggered": true
+        }
+      ]
+    }
+  ],
+  "mode": "evolve",
+  "end_time": "2026-09-08T19:35:42.387049"
+}

@@ -1,0 +1,627 @@
+{
+  "start_time": "2026-09-08T19:19:36.800968",
+  "pop_size": 3,
+  "problems_evaluated": [
+    {
+      "problem_id": 1037,
+      "generations": [
+        {
+          "generation_id": 1,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "from typing import List\n\ndef find_min_difference(arr: List[int], target: int) -> int:\n    if not arr:\n        return None\n    \n    left, right = 0, len(arr) - 1\n    \n    while left < right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid\n    \n    if left == 0:\n        return 0\n    elif left == len(arr):\n        return len(arr) - 1\n    else:\n        if abs(arr[left] - target) < abs(arr[left - 1] - target):\n            return left\n        else:\n            return left - 1",
+              "test_results": {
+                "passed_tests": 4,
+                "total_tests": 5,
+                "failed_test_ids": [
+                  0
+                ],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.02290299926244188,
+                "peak_memory_kb": 0.095703125,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "fail",
+                    "expected": "2",
+                    "actual": "1",
+                    "time_ms": 0.01207899913424626,
+                    "mem_kb": 0.072265625
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass",
+                    "time_ms": 0.003385999661986716,
+                    "mem_kb": 0.091796875
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass",
+                    "time_ms": 0.003159999323543161,
+                    "mem_kb": 0.095703125
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass",
+                    "time_ms": 0.0020980005501769483,
+                    "mem_kb": 0.091796875
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass",
+                    "time_ms": 0.0021800005924887955,
+                    "mem_kb": 0.091796875
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.8,
+                "issues": [
+                  "The code does not handle the case where the array is empty correctly. It should return None instead of None."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.727994,
+                "correctness_rate": 0.8,
+                "quality_score": 0.91,
+                "breakdown": {
+                  "correctness": 0.8,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 0.8,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "wrong_output",
+                "severity": 0.5,
+                "recommended_mutations": [
+                  "increase_reasoning_steps",
+                  "fix_edge_cases",
+                  "break_cache_loop"
+                ],
+                "priority": "medium",
+                "code_issues": [
+                  "WARNING: You generated this exact code previously and it failed. Try a fundamentally different approach."
+                ]
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "public class Solution {\n    public int findMinDifference(List<Integer> arr, int target) {\n        if (arr == null || arr.isEmpty()) {\n            throw new IllegalArgumentException(\"Input array cannot be null or empty\");\n        }\n\n        int left = 0;\n        int right = arr.size() - 1;\n\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n\n            if (arr.get(mid) == target) {\n                return mid;\n            } else if (arr.get(mid) < target) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n\n        // If the target is not found, return the index of the element closest to the target\n        if (left == 0) {\n            return 0;\n        } else if (left == arr.size()) {\n            return arr.size() - 1;\n        } else {\n            int diff1 = Math.abs(arr.get(left) - target);\n            int diff2 = Math.abs(arr.get(left - 1) - target);\n            return diff1 < diff2 ? left : left - 1;\n        }\n    }\n}",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "execution_time_ms": 2019.3147659301758,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:2: error: cannot find symbol\n    public int findMinDifference(List<Integer> arr, int target) {\n                                 ^\n  symbol:   class List\n  location: class Solution\n1 error"
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:2: error: cannot find symbol\n    public int findMinDifference(List<Integer> arr, int target) {\n                                 ^\n  symbol:   class List\n  location: class Solution\n1 error"
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:2: error: cannot find symbol\n    public int findMinDifference(List<Integer> arr, int target) {\n                                 ^\n  symbol:   class List\n  location: class Solution\n1 error"
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:2: error: cannot find symbol\n    public int findMinDifference(List<Integer> arr, int target) {\n                                 ^\n  symbol:   class List\n  location: class Solution\n1 error"
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:2: error: cannot find symbol\n    public int findMinDifference(List<Integer> arr, int target) {\n                                 ^\n  symbol:   class List\n  location: class Solution\n1 error"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.0,
+                "issues": [
+                  "The code is written in Java, but the sandbox results indicate that it is being run as Python code.",
+                  "The code contains a syntax error: 'symbol:   class List' indicates that the List class is not recognized.",
+                  "The code crashes on all tests, which is more than 20% of the tests."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.0,
+                "correctness_rate": 0.0,
+                "quality_score": 0.45,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.0,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "severity": 1.0,
+                "primary_failure": "runtime_crash",
+                "code_issues": [
+                  "No JSON array in stdout.\nStdout: \nStderr: Solution.java:2: error: cannot find symbol\n    public int findMinDifference(List<Integer> arr, int target) {\n                                 ^\n  symbol:   class List\n  location: class Solution\n1 error"
+                ],
+                "recommended_mutations": [
+                  "fix_crash"
+                ]
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "#include <vector>\n#include <climits>\n\nint findMinDifference(const std::vector<int>& arr, int target) {\n    if (arr.empty()) {\n        throw std::invalid_argument(\"Input array is empty\");\n    }\n\n    int left = 0;\n    int right = arr.size() - 1;\n\n    while (left < right) {\n        int mid = left + (right - left) / 2;\n\n        if (arr[mid] == target) {\n            return mid;\n        } else if (arr[mid] < target) {\n            left = mid + 1;\n        } else {\n            right = mid;\n        }\n    }\n\n    // If the target is not found, return the index of the element closest to the target\n    if (left == 0) {\n        return 0;\n    } else if (left == arr.size()) {\n        return arr.size() - 1;\n    } else {\n        int diff1 = std::abs(arr[left] - target);\n        int diff2 = std::abs(arr[left - 1] - target);\n        return diff1 < diff2 ? left : left - 1;\n    }\n}",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "execution_time_ms": 2193.1369304656982,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int findMinDifference(const std::vector<int>&, int)’:\nsolution.cpp:6:20: error: ‘invalid_argument’ is not a member of ‘std’\n    6 |         throw std::invalid_argument(\"Input array is empty\");\n      |                    ^~~~~~~~~~~~~~~~\nsolution.cpp:3:1: note: ‘std::invali"
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int findMinDifference(const std::vector<int>&, int)’:\nsolution.cpp:6:20: error: ‘invalid_argument’ is not a member of ‘std’\n    6 |         throw std::invalid_argument(\"Input array is empty\");\n      |                    ^~~~~~~~~~~~~~~~\nsolution.cpp:3:1: note: ‘std::invali"
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int findMinDifference(const std::vector<int>&, int)’:\nsolution.cpp:6:20: error: ‘invalid_argument’ is not a member of ‘std’\n    6 |         throw std::invalid_argument(\"Input array is empty\");\n      |                    ^~~~~~~~~~~~~~~~\nsolution.cpp:3:1: note: ‘std::invali"
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int findMinDifference(const std::vector<int>&, int)’:\nsolution.cpp:6:20: error: ‘invalid_argument’ is not a member of ‘std’\n    6 |         throw std::invalid_argument(\"Input array is empty\");\n      |                    ^~~~~~~~~~~~~~~~\nsolution.cpp:3:1: note: ‘std::invali"
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int findMinDifference(const std::vector<int>&, int)’:\nsolution.cpp:6:20: error: ‘invalid_argument’ is not a member of ‘std’\n    6 |         throw std::invalid_argument(\"Input array is empty\");\n      |                    ^~~~~~~~~~~~~~~~\nsolution.cpp:3:1: note: ‘std::invali"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.0,
+                "issues": [
+                  "The code crashes on all tests.",
+                  "The code raises an exception instead of returning None for an empty input array."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.0,
+                "correctness_rate": 0.0,
+                "quality_score": 0.45,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.0,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "severity": 1.0,
+                "primary_failure": "runtime_crash",
+                "code_issues": [
+                  "No JSON array in stdout.\nStdout: \nStderr: solution.cpp: In function ‘int findMinDifference(const std::vector<int>&, int)’:\nsolution.cpp:6:20: error: ‘invalid_argument’ is not a member of ‘std’\n    6 |         throw std::invalid_argument(\"Input array is empty\");\n      |                    ^~~~~~~~~~~~~~~~\nsolution.cpp:3:1: note: ‘std::invali"
+                ],
+                "recommended_mutations": [
+                  "fix_crash"
+                ]
+              }
+            }
+          ],
+          "selection_and_breeding": {
+            "survivors": [
+              0
+            ],
+            "killed": [],
+            "mutations": [
+              {
+                "parent_index": 0,
+                "child_index": 1,
+                "parent_genome": {
+                  "parent_id": null,
+                  "parent_fitness": 0.0,
+                  "generation_id": 0,
+                  "prompt_style": "direct",
+                  "temperature": 0.5,
+                  "reasoning_steps": 3,
+                  "system_instruction_variant": "standard",
+                  "past_code": null,
+                  "critic_feedback": null,
+                  "crossover_instruction": null
+                },
+                "child_genome": {
+                  "parent_id": 0,
+                  "parent_fitness": 0.727994,
+                  "generation_id": 0,
+                  "prompt_style": "direct",
+                  "temperature": 0.5,
+                  "reasoning_steps": 3,
+                  "system_instruction_variant": "standard",
+                  "past_code": null,
+                  "critic_feedback": null,
+                  "crossover_instruction": null
+                }
+              },
+              {
+                "parent_index": 0,
+                "child_index": 2,
+                "parent_genome": {
+                  "parent_id": null,
+                  "parent_fitness": 0.0,
+                  "generation_id": 0,
+                  "prompt_style": "direct",
+                  "temperature": 0.5,
+                  "reasoning_steps": 3,
+                  "system_instruction_variant": "standard",
+                  "past_code": null,
+                  "critic_feedback": null,
+                  "crossover_instruction": null
+                },
+                "child_genome": {
+                  "parent_id": 0,
+                  "parent_fitness": 0.727994,
+                  "generation_id": 0,
+                  "prompt_style": "direct",
+                  "temperature": 0.5,
+                  "reasoning_steps": 3,
+                  "system_instruction_variant": "standard",
+                  "past_code": null,
+                  "critic_feedback": null,
+                  "crossover_instruction": null
+                }
+              }
+            ]
+          }
+        },
+        {
+          "generation_id": 2,
+          "evaluations": [
+            {
+              "genome_index": 0,
+              "gen_genome_snapshot": {
+                "parent_id": null,
+                "parent_fitness": 0.0,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "from typing import List\n\ndef find_min_difference(arr: List[int], target: int) -> int:\n    if not arr:\n        return None\n    \n    left, right = 0, len(arr) - 1\n    \n    while left < right:\n        mid = (left + right) // 2\n        \n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid\n    \n    if left == 0:\n        return 0\n    elif left == len(arr):\n        return len(arr) - 1\n    else:\n        if abs(arr[left] - target) < abs(arr[left - 1] - target):\n            return left\n        else:\n            return left - 1",
+              "test_results": {
+                "passed_tests": 4,
+                "total_tests": 5,
+                "failed_test_ids": [
+                  0
+                ],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.02290299926244188,
+                "peak_memory_kb": 0.095703125,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "fail",
+                    "expected": "2",
+                    "actual": "1",
+                    "time_ms": 0.01207899913424626,
+                    "mem_kb": 0.072265625
+                  },
+                  {
+                    "id": 1,
+                    "status": "pass",
+                    "time_ms": 0.003385999661986716,
+                    "mem_kb": 0.091796875
+                  },
+                  {
+                    "id": 2,
+                    "status": "pass",
+                    "time_ms": 0.003159999323543161,
+                    "mem_kb": 0.095703125
+                  },
+                  {
+                    "id": 3,
+                    "status": "pass",
+                    "time_ms": 0.0020980005501769483,
+                    "mem_kb": 0.091796875
+                  },
+                  {
+                    "id": 4,
+                    "status": "pass",
+                    "time_ms": 0.0021800005924887955,
+                    "mem_kb": 0.091796875
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.8,
+                "issues": [
+                  "The code does not handle the case where the array is empty correctly. It should return None instead of None."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.727994,
+                "correctness_rate": 0.8,
+                "quality_score": 0.91,
+                "breakdown": {
+                  "correctness": 0.8,
+                  "runtime": 1.0,
+                  "memory": 1.0,
+                  "efficiency": 0.8,
+                  "complexity": 1.0,
+                  "robustness": 0.5
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "wrong_output",
+                "severity": 0.5,
+                "recommended_mutations": [
+                  "increase_reasoning_steps",
+                  "fix_edge_cases",
+                  "break_cache_loop"
+                ],
+                "priority": "medium",
+                "code_issues": [
+                  "WARNING: You generated this exact code previously and it failed. Try a fundamentally different approach."
+                ]
+              }
+            },
+            {
+              "genome_index": 1,
+              "gen_genome_snapshot": {
+                "parent_id": 0,
+                "parent_fitness": 0.727994,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "public class Solution {\n    public int findMinDifference(List<Integer> arr, int target) {\n        if (arr == null || arr.isEmpty()) {\n            throw new IllegalArgumentException(\"Input array cannot be null or empty\");\n        }\n\n        int left = 0;\n        int right = arr.size() - 1;\n\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n\n            if (arr.get(mid) == target) {\n                return mid;\n            } else if (arr.get(mid) < target) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n\n        // If the target is not found, return the index of the element closest to the target\n        if (left == 0) {\n            return 0;\n        } else if (left == arr.size()) {\n            return left - 1;\n        } else {\n            int diff1 = Math.abs(arr.get(left) - target);\n            int diff2 = Math.abs(arr.get(left - 1) - target);\n            return diff1 < diff2 ? left : left - 1;\n        }\n    }\n}",
+              "test_results": {
+                "passed_tests": 0,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "execution_time_ms": 1946.3813304901123,
+                "peak_memory_kb": 0.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:2: error: cannot find symbol\n    public int findMinDifference(List<Integer> arr, int target) {\n                                 ^\n  symbol:   class List\n  location: class Solution\n1 error"
+                  },
+                  {
+                    "id": 1,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:2: error: cannot find symbol\n    public int findMinDifference(List<Integer> arr, int target) {\n                                 ^\n  symbol:   class List\n  location: class Solution\n1 error"
+                  },
+                  {
+                    "id": 2,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:2: error: cannot find symbol\n    public int findMinDifference(List<Integer> arr, int target) {\n                                 ^\n  symbol:   class List\n  location: class Solution\n1 error"
+                  },
+                  {
+                    "id": 3,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:2: error: cannot find symbol\n    public int findMinDifference(List<Integer> arr, int target) {\n                                 ^\n  symbol:   class List\n  location: class Solution\n1 error"
+                  },
+                  {
+                    "id": 4,
+                    "status": "crash",
+                    "error": "No JSON array in stdout.\nStdout: \nStderr: Solution.java:2: error: cannot find symbol\n    public int findMinDifference(List<Integer> arr, int target) {\n                                 ^\n  symbol:   class List\n  location: class Solution\n1 error"
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": false,
+                "confidence": 0.0,
+                "issues": [
+                  "The code contains a syntax error due to the use of Python syntax in a Java file.",
+                  "The code crashes on all tests due to the syntax error."
+                ]
+              },
+              "fitness": {
+                "fitness_value": 0.0,
+                "correctness_rate": 0.0,
+                "quality_score": 0.4517,
+                "breakdown": {
+                  "correctness": 0.0,
+                  "runtime": 0.0,
+                  "memory": 1.0,
+                  "efficiency": 0.0,
+                  "complexity": 1.0,
+                  "robustness": 0.5175
+                }
+              },
+              "critic_diagnosis": {
+                "severity": 1.0,
+                "primary_failure": "runtime_crash",
+                "code_issues": [
+                  "No JSON array in stdout.\nStdout: \nStderr: Solution.java:2: error: cannot find symbol\n    public int findMinDifference(List<Integer> arr, int target) {\n                                 ^\n  symbol:   class List\n  location: class Solution\n1 error"
+                ],
+                "recommended_mutations": [
+                  "fix_crash"
+                ]
+              }
+            },
+            {
+              "genome_index": 2,
+              "gen_genome_snapshot": {
+                "parent_id": 0,
+                "parent_fitness": 0.727994,
+                "generation_id": 0,
+                "prompt_style": "direct",
+                "temperature": 0.5,
+                "reasoning_steps": 3,
+                "system_instruction_variant": "standard",
+                "past_code": null,
+                "critic_feedback": null,
+                "crossover_instruction": null
+              },
+              "generated_code": "#include <vector>\n#include <climits>\n#include <algorithm>\n#include <stdexcept>\n\nint findMinDifference(const std::vector<int>& arr, int target) {\n    if (arr.empty()) {\n        throw std::invalid_argument(\"Input array is empty\");\n    }\n\n    int left = 0;\n    int right = arr.size() - 1;\n\n    while (left < right) {\n        int mid = left + (right - left) / 2;\n        if (arr[mid] == target) {\n            return mid;\n        } else if (arr[mid] < target) {\n            left = mid + 1;\n        } else {\n            right = mid;\n        }\n    }\n\n    // After the loop, left should be the insertion point\n    if (left == 0) {\n        return 0;\n    } else if (left == arr.size()) {\n        return arr.size() - 1;\n    } else {\n        int diff1 = std::abs(arr[left] - target);\n        int diff2 = std::abs(arr[left - 1] - target);\n        return diff1 <= diff2 ? left : left - 1;\n    }\n}",
+              "test_results": {
+                "passed_tests": 5,
+                "total_tests": 5,
+                "failed_test_ids": [],
+                "timeout_tests": [],
+                "crash_tests": [],
+                "execution_time_ms": 0.005776999999999999,
+                "peak_memory_kb": 128.0,
+                "test_outputs": [
+                  {
+                    "id": 0,
+                    "mem_kb": 128.0,
+                    "status": "pass",
+                    "time_ms": 0.002238
+                  },
+                  {
+                    "id": 1,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.001055
+                  },
+                  {
+                    "id": 2,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000972
+                  },
+                  {
+                    "id": 3,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000613
+                  },
+                  {
+                    "id": 4,
+                    "mem_kb": 0.0,
+                    "status": "pass",
+                    "time_ms": 0.000899
+                  }
+                ]
+              },
+              "validation": {
+                "is_correct": true,
+                "confidence": 1.0,
+                "issues": []
+              },
+              "fitness": {
+                "fitness_value": 0.934589,
+                "correctness_rate": 1.0,
+                "quality_score": 0.9346,
+                "breakdown": {
+                  "correctness": 1.0,
+                  "runtime": 0.9801,
+                  "memory": 0.9776,
+                  "efficiency": 0.9801,
+                  "complexity": 1.0,
+                  "robustness": 0.4901
+                }
+              },
+              "critic_diagnosis": {
+                "failure_type": "none",
+                "severity": 0.0,
+                "recommended_mutations": [],
+                "priority": "low",
+                "code_issues": []
+              }
+            }
+          ],
+          "selection_and_breeding": {},
+          "circuit_breaker_triggered": true
+        }
+      ]
+    }
+  ],
+  "mode": "evolve",
+  "end_time": "2026-09-08T19:21:29.177241"
+}

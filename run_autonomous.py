@@ -109,22 +109,32 @@ def _get_next_problem_id() -> int:
 async def generate_problems(client: EvoClient, n: int, start_id: int) -> list[dict]:
     """
     Uses the LLM to autonomously generate `n` programming problems.
-    Generates ONE problem per API call to avoid token-limit truncation.
+    Enforces a ratio (e.g., 80% unique, 10% same topic, 10% identical).
     """
-    print(f"\n[Autonomous] Asking LLM to generate {n} compatible problem(s) (one at a time)...")
+    import random
+    import copy
+    
+    print(f"\n[Autonomous] Asking LLM to generate {n} compatible problem(s)...")
 
-    valid_problems = []
-    attempt_id = start_id
+    if n >= 3:
+        num_identical = max(1, round(n * 0.1))
+        num_same_topic = max(1, round(n * 0.1))
+    else:
+        num_identical = 0
+        num_same_topic = 0
+    num_unique = max(0, n - num_identical - num_same_topic)
+    
+    print(f"[Autonomous] Target Plan: {num_unique} Unique, {num_same_topic} Same-Topic, {num_identical} Identical")
 
-    for i in range(n):
-        print(f"  -> Generating problem {i + 1}/{n} (ID will be {attempt_id})...")
-
+    unique_titles = []
+    
+    async def _gen_one(prompt_suffix: str, attempt_idx: int) -> dict:
         user_prompt = (
             f"Generate exactly 1 programming problem following the rules above. "
-            f"Use a fresh category and difficulty between 1-7. "
-            f"Return ONLY a JSON object (not an array) for that single problem."
+            f"Use a difficulty between 1-7. "
+            f"Return ONLY a JSON object (not an array) for that single problem.\n"
+            f"{prompt_suffix}"
         )
-
         try:
             response = await client.create_completion(
                 messages=[
@@ -133,46 +143,75 @@ async def generate_problems(client: EvoClient, n: int, start_id: int) -> list[di
                 ],
                 temperature=0.7
             )
-
             content = response["content"].strip()
-
-            # Strip markdown code blocks if the LLM wrapped the JSON
             if "```json" in content:
                 content = content.split("```json")[1].split("```")[0].strip()
             elif "```" in content:
                 content = content.split("```")[1].split("```")[0].strip()
 
-            # The LLM might return an array with one item or a plain object
             parsed = json.loads(content)
-            if isinstance(parsed, list):
-                if not parsed:
-                    print(f"    [Autonomous] Empty response for problem {i + 1}. Skipping.")
-                    continue
-                p = parsed[0]
-            else:
-                p = parsed
-
-            # Validate minimum required fields
+            p = parsed[0] if isinstance(parsed, list) and parsed else parsed
+            
             if not all(k in p for k in ("title", "description", "tests", "function_signature")):
-                print(f"    [Autonomous] Problem {i + 1} missing required fields. Skipping.")
-                continue
-
+                print(f"    [Autonomous] Attempt {attempt_idx} missing required fields. Skipping.")
+                return None
             if len(p.get("tests", [])) < 3:
-                print(f"    [Autonomous] Problem {i + 1} has too few tests ({len(p.get('tests', []))}). Skipping.")
-                continue
-
-            # Assign sequential ID, ignoring whatever the LLM put
-            p["id"] = attempt_id
-            valid_problems.append(p)
-            print(f"    [OK] '{p.get('title')}' -> ID: {attempt_id}")
-            attempt_id += 1
-
-        except json.JSONDecodeError as e:
-            print(f"    [Autonomous] JSON error for problem {i + 1}: {e}. Skipping.")
-            with open(f"failed_problem_{i + 1}.txt", "w", encoding="utf-8") as f:
-                f.write(content)
+                print(f"    [Autonomous] Attempt {attempt_idx} has too few tests. Skipping.")
+                return None
+            return p
         except Exception as e:
-            print(f"    [Autonomous] Unexpected error for problem {i + 1}: {e}. Skipping.")
+            print(f"    [Autonomous] Error on attempt {attempt_idx}: {e}")
+            return None
+
+    unique_problems = []
+    for i in range(num_unique):
+        print(f"  -> Generating Unique problem {i + 1}/{num_unique}...")
+        avoid_str = ""
+        if unique_titles:
+            avoid_str = f"CRITICAL: Do NOT generate problems similar to these existing ones: {', '.join(unique_titles[-10:])}"
+        p = await _gen_one(f"Use a fresh category. {avoid_str}", i + 1)
+        if p:
+            unique_problems.append(p)
+            unique_titles.append(p.get("title", "Unknown"))
+            print(f"    [OK] '{p.get('title')}'")
+
+    same_topic_problems = []
+    for i in range(num_same_topic):
+        print(f"  -> Generating Same-Topic problem {i + 1}/{num_same_topic}...")
+        base_title = random.choice(unique_titles) if unique_titles else "array manipulation"
+        prompt = f"CRITICAL: Generate a problem related to the same topic/category as '{base_title}', but it MUST be a completely different problem."
+        p = await _gen_one(prompt, i + 1 + num_unique)
+        if p:
+            same_topic_problems.append(p)
+            unique_titles.append(p.get("title", "Unknown"))
+            print(f"    [OK] '{p.get('title')}' (Related to: {base_title})")
+
+    final_list = unique_problems + same_topic_problems
+    random.shuffle(final_list)
+    
+    identical_problems = []
+    for i in range(num_identical):
+        if final_list:
+            base_prob = random.choice(final_list)
+            dup = copy.deepcopy(base_prob)
+            identical_problems.append(dup)
+
+    if identical_problems:
+        # Space them out evenly across the final list
+        spacing = max(1, len(final_list) // len(identical_problems))
+        for i, p in enumerate(identical_problems):
+            insert_idx = min(len(final_list), (i * spacing) + (spacing // 2))
+            final_list.insert(insert_idx, p)
+            print(f"  -> Injected Identical problem (Clone of '{p.get('title')}') at index {insert_idx}")
+
+    # Final ID assignment
+    valid_problems = []
+    attempt_id = start_id
+    for p in final_list:
+        new_p = copy.deepcopy(p)
+        new_p["id"] = attempt_id
+        valid_problems.append(new_p)
+        attempt_id += 1
 
     print(f"[Autonomous] {len(valid_problems)}/{n} valid problem(s) generated.")
     return valid_problems
