@@ -22,8 +22,8 @@ class EvoClient:
     """
     EvoClient handles calling LLM APIs asynchronously with a 3-tier fallback chain:
 
-        Tier 1: Groq Cloud (4 rotating API keys — fast primary)
-        Tier 2: Ollama Local (unlimited, no rate limits, completely local fallback)
+        Tier 1: Ollama Local (unlimited, no rate limits, completely local primary)
+        Tier 2: Groq Cloud (4 rotating API keys — fast fallback)
         Tier 3: OpenRouter Cloud (cloud safety net)
 
     Built-in features: rate-limiting, tenacity-based retries, round-robin key
@@ -49,10 +49,10 @@ class EvoClient:
                 base_url=self.ollama_base_url
             )
             logger.info(
-                f"[Tier 2] Ollama Local: initialized → {self.ollama_base_url}, model={self.ollama_model}"
+                f"[Tier 1] Ollama Local: initialized → {self.ollama_base_url}, model={self.ollama_model}"
             )
         else:
-            logger.warning("[Tier 2] Ollama: OLLAMA_MODEL not set, local fallback disabled.")
+            logger.warning("[Tier 1] Ollama: OLLAMA_MODEL not set, local primary disabled.")
 
         # ── Tier 2: Groq ─────────────────────────────────────────────────────
         keys_str = os.getenv("GROQ_API_KEYS", "")
@@ -83,9 +83,9 @@ class EvoClient:
                     base_url="https://api.groq.com/openai/v1"
                 )
                 self.groq_clients.append(client)
-            logger.info(f"[Tier 1] Groq: {len(self.groq_clients)} key(s) loaded, model={self.groq_model}")
+            logger.info(f"[Tier 2] Groq: {len(self.groq_clients)} key(s) loaded, model={self.groq_model}")
         else:
-            logger.warning("[Tier 1] Groq: No valid API keys or model configured.")
+            logger.warning("[Tier 2] Groq: No valid API keys or model configured.")
 
         # ── Tier 3: OpenRouter ────────────────────────────────────────────────
         self.openrouter_key = os.getenv("OPENROUTER_API_KEY", "")
@@ -130,13 +130,53 @@ class EvoClient:
         total_input_chars = sum(len(m.get("content", "")) for m in messages)
         estimated_tokens = int(total_input_chars / 4) + (max_tokens or 500)
 
-        # ── Tier 1: Groq (round-robin across keys, 2 full passes) ────────────
+        # ── Tier 1: Ollama Local (Primary) ─────────────────────────
+        if self.ollama_client:
+            logger.info(f"Attempting completion → Tier 1: Ollama Local (model={self.ollama_model})")
+            try:
+                response = await self.ollama_client.chat.completions.create(
+                    model=self.ollama_model,
+                    messages=messages,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    **kwargs
+                )
+
+                if not getattr(response, "choices", None):
+                    raise RuntimeError("Ollama returned empty choices.")
+
+                # Ollama doesn't always return usage, so default gracefully
+                usage = getattr(response, "usage", None)
+                input_tokens = usage.prompt_tokens if usage else 0
+                output_tokens = usage.completion_tokens if usage else 0
+
+                self.budget_tracker.record_call(
+                    provider="ollama_local",
+                    model=self.ollama_model,
+                    input_tokens=input_tokens,
+                    output_tokens=output_tokens
+                )
+
+                logger.info(f"✓ Completion via Ollama Local (model={self.ollama_model})")
+                return {
+                    "provider": "ollama_local",
+                    "model": self.ollama_model,
+                    "content": response.choices[0].message.content,
+                    "input_tokens": input_tokens,
+                    "output_tokens": output_tokens
+                }
+
+            except Exception as e:
+                logger.warning(f"Ollama Local failed: {e}. Falling back to Tier 2 (Groq)...")
+                last_exception = e
+
+        # ── Tier 2: Groq (round-robin across keys, 2 full passes) ────────────
         for groq_pass in range(2):
             while self.groq_clients and self.current_groq_index < len(self.groq_clients):
                 client = self.groq_clients[self.current_groq_index]
                 name = f"groq_key_{self.current_groq_index + 1}"
 
-                logger.info(f"Attempting completion → Tier 1: {name} (model={self.groq_model})")
+                logger.info(f"Attempting completion → Tier 2: {name} (model={self.groq_model})")
                 try:
                     async for attempt in AsyncRetrying(
                         stop=stop_after_attempt(3),
@@ -195,46 +235,6 @@ class EvoClient:
             if self.groq_clients and self.current_groq_index >= len(self.groq_clients) and groq_pass == 0:
                 logger.info("All Groq keys exhausted on pass 1. Resetting index for pass 2...")
                 self.current_groq_index = 0
-
-        # ── Tier 2: Ollama Local (Fallback) ─────────────────────────
-        if self.ollama_client:
-            logger.info(f"Attempting completion → Tier 2: Ollama Local (model={self.ollama_model})")
-            try:
-                response = await self.ollama_client.chat.completions.create(
-                    model=self.ollama_model,
-                    messages=messages,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                    **kwargs
-                )
-
-                if not getattr(response, "choices", None):
-                    raise RuntimeError("Ollama returned empty choices.")
-
-                # Ollama doesn't always return usage, so default gracefully
-                usage = getattr(response, "usage", None)
-                input_tokens = usage.prompt_tokens if usage else 0
-                output_tokens = usage.completion_tokens if usage else 0
-
-                self.budget_tracker.record_call(
-                    provider="ollama_local",
-                    model=self.ollama_model,
-                    input_tokens=input_tokens,
-                    output_tokens=output_tokens
-                )
-
-                logger.info(f"✓ Completion via Ollama Local (model={self.ollama_model})")
-                return {
-                    "provider": "ollama_local",
-                    "model": self.ollama_model,
-                    "content": response.choices[0].message.content,
-                    "input_tokens": input_tokens,
-                    "output_tokens": output_tokens
-                }
-
-            except Exception as e:
-                logger.warning(f"Ollama Local failed: {e}. Falling back to Tier 3 (OpenRouter)...")
-                last_exception = e
 
         # ── Tier 3: OpenRouter ────────────────────────────────────────────────
         if self.openrouter_client:

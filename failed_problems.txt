@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "category": "array manipulation",
+    "title": "Sum of Even Numbers",
+    "description": "Given a list of integers, return the sum of all even numbers in the list. If there are no even numbers, return 0.",
+    "difficulty": 2,
+    "function_signature": "def sum_even(nums: list[int]) -> int:",
+    "test_strategy": {
+      "input_types": "list of integers",
+      "inferred_ranges": "list length 0..10^5, values -10^9..10^9",
+      "planned_cases": "empty list, all odd, mix of even and odd, large numbers, single element"
+    },
+    "tests": [
+      {"id": 0, "input": "sum_even([])", "expected": "0"},
+      {"id": 1, "input": "sum_even([1, 3, 5])", "expected": "0"},
+      {"id": 2, "input": "sum_even([2, 4, 6])", "expected": "12"},
+      {"id": 3, "input": "sum_even([1, 2, 3, 4, 5])", "expected": "6"},
+      {"id": 4, "input": "sum_even([-2, -3, 7, 8])", "expected": "6"},
+      {"id": 5, "input": "sum_even([0, 1, 2])", "expected": "2"}
+    ]
+  },
+  {
+    "id": 2,
+    "category": "string processing",
+    "title": "Palindrome Check Ignoring Non-Alphanumeric",
+    "description": "Determine whether a given string is a palindrome when considering only alphanumeric characters and ignoring case. Return True if it is a palindrome, otherwise False.",
+    "difficulty": 3,
+    "function_signature": "def is_palindrome(s: str) -> bool:",
+    "test_strategy": {
+      "input_types": "string",
+      "inferred_ranges": "length 0..10^5, any Unicode characters",
+      "planned_cases": "empty string, only non-alphanumeric, mixed case palindrome, non-palindrome"
+    },
+    "tests": [
+      {"id": 0, "input": "is_palindrome(\"\")", "expected": "True"},
+      {"id": 1, "input": "is_palindrome(\"A man, a plan, a canal: Panama\")", "expected": "True"},
+      {"id": 2, "input": "is_palindrome(\"race a car\")", "expected": "False"},
+      {"id": 3, "input": "is_palindrome(\"Madam\")", "expected": "True"},
+      {"id": 4, "input": "is_palindrome(\"No lemon, no melon\")", "expected": "True"},
+      {"id": 5, "input": "is_palindrome(\"

@@ -3,6 +3,10 @@ from src.genome import GeneratorGenome, MutatorGenome
 from src.client import EvoClient
 import random
 import copy
+from src.agents.memory_agent import MemoryHistorianAgent
+
+# Load persistent memory once at module load time (static read, no LLM call).
+_AGENT_MEMORY: str = MemoryHistorianAgent.load_memory()
 
 _PROMPT_STYLES = ["direct", "chain_of_thought", "test_first", "step_by_step"]
 _SYSTEM_VARIANTS = ["standard", "expert_coder", "pedantic_reviewer"]
@@ -119,25 +123,32 @@ class MutatorAgent:
 
     async def _llm_mutate(self, diagnosis: dict, current_genome: GeneratorGenome) -> GeneratorGenome | None:
         """
-        Uses Ollama to dynamically propose a mutated GeneratorGenome based on the diagnosis.
+        Uses the LLM to dynamically propose a mutated GeneratorGenome based on the diagnosis.
+        Injects global agent memory so the mutator can draw on historical lessons.
         """
-        prompt = f"""
-        You are an AI Evolutionary Mutator.
-        Your job is to mutate the prompt engineering parameters (the 'genome') of a Generator Agent that failed to solve a problem.
+        memory_section = ""
+        if _AGENT_MEMORY:
+            memory_section = (
+                "\n\nGLOBAL AGENT MEMORY (Lessons from past runs — use these to guide your mutation):\n"
+                + _AGENT_MEMORY
+                + "\n--- END OF AGENT MEMORY ---\n"
+            )
 
-        CURRENT GENOME:
-        {json.dumps(current_genome.model_dump(), indent=2)}
-        
-        CRITIC DIAGNOSIS (Why it failed):
-        {json.dumps(diagnosis, indent=2)}
-        
-        Your task: Return a JSON object with updated parameters for the genome.
-        You may change 'temperature' (0.0 to 1.0), 'prompt_style' (direct, chain_of_thought, test_first, step_by_step), 
-        'system_instruction_variant' (standard, expert_coder, pedantic_reviewer), and 'reasoning_steps' (int).
-        You can also append specific advice to 'critic_feedback' to guide the agent next time.
+        prompt = f"""You are an AI Evolutionary Mutator.
+Your job is to mutate the prompt engineering parameters (the 'genome') of a Generator Agent that failed to solve a problem.
 
-        Respond ONLY with a valid JSON object matching the current genome structure. Do not include markdown formatting or extra text.
-        """
+CURRENT GENOME:
+{json.dumps(current_genome.model_dump(), indent=2)}
+
+CRITIC DIAGNOSIS (Why it failed):
+{json.dumps(diagnosis, indent=2)}{memory_section}
+Your task: Return a JSON object with updated parameters for the genome.
+You may change 'temperature' (0.0 to 1.0), 'prompt_style' (direct, chain_of_thought, test_first, step_by_step), 
+'system_instruction_variant' (standard, expert_coder, pedantic_reviewer), and 'reasoning_steps' (int).
+You can also append specific advice to 'critic_feedback' to guide the agent next time.
+
+Respond ONLY with a valid JSON object matching the current genome structure. Do not include markdown formatting or extra text.
+"""
         
         response = await self.client.create_completion(
             messages=[{"role": "user", "content": prompt}],

@@ -1,0 +1,69 @@
+---
+[MEMORY ENTRY - 2026-09-08 14:13:09]
+Problem: Problem 5 | Result: SOLVED | Best Fitness: 0.9000
+
+All three genomes used a **direct prompt style** with **temperature 0.5** and the **standard variant**. No mutations were applied, yet each achieved perfect pass‑rate (6/6) and the highest fitness (0.9000). The uniform success indicates that the problem was well‑matched to a straightforward, deterministic solution; the EvoCode engine did not need exploratory changes. Because no crashes or timeouts occurred, the baseline configuration proved stable and efficient.
+
+No strategies failed in this run—every candidate passed all test cases, and the fitness plateau was reached in a single generation. The lack of mutation pressure suggests that for tightly scoped tasks, preserving the original prompt is preferable to aggressive genetic variation.
+
+Cross‑language insights were not exercised; the solution remained within the original language context.
+
+LESSON: For problems with clear, deterministic specifications, start with a direct, low‑temperature prompt and avoid unnecessary mutations.  
+LESSON: When the initial fitness already meets the target, halt evolution early to save compute cycles.
+# SOURCE_REPORT:08092026_19-43-09.json
+
+---
+[MEMORY ENTRY - 2026-09-08 19:42:13]
+Problem: Problem 4 | Result: SOLVED | Best Fitness: 0.9499
+
+The winning genomes all used a **direct prompting style** with the default **standard variant** and a moderate temperature of **0.5**. No explicit mutations were applied, yet they achieved a perfect 6/6 pass rate, indicating that the baseline prompt already captured the required logic and edge‑case handling. Maintaining the original structure (no “simplify_logic” or “fix_edge_cases” tweaks) proved crucial; the unmutated genomes were both fast and crash‑free.
+
+The third genome attempted aggressive **logic simplification** and **edge‑case fixes**, which introduced subtle timing bottlenecks that manifested as six timeouts and a fitness of 0.0. This demonstrates that premature pruning of conditionals can break hidden performance constraints, even when functional correctness seems intact.
+
+No cross‑language transfer was recorded in this run, but the pattern suggests that the direct style is language‑agnostic and can be reused across implementations without modification.
+
+LESSON: Preserve the original direct prompt when it already yields full test coverage; unnecessary logic simplifications can cause timeouts.  
+LESSON: Use a moderate temperature (≈0.5) to balance deterministic correctness with enough variability for edge‑case discovery.
+# SOURCE_REPORT:08092026_19-42-13.json
+
+---
+[MEMORY ENTRY - 2026-09-08 14:10:57]
+Problem: Problem ID 3 | Result: SOLVED | Best Fitness: 0.9500
+
+The winning genome used a **direct prompt style** with **temperature 0.5** and no explicit mutations. This minimal‑overhead approach produced clean, deterministic code that passed all six test cases, yielding the highest fitness (0.95). The “standard” variant (no exotic prompting tricks) proved sufficient; extra reasoning steps or edge‑case scaffolding were unnecessary for this task.
+
+Genome 1 added **increase_reasoning_steps** and **fix_edge_cases**. While edge‑case handling raised its pass count from 0 to 4, the extra reasoning steps introduced verbosity that reduced overall correctness, resulting in a lower fitness (0.5694). Genome 2 applied **simplify_logic** together with edge‑case fixes, but the aggressive simplification caused every test to timeout, giving a fitness of 0.0. This shows that over‑simplifying logic can cripple runtime performance.
+
+No cross‑language transfers were observed in this run.
+
+LESSON: For straightforward algorithmic problems, a concise direct prompt at moderate temperature often outperforms added reasoning layers or aggressive simplifications.  
+LESSON: Edge‑case patches help only when the core logic remains sound; avoid mutations that strip essential control flow or inflate execution time.
+# SOURCE_REPORT:08092026_19-40-57.json
+
+---
+[MEMORY ENTRY - 2026-09-08 14:09:44]
+Problem: Problem ID 2 | Result: SOLVED | Best Fitness: 0.9500
+All three genomes used a plain “direct” prompting style with a moderate temperature (0.5) and the standard variant, and none applied any mutations. This minimalist configuration achieved perfect test coverage (7/7) and the highest fitness (0.9500) without crashes or timeouts. The lack of mutation overhead kept the solutions stable and allowed the evaluator to focus on core logic rather than experimental tweaks.
+
+No strategies failed in this run; the uniform approach across the population eliminated variance that could cause edge‑case errors. Because every genome succeeded, there were no crash or timeout patterns to analyze.
+
+Cross‑language insight: not applicable—solutions were generated in a single language and required no porting.
+
+LESSON: For straightforward algorithmic tasks, a direct prompt with temperature ≈0.5 and no mutations often yields the best balance of correctness and fitness.  
+LESSON: Reserve mutations for later generations when baseline solutions plateau; unnecessary changes can introduce instability without benefit.
+# SOURCE_REPORT:08092026_19-39-44.json
+
+---
+[MEMORY ENTRY - 2026-09-08 19:38:40]
+Problem: Unknown (ID 1) | Result: UNSOLVED | Best Fitness: 0.0000
+
+The only mutation that ever stopped runtime crashes was the combination of **simplify_logic** and **fix_edge_cases** applied to Genome 2 in Generation 2 (and repeated in Gen 3). These changes removed all 7 crashes, proving that the original code had fundamental logical errors and unhandled inputs. However, the same genome then timed out on every test case (7 timeouts), indicating that the simplifications introduced either infinite loops or overly expensive operations.
+
+All other genomes relied solely on **fix_crash**, which repeatedly patched the immediate exception but left the underlying flaw untouched; they crashed on every run across all generations. No temperature or style variations were explored—every genome remained in the “direct” style with a temperature of 0.5, so the search space stayed narrow.
+
+No cross‑language transfer occurred in this run; all attempts stayed within the same language/environment.
+
+LESSON: Eliminate crashes first, then profile the resulting code to identify why it now times out; a crash‑free solution that times out is still a failure.
+LESSON: Diversify prompt styles and temperature settings after a crash‑free baseline is achieved to explore alternative algorithmic structures that may reduce runtime.
+# SOURCE_REPORT:08092026_19-38-40.json
+

@@ -1,6 +1,11 @@
 import json
 from src.client import EvoClient
 from src.genome import GeneratorGenome
+from src.agents.memory_agent import MemoryHistorianAgent
+
+# Load the persistent agent memory once at module load time.
+# This is a static read — fast, no LLM call required.
+_AGENT_MEMORY: str = MemoryHistorianAgent.load_memory()
 
 class GeneratorAgent:
     """
@@ -45,25 +50,40 @@ class GeneratorAgent:
     def _build_system_prompt(self, genome: GeneratorGenome) -> str:
         base_prompt = f"You are an expert software engineer specializing in {self.language}.\n"
         invalid_rule = self._get_invalid_input_instruction()
-        
+
         if genome.system_instruction_variant == "expert_coder":
-            return base_prompt + (
+            core = (
                 "Provide only the robust, clean, and fully correct code implementation. "
                 "Pay close attention to ALL edge cases including empty inputs, negative values, "
                 f"and cases where no solution exists. {invalid_rule}"
             )
-        if genome.system_instruction_variant == "pedantic_reviewer":
-            return base_prompt + (
+        elif genome.system_instruction_variant == "pedantic_reviewer":
+            core = (
                 "You are a meticulous code reviewer and software engineer. "
                 "Before writing any code, carefully reason about every edge case: "
                 "empty inputs, negative values, no-solution cases, duplicate values, and boundary conditions. "
                 f"{invalid_rule}"
             )
-        # standard
-        return base_prompt + (
-            "You are a code generation assistant. Output code for the given problem. "
-            f"{invalid_rule}"
-        )
+        else:
+            # standard
+            core = (
+                "You are a code generation assistant. Output code for the given problem. "
+                f"{invalid_rule}"
+            )
+
+        prompt = base_prompt + core
+
+        # Inject global historical memory if available.
+        # This gives the agent context about what has worked and failed in past runs.
+        if _AGENT_MEMORY:
+            prompt += (
+                "\n\n--- GLOBAL AGENT MEMORY (Lessons from Past Runs) ---\n"
+                + _AGENT_MEMORY
+                + "\n--- END OF AGENT MEMORY ---\n"
+                "Use the lessons above to guide your approach and avoid known failure patterns."
+            )
+
+        return prompt
 
     def _build_user_prompt(self, problem: dict, genome: GeneratorGenome, template: str | None) -> str:
         prompt = f"Problem: {problem.get('title', 'Unknown')}\n{problem.get('description', '')}\n\n"
