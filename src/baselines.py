@@ -21,7 +21,7 @@ class BaselineRunner:
         for problem in problems:
             for iteration in range(3):
                 code = await self.generator.solve(problem, genome)
-                results = self.sandbox.run(code, problem.get("tests", []))
+                results = self.sandbox.run(code, problem.get("tests", []), agent_id="BASELINE")
                 if results["passed_tests"] == results["total_tests"] and results["total_tests"] > 0:
                     print(f"Problem {problem.get('id')} solved at iteration {iteration}")
                     break
@@ -32,7 +32,7 @@ class BaselineRunner:
         for problem in problems:
             for iteration in range(10):
                 code = await self.generator.solve(problem, genome)
-                results = self.sandbox.run(code, problem.get("tests", []))
+                results = self.sandbox.run(code, problem.get("tests", []), agent_id="BASELINE")
                 if results["passed_tests"] == results["total_tests"] and results["total_tests"] > 0:
                     print(f"Problem {problem.get('id')} solved at iteration {iteration}")
                     break
@@ -48,7 +48,7 @@ class BaselineRunner:
                     prompt_style=random.choice(["direct", "chain_of_thought", "test_first", "step_by_step"])
                 )
                 code = await self.generator.solve(problem, genome)
-                results = self.sandbox.run(code, problem.get("tests", []))
+                results = self.sandbox.run(code, problem.get("tests", []), agent_id="BASELINE")
                 if results["passed_tests"] == results["total_tests"] and results["total_tests"] > 0:
                     print(f"Problem {problem.get('id')} solved at iteration {iteration}")
                     break

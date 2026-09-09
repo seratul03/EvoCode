@@ -136,7 +136,7 @@ class EvoFlowOrchestrator:
                 all_tests = problem.get("tests", []) + extra_tests
 
                 # 4. Sandbox with full test suite (fixed + ephemeral) wrapped in to_thread
-                test_results = await asyncio.to_thread(self.sandbox.run, code, all_tests, language=generator.language, template=template)
+                test_results = await asyncio.to_thread(self.sandbox.run, code, all_tests, language=generator.language, template=template, agent_id=f"EVO_{generator.language.upper()}")
                 passed = test_results["passed_tests"]
                 total = test_results["total_tests"]
                 print(f"      [Sandbox] Passed {passed}/{total} tests "

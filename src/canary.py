@@ -28,7 +28,7 @@ class CanaryPipeline:
         print(f"    [Canary] Validating proposed mutation ({proposed_genome.reasoning.planning_strategy}, temp={proposed_genome.temperature:.2f})...")
         
         # Create a temporary agent
-        agent = GeneratorAgent(self.client, language=language)
+        agent = GeneratorAgent(self.client, language=language, agent_id="CANARY")
         
         for problem in self.canary_suite:
             try:
@@ -36,7 +36,7 @@ class CanaryPipeline:
                 test_results = self.sandbox.run(
                     code, 
                     problem.get("tests", []), 
-                    language=language, 
+                    language=language, agent_id="CANARY", 
                     template=problem.get("function_signature")
                 )
                 
