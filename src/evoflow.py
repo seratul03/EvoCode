@@ -14,10 +14,12 @@ from src.agents.code_validator import CodeValidatorAgent
 from src.agents.critic import CriticAgent
 from src.agents.mutator import MutatorAgent
 from src.agents.template import TemplateAgent
+from src.agents.hypothesis_engine import HypothesisEngine
 from src.canary import CanaryPipeline
 
 import ast
 from src.genome import AgentGenome, CriticGenome, MutatorGenome, EvaluatorGenome
+from src.evolution_trigger import TriggerMonitor
 
 def _normalize_code(code: str) -> str:
     try:
@@ -41,6 +43,7 @@ class EvoFlowOrchestrator:
         self.sandbox = Sandbox(timeout_seconds=15)
         self.fitness_scorer = FitnessScorer()
         self.property_tester = PropertyTester()   # Layer 2
+        self.trigger_monitor = TriggerMonitor()
 
         # 3 distinct base agents for generation
         self.agent_names = ["Evo_py", "Evo_java", "Evo_Cpp"]
@@ -56,6 +59,9 @@ class EvoFlowOrchestrator:
 
         # Template Agent — isolated call before any generator runs
         self.template_agent = TemplateAgent(self.client)
+        
+        # Hypothesis Engine
+        self.hypothesis_engine = HypothesisEngine(self.client)
 
         self.validator = CodeValidatorAgent(self.client)
         self.critic = CriticAgent()
@@ -577,6 +583,27 @@ class EvoFlowOrchestrator:
                 if gen < num_generations - 1:
                     await self.select_and_breed(gen, results, problem_id, gen_report, mode)
                     
+            # After finishing the problem (all generations), feed the best final result to TriggerMonitor
+            if results:
+                best_final_result = max(results, key=lambda r: r["fitness"])
+                is_passed = best_final_result.get("passed_tests", 0) == best_final_result.get("total_tests", -1) and best_final_result.get("total_tests", 0) > 0
+                agent_id = f"EVO_{best_final_result['language'].upper()}"
+                category = problem.get("category", "general")
+                
+                self.trigger_monitor.add_result(agent_id, category, best_final_result["fitness"], is_passed)
+                should_trigger, reason = self.trigger_monitor.evaluate(agent_id)
+                
+                if should_trigger:
+                    print(f"  [Evolution Trigger] FIRED for {agent_id}! Objective: {reason.get('objective')}")
+                    # Phase 5: Formulate hypothesis
+                    current_genome = best_final_result["gen_genome"]
+                    print(f"  [HypothesisEngine] Formulating hypothesis for {agent_id}...")
+                    hypothesis = await self.hypothesis_engine.generate_hypothesis(agent_id, reason, current_genome)
+                    print(f"  [HypothesisEngine] Output: {hypothesis}")
+                    
+                    reason["hypothesis_data"] = hypothesis
+                    problem_report["evolution_trigger"] = reason
+            
             self.run_report["problems_evaluated"].append(problem_report)
             
         # Write the final JSON report at the end of the run
