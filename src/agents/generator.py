@@ -1,6 +1,6 @@
 import json
 from src.client import EvoClient
-from src.genome import GeneratorGenome
+from src.genome import AgentGenome
 from src.agents.memory_agent import MemoryHistorianAgent
 
 # Load the persistent agent memory once at module load time.
@@ -26,11 +26,11 @@ class GeneratorAgent:
             return "If no valid solution exists for an input, and you are returning a pointer or std::optional, return nullptr or std::nullopt. If you MUST return a primitive (like int), throw std::invalid_argument. Do NOT return nullptr for primitive types."
         return "If no valid solution exists, return None/null."
 
-    async def solve(self, problem: dict, genome: GeneratorGenome, template: str | None = None) -> str:
+    async def solve(self, problem: dict, genome: AgentGenome, template: str | None = None) -> str:
         """
         Args:
             problem:  The problem dict.
-            genome:   The current GeneratorGenome.
+            genome:   The current AgentGenome.
             template: (Optional) A pre-filled function skeleton from TemplateAgent.
                       If provided, the generator is asked to fill in ONLY the body.
                       The generator has no knowledge of how the template was created.
@@ -47,7 +47,7 @@ class GeneratorAgent:
         )
         return self._extract_code(response["content"])
 
-    def _build_system_prompt(self, genome: GeneratorGenome) -> str:
+    def _build_system_prompt(self, genome: AgentGenome) -> str:
         base_prompt = f"You are an expert software engineer specializing in {self.language}.\n"
         invalid_rule = self._get_invalid_input_instruction()
 
@@ -85,7 +85,7 @@ class GeneratorAgent:
 
         return prompt
 
-    def _build_user_prompt(self, problem: dict, genome: GeneratorGenome, template: str | None) -> str:
+    def _build_user_prompt(self, problem: dict, genome: AgentGenome, template: str | None) -> str:
         prompt = f"Problem: {problem.get('title', 'Unknown')}\n{problem.get('description', '')}\n\n"
 
         invalid_rule = self._get_invalid_input_instruction()

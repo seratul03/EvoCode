@@ -1,6 +1,6 @@
 from src.client import EvoClient
 from src.agents.generator import GeneratorAgent
-from src.genome import GeneratorGenome
+from src.genome import AgentGenome
 from src.sandbox import Sandbox
 
 class BaselineRunner:
@@ -17,7 +17,7 @@ class BaselineRunner:
 
     async def run_baseline_a(self, problems: list[dict]):
         print("Running Baseline A (3 iterations)...")
-        genome = GeneratorGenome()
+        genome = AgentGenome()
         for problem in problems:
             for iteration in range(3):
                 code = await self.generator.solve(problem, genome)
@@ -28,7 +28,7 @@ class BaselineRunner:
 
     async def run_baseline_b(self, problems: list[dict]):
         print("Running Baseline B (10 iterations)...")
-        genome = GeneratorGenome()
+        genome = AgentGenome()
         for problem in problems:
             for iteration in range(10):
                 code = await self.generator.solve(problem, genome)
@@ -43,7 +43,7 @@ class BaselineRunner:
         for problem in problems:
             for iteration in range(10): # matched attempts
                 # Random genome
-                genome = GeneratorGenome(
+                genome = AgentGenome(
                     temperature=random.random(),
                     prompt_style=random.choice(["direct", "chain_of_thought", "test_first", "step_by_step"])
                 )

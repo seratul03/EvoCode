@@ -6,42 +6,51 @@ class BaseGenome(BaseModel):
     parent_fitness: float = Field(default=0.0, description="Fitness of the parent genome.")
     generation_id: int = Field(default=0, description="The generation in which this genome was created.")
 
-class GeneratorGenome(BaseGenome):
+class ReasoningGenes(BaseModel):
+    planning_strategy: str = Field(default="direct", description="e.g., 'direct', 'step_by_step', 'tree_of_thought'")
+    reasoning_depth: int = Field(default=3, ge=0, description="Number of explicit reasoning steps.")
+    self_reflection_policy: str = Field(default="on_failure", description="e.g., 'none', 'on_failure', 'always'")
+
+class CodingGenes(BaseModel):
+    algorithm_selection_strategy: str = Field(default="optimize_first", description="e.g., 'brute_force_first', 'optimize_first'")
+    implementation_strategy: str = Field(default="modular", description="e.g., 'modular', 'monolithic'")
+    language_specific_policy: str = Field(default="standard", description="e.g., 'standard', 'idiomatic', 'secure'")
+
+class VerificationGenes(BaseModel):
+    test_generation_policy: str = Field(default="comprehensive", description="e.g., 'none', 'edge_cases_only', 'comprehensive'")
+    verification_depth: int = Field(default=5, ge=0, description="Number of test cases to generate or depth of verification.")
+    failure_diagnosis_strategy: str = Field(default="logical_trace", description="e.g., 'syntax_only', 'logical_trace'")
+
+class LearningGenes(BaseModel):
+    memory_retrieval_strategy: str = Field(default="recent_only", description="e.g., 'recent_only', 'similarity_search'")
+    experience_prioritization: str = Field(default="balanced", description="e.g., 'successes', 'failures', 'balanced'")
+
+class EvolutionGenes(BaseModel):
+    experimentation_aggressiveness: float = Field(default=0.1, ge=0.0, le=1.0, description="Probability or degree of mutation during self-evolution.")
+    evidence_threshold: int = Field(default=3, ge=1, description="Number of failures required to trigger evolution.")
+    modification_scope_preference: str = Field(default="parameters_only", description="e.g., 'parameters_only', 'logic_rewrite'")
+
+class AgentGenome(BaseGenome):
     """
-    Genome for the LLM-based Generator agent.
-    Mutates to find the optimal code generation strategy.
+    The new, multi-domain genome representing the agent's true evolvable intelligence.
     """
-    prompt_style: str = Field(
-        default="direct",
-        description="The style of the prompt: 'direct', 'chain_of_thought', 'test_first', 'step_by_step'."
-    )
-    temperature: float = Field(
-        default=0.5,
-        ge=0.0,
-        le=1.0,
-        description="LLM temperature setting."
-    )
-    reasoning_steps: int = Field(
-        default=3,
-        ge=0,
-        description="Number of explicit reasoning steps to require before coding."
-    )
-    system_instruction_variant: str = Field(
-        default="standard",
-        description="Variant of the system instruction: 'standard', 'expert_coder', 'pedantic_reviewer'."
-    )
-    past_code: str | None = Field(
-        default=None,
-        description="Previous code attempt (for reflection)."
-    )
-    critic_feedback: str | None = Field(
-        default=None,
-        description="Critic's diagnosis of the previous attempt (for reflection)."
-    )
-    crossover_instruction: str | None = Field(
-        default=None,
-        description="Instruction containing the successful logic from a winning agent in another language."
-    )
+    agent_id: str | None = Field(default=None, description="Unique identifier for the agent lineage (e.g., 'EVO_PY').")
+    version: str = Field(default="v1.0", description="Version identifier of the agent.")
+    
+    # The 5 Gene Groups
+    reasoning: ReasoningGenes = Field(default_factory=ReasoningGenes)
+    coding: CodingGenes = Field(default_factory=CodingGenes)
+    verification: VerificationGenes = Field(default_factory=VerificationGenes)
+    learning: LearningGenes = Field(default_factory=LearningGenes)
+    evolution: EvolutionGenes = Field(default_factory=EvolutionGenes)
+    
+    # Retained fields from legacy GeneratorGenome that are still needed for EvoFlow integration temporarily,
+    # or that can be migrated into memory properly later.
+    system_instruction_variant: str = Field(default="standard", description="Variant of the system instruction: 'standard', 'expert_coder', 'pedantic_reviewer'.")
+    temperature: float = Field(default=0.5, ge=0.0, le=1.0, description="LLM temperature setting.")
+    past_code: str | None = Field(default=None, description="Previous code attempt (for reflection).")
+    critic_feedback: str | None = Field(default=None, description="Critic's diagnosis of the previous attempt (for reflection).")
+    crossover_instruction: str | None = Field(default=None, description="Instruction containing the successful logic from a winning agent in another language.")
 
 class CriticGenome(BaseGenome):
     """

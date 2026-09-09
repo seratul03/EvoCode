@@ -2,7 +2,7 @@ import json
 import asyncio
 from src.agents.generator import GeneratorAgent
 from src.sandbox import Sandbox
-from src.genome import GeneratorGenome
+from src.genome import AgentGenome
 
 class CanaryPipeline:
     """
@@ -20,12 +20,12 @@ class CanaryPipeline:
             # Pick 2 fast, simple problems for the canary suite (e.g., Two Sum)
             self.canary_suite = all_problems[:2]
             
-    async def validate_mutation(self, proposed_genome: GeneratorGenome, language: str = "Python") -> bool:
+    async def validate_mutation(self, proposed_genome: AgentGenome, language: str = "Python") -> bool:
         """
         Runs the proposed genome against the canary suite.
         Returns True if it passes ALL canary tests, False otherwise.
         """
-        print(f"    [Canary] Validating proposed mutation ({proposed_genome.prompt_style}, temp={proposed_genome.temperature:.2f})...")
+        print(f"    [Canary] Validating proposed mutation ({proposed_genome.reasoning.planning_strategy}, temp={proposed_genome.temperature:.2f})...")
         
         # Create a temporary agent
         agent = GeneratorAgent(self.client, language=language)

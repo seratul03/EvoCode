@@ -17,7 +17,7 @@ from src.agents.template import TemplateAgent
 from src.canary import CanaryPipeline
 
 import ast
-from src.genome import GeneratorGenome, CriticGenome, MutatorGenome, EvaluatorGenome
+from src.genome import AgentGenome, CriticGenome, MutatorGenome, EvaluatorGenome
 
 def _normalize_code(code: str) -> str:
     try:
@@ -65,7 +65,7 @@ class EvoFlowOrchestrator:
         self.pop_size = pop_size 
 
         # Populations
-        self.pop_generator = [GeneratorGenome() for _ in range(self.pop_size)]
+        self.pop_generator = [AgentGenome() for _ in range(self.pop_size)]
         self.pop_critic = [CriticGenome() for _ in range(self.pop_size)]
         self.pop_mutator = [MutatorGenome() for _ in range(self.pop_size)]
         self.pop_evaluator = [EvaluatorGenome() for _ in range(self.pop_size)]
@@ -292,7 +292,7 @@ class EvoFlowOrchestrator:
     async def select_and_breed(self, generation_id: int, results: list, problem_id: int, gen_report: dict, mode: str = "evolve"):
         if mode == "baseline_a":
             # Zero-shot: No feedback, no mutation. Keep same blank slate genomes.
-            self.pop_generator = [GeneratorGenome() for _ in range(self.pop_size)]
+            self.pop_generator = [AgentGenome() for _ in range(self.pop_size)]
             return
 
         # --- Layer 3A: Viability Gate ---
@@ -317,7 +317,7 @@ class EvoFlowOrchestrator:
         if mode == "baseline_b":
             # Static Reflection: Pop size is 1. Feed back diagnosis and code into the same genome.
             r = results[0]
-            new_genome = GeneratorGenome(**r["gen_genome"].model_dump())
+            new_genome = AgentGenome(**r["gen_genome"].model_dump())
             new_genome.past_code = gen_report["evaluations"][0]["generated_code"]
             issues = "\n- ".join(r["diagnosis"].get("code_issues", ["Unknown issues"]))
             new_genome.critic_feedback = f"Failure type: {r['diagnosis'].get('primary_failure', 'Unknown')}\nIssues:\n- {issues}"
@@ -504,13 +504,13 @@ class EvoFlowOrchestrator:
 
         Args:
             problems:       List of problem dicts (typically test_problems.json).
-            genome_config:  Dict matching GeneratorGenome fields (from best training genome).
+            genome_config:  Dict matching AgentGenome fields (from best training genome).
             condition_name: Label for the report (e.g. 'baseline_a', 'evolve').
 
         Returns:
             A structured evaluation report dict.
         """
-        genome = GeneratorGenome(**genome_config)
+        genome = AgentGenome(**genome_config)
         self.pop_generator = [genome] * self.pop_size
         self.use_validator = False   # eval-only: no LLM validator overhead
 
@@ -552,7 +552,7 @@ class EvoFlowOrchestrator:
             print(f"==============================")
             
             # Reinitialize population for a fresh start on each problem
-            self.pop_generator = [GeneratorGenome() for _ in range(self.pop_size)]
+            self.pop_generator = [AgentGenome() for _ in range(self.pop_size)]
             
             problem_report = {
                 "problem_id": problem_id,
