@@ -1,6 +1,6 @@
 import os
 import shutil
-import pytest
+import pytest # pyright: ignore[reportMissingImports]
 from src.sandbox import Sandbox
 
 @pytest.fixture(autouse=True)

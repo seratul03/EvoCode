@@ -20,6 +20,7 @@ from src.canary import CanaryPipeline
 import ast
 from src.genome import AgentGenome, CriticGenome, MutatorGenome, EvaluatorGenome
 from src.evolution_trigger import TriggerMonitor
+from src.clone_manager import CloneManager
 
 def _normalize_code(code: str) -> str:
     try:
@@ -600,8 +601,23 @@ class EvoFlowOrchestrator:
                     print(f"  [HypothesisEngine] Formulating hypothesis for {agent_id}...")
                     hypothesis = await self.hypothesis_engine.generate_hypothesis(agent_id, reason, current_genome)
                     print(f"  [HypothesisEngine] Output: {hypothesis}")
-                    
                     reason["hypothesis_data"] = hypothesis
+
+                    # Phase 6: Create candidate clone
+                    try:
+                        clone = CloneManager.create_candidate(agent_id, current_genome, hypothesis)
+                        print(f"  [CloneManager] Candidate '{clone.candidate_id}' created. Diff: {list(clone.diff.keys())}")
+                        reason["candidate"] = {
+                            "candidate_id": clone.candidate_id,
+                            "workspace": clone.workspace_path,
+                            "parent_hash": clone.parent_hash,
+                            "candidate_hash": clone.candidate_hash,
+                            "diff": clone.diff,
+                        }
+                        # Candidate is staged — Phase 7 will decide to commit or discard after verification
+                    except Exception as e:
+                        print(f"  [CloneManager] Failed to create candidate: {e}. Skipping clone.")
+
                     problem_report["evolution_trigger"] = reason
             
             self.run_report["problems_evaluated"].append(problem_report)
