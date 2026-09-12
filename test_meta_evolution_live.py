@@ -29,6 +29,10 @@ import os
 import sys
 import shutil
 import time
+import warnings
+
+# Suppress harmless Windows asyncio pipe cleanup warning
+warnings.filterwarnings("ignore", category=ResourceWarning)
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
@@ -39,7 +43,7 @@ from src.meta_evolution.source_judge import SourceJudge
 from src.meta_evolution.referee import Referee
 from src.meta_evolution.meta_arena import MetaArena
 
-# ── Configuration ─────────────────────────────────────────────────────────────
+# -- Configuration -------------------------------------------------------------
 
 TARGET_AGENT = "src/agents/generator.py"
 BACKUP_PATH  = "src/agents/generator.py.test_backup"
@@ -49,7 +53,7 @@ BACKUP_PATH  = "src/agents/generator.py.test_backup"
 FORCE_THRESHOLD = 0.99
 
 
-# ── Display Helpers ───────────────────────────────────────────────────────────
+# -- Display Helpers -----------------------------------------------------------
 
 def banner(title: str):
     print(f"\n{'='*60}")
@@ -57,10 +61,10 @@ def banner(title: str):
     print(f"{'='*60}")
 
 def step(n: int, label: str):
-    print(f"\n[Stage {n}] ── {label} {'─'*(50 - len(label))}")
+    print(f"\n[Stage {n}] -- {label} {'-'*(50 - len(label))}")
 
 
-# ── Main Test ─────────────────────────────────────────────────────────────────
+# -- Main Test -----------------------------------------------------------------
 
 async def run_live_test():
     banner("META-EVOLUTION LIVE TEST")
@@ -72,12 +76,12 @@ async def run_live_test():
 
     # Safety backup before we do anything
     shutil.copy2(TARGET_AGENT, BACKUP_PATH)
-    print(f"\n[Safety] Backup saved → {BACKUP_PATH}")
+    print(f"\n[Safety] Backup saved -> {BACKUP_PATH}")
 
     client = EvoClient()
 
     try:
-        # ── Stage 1: Watcher ──────────────────────────────────────────────────
+        # -- Stage 1: Watcher --------------------------------------------------
         step(1, "Watcher — Checking rolling success rate")
         watcher = Watcher(
             reports_dir="structured_reports",
@@ -98,28 +102,28 @@ async def run_live_test():
                 consecutive_upgrade_failures=0,
             )
         else:
-            print(f"[Watcher] ✅ Upgrade triggered! Rate={trigger.rolling_success_rate:.1%}")
+            print(f"[Watcher] [PASS] Upgrade triggered! Rate={trigger.rolling_success_rate:.1%}")
 
-        # ── Stage 2: CloneBuilder ─────────────────────────────────────────────
-        step(2, "CloneBuilder — Generating 2 upgrade proposals")
+        # -- Stage 2: CloneBuilder ---------------------------------------------
+        step(2, "CloneBuilder - Generating 2 upgrade proposals")
         builder = CloneBuilder(client)
         path_a, path_b = await builder.build(trigger)
-        print(f"[CloneBuilder] ✅ Proposal A: {path_a}")
-        print(f"[CloneBuilder] ✅ Proposal B: {path_b}")
+        print(f"[CloneBuilder] [PASS] Proposal A: {path_a}")
+        print(f"[CloneBuilder] [PASS] Proposal B: {path_b}")
 
         # Show a preview of proposal A
         with open(path_a, "r", encoding="utf-8") as f:
             preview = f.read()[:300]
-        print(f"\n[Preview — Proposal A (first 300 chars)]:\n{preview}...\n")
+        print(f"\n[Preview - Proposal A (first 300 chars)]:\n{preview}...\n")
 
-        # ── Stage 3: SourceJudge ──────────────────────────────────────────────
-        step(3, "SourceJudge — Two LLM judges voting on best proposal")
+        # -- Stage 3: SourceJudge ----------------------------------------------
+        step(3, "SourceJudge - Two LLM judges voting on best proposal")
         judge = SourceJudge(client)
         winning_path = await judge.judge(TARGET_AGENT, path_a, path_b)
-        print(f"[SourceJudge] ✅ Winning proposal: {winning_path}")
+        print(f"[SourceJudge] [PASS] Winning proposal: {winning_path}")
 
-        # ── Stage 4: Referee ──────────────────────────────────────────────────
-        step(4, "Referee — Running safety checks on winning proposal")
+        # -- Stage 4: Referee --------------------------------------------------
+        step(4, "Referee - Running safety checks on winning proposal")
         referee = Referee()
         with open(winning_path, "r", encoding="utf-8") as f:
             winning_code = f.read()
@@ -128,16 +132,16 @@ async def run_live_test():
         print(f"[Referee] Result: {verdict}")
 
         if not verdict.passed:
-            print(f"\n[Referee] ❌ Challenger DISQUALIFIED: {verdict.reason}")
+            print(f"\n[Referee] [FAIL] Challenger DISQUALIFIED: {verdict.reason}")
             print("[Test] The Referee correctly blocked an unsafe proposal.")
             print("[Test] This is the safety system working as designed.")
             watcher.record_upgrade_result(TARGET_AGENT, succeeded=False)
             return
 
-        print(f"[Referee] ✅ Challenger passed all safety checks.")
+        print(f"[Referee] [PASS] Challenger passed all safety checks.")
 
-        # ── Stage 5: MetaArena ────────────────────────────────────────────────
-        step(5, "MetaArena — Running the Fast Duel (this takes ~2 minutes)")
+        # -- Stage 5: MetaArena ------------------------------------------------
+        step(5, "MetaArena - Running the Fast Duel (this takes ~2 minutes)")
         print("[MetaArena] Spinning up Original vs. Challenger subprocesses...")
         print("[MetaArena] Both are given 1 problem, 1 generation each.")
 
@@ -146,16 +150,16 @@ async def run_live_test():
 
         watcher.record_upgrade_result(TARGET_AGENT, succeeded=result.challenger_won)
 
-        # ── Final Result ──────────────────────────────────────────────────────
+        # -- Final Result ------------------------------------------------------
         banner("RESULT")
         print(f"  Original fitness:    {result.original_fitness:.4f}")
         print(f"  Challenger fitness:  {result.challenger_fitness:.4f}")
 
         if result.challenger_won:
-            print(f"\n  🎉 CHALLENGER WON — generator.py has been evolved!")
+            print(f"\n  [WIN] CHALLENGER WON - generator.py has been evolved!")
             print(f"  The new, improved generator.py is now active.")
         else:
-            print(f"\n  🛡️  ORIGINAL SURVIVED — generator.py is unchanged.")
+            print(f"\n  [SHIELD] ORIGINAL SURVIVED - generator.py is unchanged.")
             print(f"  The challenger was not good enough to replace the original.")
 
         print(f"\n  Backup stored at: {BACKUP_PATH}")

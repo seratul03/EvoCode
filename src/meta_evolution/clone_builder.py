@@ -1,47 +1,46 @@
 """
-CloneBuilder: Two LLM "Architect" agents that independently propose rewrites
-to a target agent's source file.
+CloneBuilder: Two LLM "Architect" agents that independently propose targeted
+improvements to a specific method in a target agent's source file.
 
-Given the contents of e.g. `src/agents/generator.py`, each Architect is
-instructed to improve it — better prompt engineering, smarter error handling,
-more robust code extraction, etc.
-
-Each proposal is saved to `src/meta_evolution/staging/` for the SourceJudge
-to evaluate. Proposals are NEVER written directly to src/agents/.
+Instead of rewriting the entire file (slow, risky), each Architect is asked
+to improve ONE specific method. The result is a small patch that is surgically
+applied to the original file. This produces a valid, testable challenger file
+in ~15-30 seconds instead of 3-5 minutes.
 """
 
 import os
+import ast
 import asyncio
+import textwrap
 from src.client import EvoClient
 from src.meta_evolution.watcher import UpgradeTrigger
 
 STAGING_DIR = os.path.join("src", "meta_evolution", "staging")
 
-ARCHITECT_SYSTEM_PROMPT = """You are an expert AI systems engineer specialising in LLM agent design.
+# The specific method to target for improvement in generator.py
+TARGET_METHOD = "_build_system_prompt"
 
-You will be given the full source code of a Python LLM agent that is part of an
-evolutionary coding framework. Your job is to propose a single, targeted improvement
-that makes this agent:
+ARCHITECT_SYSTEM_PROMPT = """You are an expert AI systems engineer specialising in LLM prompt engineering.
 
-  - Generate better LLM prompts (clearer, more structured, fewer edge-case failures)
-  - Handle responses more robustly (better parsing, fallback strategies)
-  - Use its genome configuration more effectively
-  - Recover more gracefully from API errors or malformed outputs
+You will be given one Python method from an AI coding agent. Your job is to
+propose a single targeted improvement to make the prompts it generates more
+effective — clearer structure, better edge-case handling, smarter use of the
+agent's genome configuration.
 
 STRICT RULES:
-  1. Return ONLY the complete, modified Python source file — no explanations, no markdown.
-  2. Do NOT change the class name, method signatures, or constructor parameters.
-     The rest of the system depends on these interfaces being stable.
-  3. Do NOT add new imports that are not in: os, sys, re, json, ast, copy, asyncio,
-     typing, dataclasses, logging, src (project package), openai, tenacity, dotenv.
-  4. Do NOT write to any files. Do NOT add subprocess calls.
-  5. Your improvement must be substantive — not just adding comments or renaming variables.
+  1. Return ONLY the complete, improved Python method — no explanations, no markdown fences.
+  2. Do NOT change the method signature (name, parameters, return type).
+  3. Do NOT add new imports.
+  4. Your improvement must be substantive — not just adding comments.
+  5. Keep the indentation exactly as in the original (4 spaces).
 """
 
 
 class CloneBuilder:
     """
-    Generates two independent proposals for upgrading an agent's source file.
+    Generates two independent proposals for upgrading a specific method
+    in an agent's source file. Each proposal is a patched version of the
+    original file with the target method replaced.
 
     Args:
         client: EvoClient instance for LLM calls.
@@ -53,69 +52,123 @@ class CloneBuilder:
 
     async def build(self, trigger: UpgradeTrigger) -> tuple[str, str]:
         """
-        Reads the target agent file, fires two independent LLM Architect calls,
-        saves both proposals to staging/, and returns their file paths.
+        Reads the target agent file, extracts the target method, fires two
+        concurrent LLM calls to improve it, applies the patches, saves both
+        patched files to staging/, and returns their paths.
 
         Returns:
             (path_to_proposal_a, path_to_proposal_b)
         """
-        # Read the current agent source
+        self._original_path = trigger.agent_file
         with open(trigger.agent_file, "r", encoding="utf-8") as f:
-            current_source = f.read()
+            original_source = f.read()
 
-        user_prompt = self._build_user_prompt(trigger, current_source)
+        # Extract just the target method to send to the LLM (much smaller prompt)
+        target_method_source = self._extract_method(original_source, TARGET_METHOD)
+        if not target_method_source:
+            print(f"[CloneBuilder] WARNING: Could not extract '{TARGET_METHOD}'. Using full file approach.")
+            target_method_source = original_source
 
-        print(f"[CloneBuilder] Spawning 2 Architect agents for '{trigger.agent_name}'...")
+        user_prompt = self._build_user_prompt(trigger, target_method_source)
+
+        print(f"[CloneBuilder] Spawning 2 Architect agents for '{trigger.agent_name}.{TARGET_METHOD}'...")
+        print(f"[CloneBuilder] Sending {len(target_method_source)} chars to each architect (~15-30s)...")
 
         # Fire both LLM calls concurrently
-        results = await asyncio.gather(
+        proposal_a_method, proposal_b_method = await asyncio.gather(
             self._call_architect(user_prompt, architect_id=1),
             self._call_architect(user_prompt, architect_id=2),
         )
 
-        proposal_a, proposal_b = results
+        # Apply each proposed method back into the full original file
+        patched_a = self._apply_patch(original_source, TARGET_METHOD, proposal_a_method)
+        patched_b = self._apply_patch(original_source, TARGET_METHOD, proposal_b_method)
 
         # Save proposals to staging
         path_a = os.path.join(STAGING_DIR, f"{trigger.agent_name}_proposal_a.py")
         path_b = os.path.join(STAGING_DIR, f"{trigger.agent_name}_proposal_b.py")
 
         with open(path_a, "w", encoding="utf-8") as f:
-            f.write(proposal_a)
+            f.write(patched_a)
         with open(path_b, "w", encoding="utf-8") as f:
-            f.write(proposal_b)
+            f.write(patched_b)
 
-        print(f"[CloneBuilder] Proposals saved → {path_a}, {path_b}")
+        print(f"[CloneBuilder] Proposals saved -> {path_a}, {path_b}")
         return path_a, path_b
 
     async def _call_architect(self, user_prompt: str, architect_id: int) -> str:
         print(f"[CloneBuilder] Architect {architect_id} thinking...")
-        response = await self.client.create_completion(
-            messages=[
-                {"role": "system", "content": ARCHITECT_SYSTEM_PROMPT},
-                {"role": "user", "content": user_prompt},
-            ],
-            temperature=0.7,  # slightly creative — each architect should diverge
-        )
-        code = self._extract_python(response["content"])
+        try:
+            response = await asyncio.wait_for(
+                self.client.create_completion(
+                    messages=[
+                        {"role": "system", "content": ARCHITECT_SYSTEM_PROMPT},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    temperature=0.7,
+                ),
+                timeout=120,  # 2 min max — method-level output is small
+            )
+        except asyncio.TimeoutError:
+            print(f"[CloneBuilder] Architect {architect_id} timed out. Using original method.")
+            return self._extract_method(
+                open(self._original_path).read(), TARGET_METHOD
+            ) or ""
+        code = self._clean_output(response["content"])
         print(f"[CloneBuilder] Architect {architect_id} done ({len(code)} chars).")
         return code
 
-    def _build_user_prompt(self, trigger: UpgradeTrigger, current_source: str) -> str:
+    def _build_user_prompt(self, trigger: UpgradeTrigger, method_source: str) -> str:
         return (
-            f"The agent '{trigger.agent_name}' has been performing poorly.\n"
-            f"Rolling success rate over the last {trigger.window_size} problems: "
-            f"{trigger.rolling_success_rate:.1%} (threshold is 50%).\n\n"
-            f"Here is the current source code of this agent:\n\n"
-            f"```python\n{current_source}\n```\n\n"
-            f"Please propose an improved version of this entire file. "
-            f"Return ONLY the complete Python source, no markdown fences, no explanations."
+            f"The agent '{trigger.agent_name}' has a rolling success rate of "
+            f"{trigger.rolling_success_rate:.1%} — it needs improvement.\n\n"
+            f"Here is the '{TARGET_METHOD}' method you must improve:\n\n"
+            f"{method_source}\n\n"
+            f"Return ONLY the improved method body with the same def signature. "
+            f"No markdown, no explanations."
         )
 
-    def _extract_python(self, raw: str) -> str:
-        """Strip markdown code fences if the LLM wrapped the output."""
+    def _extract_method(self, source: str, method_name: str) -> str | None:
+        """Extract a single method's full source text using AST."""
+        try:
+            tree = ast.parse(source)
+            lines = source.splitlines()
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    if node.name == method_name:
+                        start = node.lineno - 1
+                        end = node.end_lineno
+                        return "\n".join(lines[start:end])
+        except Exception:
+            pass
+        return None
+
+    def _apply_patch(self, original_source: str, method_name: str, new_method: str) -> str:
+        """Replace the target method in the original source with the new method."""
+        if not new_method or not new_method.strip():
+            return original_source  # Fallback: keep original
+
+        try:
+            tree = ast.parse(original_source)
+            lines = original_source.splitlines()
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    if node.name == method_name:
+                        start = node.lineno - 1
+                        end = node.end_lineno
+                        new_lines = lines[:start] + new_method.splitlines() + lines[end:]
+                        return "\n".join(new_lines)
+        except Exception:
+            pass
+        return original_source  # Fallback: keep original
+
+    def _clean_output(self, raw: str) -> str:
+        """Strip markdown fences if present."""
         for fence in ("```python", "```"):
             if fence in raw:
                 parts = raw.split(fence)
                 if len(parts) > 1:
                     return parts[1].split("```")[0].strip()
         return raw.strip()
+
+

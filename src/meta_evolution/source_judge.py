@@ -85,8 +85,8 @@ class SourceJudge:
         winning_path = proposal_a_path if winner == "A" else proposal_b_path
 
         print(
-            f"[SourceJudge] Votes — A: {votes['A']}, B: {votes['B']}. "
-            f"Winner: Proposal {winner} → {winning_path}"
+            f"[SourceJudge] Votes - A: {votes['A']}, B: {votes['B']}. "
+            f"Winner: Proposal {winner} -> {winning_path}"
         )
         return winning_path
 

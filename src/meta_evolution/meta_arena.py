@@ -69,7 +69,7 @@ class MetaArena:
         Returns:
             DuelResult with fitness scores and a winner flag.
         """
-        print(f"\n[MetaArena] ⚔️  FAST DUEL STARTING ⚔️")
+        print(f"\n[MetaArena] [START] FAST DUEL STARTING")
         print(f"[MetaArena] Original:   {original_path}")
         print(f"[MetaArena] Challenger: {challenger_path}")
 
@@ -96,7 +96,7 @@ class MetaArena:
         challenger_won = challenger_fitness > original_fitness
         result = DuelResult(original_fitness, challenger_fitness, challenger_won)
 
-        print(f"\n[MetaArena] 🏆 DUEL RESULT: {result}")
+        print(f"\n[MetaArena] [RESULT] DUEL RESULT: {result}")
 
         if challenger_won:
             self._promote_challenger(challenger_path, original_path)
@@ -125,11 +125,7 @@ class MetaArena:
         # Build the command
         python_exe = sys.executable
         cmd = [
-            python_exe, "run_autonomous.py",
-            "--runs", "1",
-            "--gens", "1",
-            "--disable-memory",       # Isolate the duel from historical bias
-            "--disable-collaboration", # No collaboration during the duel
+            python_exe, "src/meta_evolution/duel_runner.py"
         ]
 
         if agent_patch:
@@ -152,7 +148,7 @@ class MetaArena:
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=300)
+            stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=600)  # 10 min max
 
             if proc.returncode != 0:
                 print(f"[MetaArena] [{label}] Subprocess failed (exit {proc.returncode}).")
@@ -164,7 +160,7 @@ class MetaArena:
                 print(f"[MetaArena] [{label}] Best fitness: {fitness:.4f}")
 
         except asyncio.TimeoutError:
-            print(f"[MetaArena] [{label}] Subprocess timed out after 300s. Scoring as 0.")
+            print(f"[MetaArena] [{label}] Subprocess timed out after 600s. Scoring as 0.")
             fitness = 0.0
         finally:
             # Always restore original file if we swapped it
@@ -193,10 +189,10 @@ class MetaArena:
 
     def _promote_challenger(self, challenger_path: str, original_path: str) -> None:
         """Atomically replaces the original with the challenger."""
-        print(f"[MetaArena] 🚀 Promoting challenger → {original_path}")
+        print(f"[MetaArena] [WIN] Promoting challenger -> {original_path}")
         shutil.copy2(challenger_path, original_path)
         self._clear_staging()
-        print(f"[MetaArena] ✅ Upgrade complete. {original_path} has been evolved.")
+        print(f"[MetaArena] [PASS] Upgrade complete. {original_path} has been evolved.")
 
     def _clear_staging(self) -> None:
         """Removes all files from the staging directory."""
