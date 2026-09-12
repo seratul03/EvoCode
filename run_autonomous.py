@@ -31,6 +31,8 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 from src.client import EvoClient
 from src.evoflow import EvoFlowOrchestrator
 from src.agents.memory_agent import MemoryHistorianAgent
+from src.meta_evolution import Watcher, CloneBuilder, SourceJudge, Referee, MetaArena
+from src.meta_evolution.watcher import UpgradeTrigger
 
 
 # ─── Problem Generation ───────────────────────────────────────────────────────
@@ -219,11 +221,12 @@ async def generate_problems(client: EvoClient, n: int, start_id: int) -> list[di
 
 # ─── Main Pipeline ────────────────────────────────────────────────────────────
 
-async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool, 
+async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
                                   enable_evolution: bool = True,
                                   enable_collaboration: bool = True,
                                   enable_memory: bool = True,
-                                  single_agent_mode: bool = False):
+                                  single_agent_mode: bool = False,
+                                  skip_meta_evolution: bool = False):
     print("=" * 60)
     print("       EvoCode Autonomous Self-Training Pipeline")
     print("=" * 60)
@@ -297,9 +300,77 @@ async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
 
     print("\n" + "=" * 60)
     print("  Autonomous pipeline finished!")
-    print(f"  Reports saved to:  structured_reports/")
+    report_dir = os.environ.get("EVOCODE_REPORT_DIR", "structured_reports")
+    print(f"  Reports saved to:  {report_dir}/")
     print(f"  Memory updated at: memory/agent_memory.txt")
     print("=" * 60)
+
+    # ── Meta-Evolution Phase ──────────────────────────────────────────────────
+    if not skip_meta_evolution:
+        await _run_meta_evolution_phase(client)
+
+
+# ─── Meta-Evolution Phase Function ───────────────────────────────────────────
+
+async def _run_meta_evolution_phase(client: EvoClient) -> None:
+    """
+    Runs the Phase 17 Meta-Evolution loop after the main pipeline completes.
+
+    Steps:
+      1. Watcher checks rolling success rate.
+      2. If below threshold, CloneBuilder proposes two rewrites.
+      3. SourceJudge votes on the best proposal.
+      4. Referee inspects the winner for safety.
+      5. MetaArena runs a fast duel — Original vs. Challenger.
+      6. Winner is kept; loser is discarded.
+    """
+    print(f"\n{'='*60}")
+    print("  META-EVOLUTION PHASE")
+    print(f"{'='*60}")
+
+    watcher = Watcher(threshold=0.50, window=10, max_failures=3)
+    trigger: UpgradeTrigger | None = watcher.check()
+
+    if trigger is None:
+        print("[Meta-Evolution] Agents are healthy. No upgrade needed.")
+        return
+
+    print(f"\n[Meta-Evolution] ⚠️  Upgrade triggered for: {trigger.agent_file}")
+    print(f"[Meta-Evolution] Consecutive failures so far: {trigger.consecutive_upgrade_failures}")
+
+    # Step 1: Generate two proposals
+    builder = CloneBuilder(client)
+    path_a, path_b = await builder.build(trigger)
+
+    # Step 2: Judge votes
+    judge = SourceJudge(client)
+    winning_path = await judge.judge(trigger.agent_file, path_a, path_b)
+
+    # Step 3: Referee safety check
+    referee = Referee()
+    with open(winning_path, "r", encoding="utf-8") as f:
+        winning_code = f.read()
+
+    verdict = referee.inspect(winning_code)
+    print(f"[Meta-Evolution] Referee verdict: {verdict}")
+
+    if not verdict.passed:
+        print(f"[Meta-Evolution] ❌ Challenger DISQUALIFIED by Referee: {verdict.reason}")
+        watcher.record_upgrade_result(trigger.agent_file, succeeded=False)
+        return
+
+    # Step 4: Fast Duel
+    arena = MetaArena()
+    result = await arena.duel(trigger.agent_file, winning_path)
+
+    watcher.record_upgrade_result(trigger.agent_file, succeeded=result.challenger_won)
+
+    if result.challenger_won:
+        print(f"\n[Meta-Evolution] 🎉 Agent '{trigger.agent_name}' has evolved!")
+    else:
+        print(f"\n[Meta-Evolution] Original agent survives. No changes made.")
+
+    print(f"{'='*60}")
 
 
 # ─── Entry Point ─────────────────────────────────────────────────────────────
@@ -348,6 +419,11 @@ if __name__ == "__main__":
         action="store_true",
         help="Disable multi-agent knowledge crossover. Used for ablation."
     )
+    parser.add_argument(
+        "--skip-meta-evolution",
+        action="store_true",
+        help="Skip the Phase 17 meta-evolution upgrade check after the pipeline."
+    )
 
     args = parser.parse_args()
 
@@ -358,5 +434,6 @@ if __name__ == "__main__":
         enable_evolution=not args.disable_evolution,
         enable_collaboration=not args.disable_collaboration,
         enable_memory=not args.disable_memory,
-        single_agent_mode=args.single_agent
+        single_agent_mode=args.single_agent,
+        skip_meta_evolution=args.skip_meta_evolution,
     ))

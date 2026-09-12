@@ -523,17 +523,20 @@ class EvoFlowOrchestrator:
 
     def _save_structured_report(self):
         self.run_report["end_time"] = datetime.utcnow().isoformat()
-        os.makedirs("structured_reports", exist_ok=True)
-        
+
+        # Support MetaArena subprocess isolation — override report output dir via env var
+        report_dir = os.environ.get("EVOCODE_REPORT_DIR", "structured_reports")
+        os.makedirs(report_dir, exist_ok=True)
+
         # Windows doesn't allow colons in filenames. Using dashes.
         # Format: ddmmyyyy_hh-mm-ss
         now = datetime.now()
         filename = now.strftime("%d%m%Y_%H-%M-%S.json")
-        filepath = os.path.join("structured_reports", filename)
-        
+        filepath = os.path.join(report_dir, filename)
+
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(self.run_report, f, indent=2, ensure_ascii=False)
-            
+
         print(f"\n[Logging] Structured report saved to: {filepath}")
 
     async def run_eval_only(
