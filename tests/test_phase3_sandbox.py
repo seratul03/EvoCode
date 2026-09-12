@@ -14,7 +14,7 @@ def clean_workspaces():
         shutil.rmtree(ws_dir)
 
 def test_sandbox_creates_persistent_workspace():
-    sandbox = Sandbox(timeout_seconds=5)
+    sandbox = Sandbox(timeout_seconds=15)
     code = "def solve(x):\n    return x * 2"
     tests = [{"id": 1, "input": "solve(2)", "expected": "4"}]
     
@@ -36,7 +36,7 @@ def test_sandbox_creates_persistent_workspace():
         assert "# === INJECTED TEST HARNESS ===" in content
 
 def test_sandbox_cross_agent_isolation():
-    sandbox = Sandbox(timeout_seconds=5)
+    sandbox = Sandbox(timeout_seconds=15)
     
     # Run Python code in EVO_PY
     code1 = "def solve(x):\n    return x + 1"

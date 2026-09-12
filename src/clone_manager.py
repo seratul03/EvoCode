@@ -237,11 +237,84 @@ class CloneManager:
                 json.dump(meta, f, indent=2)
 
     @classmethod
-    def commit_candidate(cls, clone: CandidateClone) -> AgentGenome:
+    def replace_parent(cls, clone: CandidateClone):
         """
-        Promote the candidate genome — used by Phase 7 after passing verification.
-        Returns a fresh AgentGenome from the candidate snapshot.
+        Phase 9 Finalization: Overwrite the parent genome with the candidate genome.
+        The candidate workspace is left intact for lineage tracking.
         """
+        parent_path = cls._parent_genome_path(clone.agent_id)
+        candidate_path = os.path.join(clone.workspace_path, "genome.json")
+        
+        if not os.path.exists(candidate_path):
+            raise FileNotFoundError(f"[CloneManager] Missing candidate genome at {candidate_path}")
+            
+        import shutil
+        shutil.copy2(candidate_path, parent_path)
+
+    @classmethod
+    def fork_to_new_agent(cls, clone: CandidateClone) -> str:
+        """
+        Phase 11: Spawns the candidate as a brand new independent agent in the population.
+        """
+        # 1. Determine a new sequential agent ID
+        existing = [d for d in os.listdir(cls.WORKSPACE_ROOT) if d.startswith(clone.agent_id.split("_v")[0])]
+        
+        # Simple version bump logic
+        base_name = clone.agent_id.split("_v")[0]
+        max_v = 0
+        for e in existing:
+            if "_v" in e:
+                try:
+                    v = int(e.split("_v")[1])
+                    max_v = max(max_v, v)
+                except ValueError:
+                    pass
+        new_agent_id = f"{base_name}_v{max_v + 1}"
+        
+        # 2. Setup the new workspace
+        new_workspace = os.path.join(cls.WORKSPACE_ROOT, new_agent_id)
+        os.makedirs(new_workspace, exist_ok=True)
+        
+        # 3. Copy the candidate genome into the new workspace as its 'parent' genome
+        candidate_path = os.path.join(clone.workspace_path, "genome.json")
+        if not os.path.exists(candidate_path):
+            raise FileNotFoundError(f"[CloneManager] Missing candidate genome at {candidate_path}")
+            
+        import shutil
+        shutil.copy2(candidate_path, os.path.join(new_workspace, "genome.json"))
+        
+        return new_agent_id
+
+    @classmethod
+    def commit_candidate(cls, clone: CandidateClone, verifier=None) -> AgentGenome | None:
+        """
+        Guarded promotion (Phase 7).
+
+        If a CandidateVerifier is provided, the candidate must pass all 5 stages
+        before being promoted.  On failure the candidate is auto-discarded and
+        None is returned.  Without a verifier the legacy unguarded path is used
+        (useful in tests that only target Phase 6 clone behaviour).
+        """
+        if verifier is not None:
+            from src.candidate_verifier import VerificationResult
+            result: VerificationResult = verifier.verify(clone)
+            # Persist verification result into the candidate's metadata.json
+            meta_path = os.path.join(clone.workspace_path, "metadata.json")
+            if os.path.exists(meta_path):
+                with open(meta_path, "r", encoding="utf-8") as f:
+                    meta = json.load(f)
+                meta["verification"] = result.to_dict()
+                with open(meta_path, "w", encoding="utf-8") as f:
+                    json.dump(meta, f, indent=2)
+
+            if not result.passed:
+                print(
+                    f"  [Verifier] Candidate '{clone.candidate_id}' FAILED "
+                    f"Stage {result.failed_stage}: {result.reason}"
+                )
+                cls.discard_candidate(clone)
+                return None
+
         clone.committed = True
         return AgentGenome(**clone.candidate_genome)
 

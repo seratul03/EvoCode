@@ -18,7 +18,8 @@ class HypothesisEngine:
             "The JSON must have the exact following keys:\n"
             "- 'hypothesis': (string) A clear statement of what should change and why.\n"
             "- 'expected_improvement': (string) What metric or capability is expected to improve.\n"
-            "- 'target_component': (string) The specific part of the genome or system to modify (e.g., 'temperature', 'reasoning.planning_strategy', 'system_instruction_variant')."
+            "- 'target_component': (string) The specific part of the genome or system to modify (e.g., 'temperature', 'reasoning.planning_strategy', 'system_instruction_variant').\n"
+            "If 'crossover_advice' is provided in the trigger reason, you MUST incorporate it into the hypothesis and target components."
         )
         
         user_prompt = (

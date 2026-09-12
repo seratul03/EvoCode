@@ -13,9 +13,10 @@ class GeneratorAgent:
     When a template is provided (from TemplateAgent), the generator only fills in
     the function body — it never writes the skeleton from scratch.
     """
-    def __init__(self, client: EvoClient, language: str = "Python"):
+    def __init__(self, client: EvoClient, language: str = "Python", enable_memory: bool = True):
         self.client = client
         self.language = language
+        self.enable_memory = enable_memory
 
     def _get_invalid_input_instruction(self) -> str:
         if self.language.lower() == "python":
@@ -73,9 +74,9 @@ class GeneratorAgent:
 
         prompt = base_prompt + core
 
-        # Inject global historical memory if available.
+        # Inject global historical memory if available and enabled.
         # This gives the agent context about what has worked and failed in past runs.
-        if _AGENT_MEMORY:
+        if _AGENT_MEMORY and self.enable_memory:
             prompt += (
                 "\n\n--- GLOBAL AGENT MEMORY (Lessons from Past Runs) ---\n"
                 + _AGENT_MEMORY

@@ -219,7 +219,11 @@ async def generate_problems(client: EvoClient, n: int, start_id: int) -> list[di
 
 # ─── Main Pipeline ────────────────────────────────────────────────────────────
 
-async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool):
+async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool, 
+                                  enable_evolution: bool = True,
+                                  enable_collaboration: bool = True,
+                                  enable_memory: bool = True,
+                                  single_agent_mode: bool = False):
     print("=" * 60)
     print("       EvoCode Autonomous Self-Training Pipeline")
     print("=" * 60)
@@ -265,7 +269,13 @@ async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool):
         print(f"{'='*60}")
 
         try:
-            orchestrator = EvoFlowOrchestrator(pop_size=3)
+            orchestrator = EvoFlowOrchestrator(
+                pop_size=3,
+                enable_evolution=enable_evolution,
+                enable_collaboration=enable_collaboration,
+                enable_memory=enable_memory,
+                single_agent_mode=single_agent_mode
+            )
             await orchestrator.run_generations(
                 num_generations=n_gens,
                 problems=[problem],
@@ -318,10 +328,35 @@ if __name__ == "__main__":
         help="Skip problem generation and execution. Only synthesize memory from existing reports."
     )
 
+    parser.add_argument(
+        "--single-agent",
+        action="store_true",
+        help="Run in single-agent mode (Python only). Used for ablation."
+    )
+    parser.add_argument(
+        "--disable-evolution",
+        action="store_true",
+        help="Disable the self-evolution mechanism. Used for ablation."
+    )
+    parser.add_argument(
+        "--disable-memory",
+        action="store_true",
+        help="Disable injection of historical memory. Used for ablation."
+    )
+    parser.add_argument(
+        "--disable-collaboration",
+        action="store_true",
+        help="Disable multi-agent knowledge crossover. Used for ablation."
+    )
+
     args = parser.parse_args()
 
     asyncio.run(run_autonomous_pipeline(
         n_runs=args.runs,
         n_gens=args.gens,
-        memory_only=args.memory_only
+        memory_only=args.memory_only,
+        enable_evolution=not args.disable_evolution,
+        enable_collaboration=not args.disable_collaboration,
+        enable_memory=not args.disable_memory,
+        single_agent_mode=args.single_agent
     ))

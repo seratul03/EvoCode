@@ -21,6 +21,14 @@ import ast
 from src.genome import AgentGenome, CriticGenome, MutatorGenome, EvaluatorGenome
 from src.evolution_trigger import TriggerMonitor
 from src.clone_manager import CloneManager
+from src.candidate_verifier import CandidateVerifier
+from src.arena import ArenaReferee
+from src.guarded_selection import GuardedSelector, SelectionDecision
+from src.memory_manager import MemoryManager, EvolutionEvent
+from src.population import PopulationManager
+from src.environment import EnvironmentManager
+from src.system_guard import SystemGuard
+from src.collaboration import CollaborationManager
 
 def _normalize_code(code: str) -> str:
     try:
@@ -38,7 +46,7 @@ class EvoFlowOrchestrator:
     The main orchestrator for the Co-Evolutionary system.
     Manages the 4 populations, runs the generations, and records everything via EventLogger and JSON run logs.
     """
-    def __init__(self, pop_size=3):
+    def __init__(self, pop_size=3, enable_evolution=True, enable_collaboration=True, enable_memory=True, single_agent_mode=False):
         self.client = EvoClient()
         self.logger = EventLogger()
         self.sandbox = Sandbox(timeout_seconds=15)
@@ -46,13 +54,24 @@ class EvoFlowOrchestrator:
         self.property_tester = PropertyTester()   # Layer 2
         self.trigger_monitor = TriggerMonitor()
 
+        self.enable_evolution = enable_evolution
+        self.enable_collaboration = enable_collaboration
+        self.enable_memory = enable_memory
+        self.single_agent_mode = single_agent_mode
+
         # 3 distinct base agents for generation
-        self.agent_names = ["Evo_py", "Evo_java", "Evo_Cpp"]
-        self.generators = [
-            GeneratorAgent(self.client, language="Python"),
-            GeneratorAgent(self.client, language="Java"),
-            GeneratorAgent(self.client, language="C++")
-        ]
+        if self.single_agent_mode:
+            self.agent_names = ["Evo_py"]
+            self.generators = [
+                GeneratorAgent(self.client, language="Python", enable_memory=self.enable_memory)
+            ]
+        else:
+            self.agent_names = ["Evo_py", "Evo_java", "Evo_Cpp"]
+            self.generators = [
+                GeneratorAgent(self.client, language="Python", enable_memory=self.enable_memory),
+                GeneratorAgent(self.client, language="Java", enable_memory=self.enable_memory),
+                GeneratorAgent(self.client, language="C++", enable_memory=self.enable_memory)
+            ]
         
         # Testing Agent
         from src.agents.tester import TesterAgent
@@ -63,6 +82,27 @@ class EvoFlowOrchestrator:
         
         # Hypothesis Engine
         self.hypothesis_engine = HypothesisEngine(self.client)
+        
+        # Candidate Verifier (Phase 7)
+        self.candidate_verifier = CandidateVerifier()
+        
+        # Evolution Arena Referee (Phase 8)
+        self.arena_referee = ArenaReferee()
+        
+        # Guarded Selection (Phase 9)
+        self.guarded_selector = GuardedSelector()
+        
+        # Population Manager (Phase 11)
+        self.population = PopulationManager()
+        
+        # Environment Manager (Phase 12)
+        self.environment = EnvironmentManager()
+        
+        # System Guard (Phase 13)
+        self.system_guard = SystemGuard(self.population)
+
+        # Collaboration Manager (Phase 15)
+        self.collaboration_manager = CollaborationManager(self.client)
 
         self.validator = CodeValidatorAgent(self.client)
         self.critic = CriticAgent()
@@ -594,29 +634,17 @@ class EvoFlowOrchestrator:
                 self.trigger_monitor.add_result(agent_id, category, best_final_result["fitness"], is_passed)
                 should_trigger, reason = self.trigger_monitor.evaluate(agent_id)
                 
-                if should_trigger:
+                if should_trigger and self.enable_evolution:
                     print(f"  [Evolution Trigger] FIRED for {agent_id}! Objective: {reason.get('objective')}")
-                    # Phase 5: Formulate hypothesis
+                    
+                    if self.enable_collaboration:
+                        advice = await self.collaboration_manager.get_crossover_advice(agent_id, reason)
+                        if advice:
+                            reason["crossover_advice"] = advice
+                    
+                    # Phase 14 / Phase 13 integration: Wrap the entire candidate lifecycle in SystemGuard
                     current_genome = best_final_result["gen_genome"]
-                    print(f"  [HypothesisEngine] Formulating hypothesis for {agent_id}...")
-                    hypothesis = await self.hypothesis_engine.generate_hypothesis(agent_id, reason, current_genome)
-                    print(f"  [HypothesisEngine] Output: {hypothesis}")
-                    reason["hypothesis_data"] = hypothesis
-
-                    # Phase 6: Create candidate clone
-                    try:
-                        clone = CloneManager.create_candidate(agent_id, current_genome, hypothesis)
-                        print(f"  [CloneManager] Candidate '{clone.candidate_id}' created. Diff: {list(clone.diff.keys())}")
-                        reason["candidate"] = {
-                            "candidate_id": clone.candidate_id,
-                            "workspace": clone.workspace_path,
-                            "parent_hash": clone.parent_hash,
-                            "candidate_hash": clone.candidate_hash,
-                            "diff": clone.diff,
-                        }
-                        # Candidate is staged — Phase 7 will decide to commit or discard after verification
-                    except Exception as e:
-                        print(f"  [CloneManager] Failed to create candidate: {e}. Skipping clone.")
+                    await self.system_guard.execute_with_guards(self, agent_id, reason, current_genome)
 
                     problem_report["evolution_trigger"] = reason
             
@@ -624,3 +652,114 @@ class EvoFlowOrchestrator:
             
         # Write the final JSON report at the end of the run
         self._save_structured_report()
+
+    async def trigger_evolution(self, agent_id: str, reason: dict, current_genome):
+        """
+        Executes a single evolutionary cycle (Phases 5-10) for the given agent.
+        This is wrapped by SystemGuard to safely rollback in case of critical failure.
+        """
+        # Phase 5: Formulate hypothesis
+        print(f"  [HypothesisEngine] Formulating hypothesis for {agent_id}...")
+        hypothesis = await self.hypothesis_engine.generate_hypothesis(agent_id, reason, current_genome)
+        print(f"  [HypothesisEngine] Output: {hypothesis}")
+        reason["hypothesis_data"] = hypothesis
+
+        # Phase 6: Create candidate clone
+        try:
+            clone = CloneManager.create_candidate(agent_id, current_genome, hypothesis)
+            print(f"  [CloneManager] Candidate '{clone.candidate_id}' created. Diff: {list(clone.diff.keys())}")
+
+            # Phase 7: Verify candidate before staging
+            promoted = CloneManager.commit_candidate(clone, verifier=self.candidate_verifier)
+            verification = clone.workspace_path  # metadata.json was updated in place
+            # Re-read verification result from metadata
+            import json as _json
+            meta_path = os.path.join(clone.workspace_path, "metadata.json")
+            verification_data = {}
+            if os.path.exists(meta_path):
+                with open(meta_path) as _f:
+                    verification_data = _json.load(_f).get("verification", {})
+
+            reason["candidate"] = {
+                "candidate_id": clone.candidate_id,
+                "workspace": clone.workspace_path,
+                "parent_hash": clone.parent_hash,
+                "candidate_hash": clone.candidate_hash,
+                "diff": clone.diff,
+                "verification": verification_data,
+                "promoted": promoted is not None,
+            }
+            if promoted:
+                print(f"  [Verifier] Candidate '{clone.candidate_id}' PASSED all stages. Staged for arena.")
+                # Phase 8: The Arena
+                print(f"  [Arena] Refereeing competition between {clone.parent_hash[:8]} and {clone.candidate_hash[:8]} at Pressure Level {self.environment.profile.level}...")
+                arena = ArenaReferee()
+                arena_result = arena.compare(
+                    clone.parent_genome,
+                    clone.candidate_genome,
+                    env_profile=self.environment.profile
+                )
+                print(f"  [Arena] Winner: {arena_result.winner.upper()} (Margin: {arena_result.margin:.4f})")
+                reason["candidate"]["arena_result"] = arena_result.to_dict()
+                
+                # Phase 9: Guarded Selection
+                decision, decision_reason = self.guarded_selector.evaluate(arena_result)
+                print(f"  [GuardedSelection] Decision: {decision.name} - {decision_reason}")
+                reason["candidate"]["selection_decision"] = decision.name
+                reason["candidate"]["selection_reason"] = decision_reason
+                
+                if decision == SelectionDecision.PROMOTE:
+                    if self.population.is_duplicate(clone.candidate_hash):
+                        print(f"  [Population] Candidate '{clone.candidate_id}' is a duplicate. Discarding to maintain diversity.")
+                        CloneManager.discard_candidate(clone)
+                        decision_reason += " (Discarded by PopulationManager: Duplicate)"
+                    else:
+                        print(f"  [EvoFlow] Promoting candidate '{clone.candidate_id}' to a new agent in the population!")
+                        new_agent_id = CloneManager.fork_to_new_agent(clone)
+                        self.population.register_agent(new_agent_id, clone.candidate_hash)
+                        
+                        # Collect active population fitness scores for limit enforcement and environment adaptation
+                        mock_scores = {aid: arena_result.parent_score for aid in self.population.active_agents}
+                        mock_scores[new_agent_id] = arena_result.candidate_score
+                        
+                        self.population.enforce_population_limit(mock_scores)
+                        print(f"  [Population] Spawned {new_agent_id}. Active agents: {len(self.population.active_agents)}")
+                        
+                        self.environment.evaluate_pressure(mock_scores)
+                else:
+                    print(f"  [EvoFlow] Discarding candidate '{clone.candidate_id}'.")
+                    CloneManager.discard_candidate(clone)
+                    
+                # Phase 10: Record the Evolution Event
+                import os, json
+                meta_path = os.path.join(clone.workspace_path, "metadata.json")
+                verification_data = {}
+                if os.path.exists(meta_path):
+                    with open(meta_path) as _f:
+                        verification_data = json.load(_f).get("verification", {})
+                
+                event = EvolutionEvent.create(
+                    agent_id=agent_id,
+                    generation=0,
+                    trigger_data=reason,
+                    hypothesis_data=hypothesis,
+                    parent_hash=clone.parent_hash,
+                    candidate_hash=clone.candidate_hash,
+                    diff=clone.diff,
+                    verification_result=verification_data,
+                    arena_result=arena_result.to_dict(),
+                    selection_decision=decision.name,
+                    selection_reason=decision_reason
+                )
+                MemoryManager.record_event(event)
+                print(f"  [Memory] Evolution event '{event.event_id}' recorded.")
+                
+            else:
+                print(f"  [Verifier] Candidate '{clone.candidate_id}' failed verification. Discarded.")
+                CloneManager.discard_candidate(clone)
+
+        except Exception as e:
+            print(f"  [CloneManager] Error during cloning/mutation: {e}")
+            import traceback
+            traceback.print_exc()
+            raise e
