@@ -106,6 +106,6 @@ EvoGenesis can upgrade its own source code when performance degrades.
 The `EvoClient` (`src/client.py`) is designed for maximum uptime and resilience during long-running evolutionary algorithms where thousands of LLM calls are made.
 
 ### The Fallback Strategy
-1. **Groq (Primary):** Rotates multiple API keys for high-speed inference.
-2. **Ollama (Local Fallback):** Used if cloud limits are hit.
-3. **OpenRouter (Cloud Fallback):** Used if local models are unavailable.
+1. **Ollama (Tier 1 — Local Primary):** Runs completely locally with no rate limits. Used first if `OLLAMA_MODEL` is set.
+2. **Groq (Tier 2 — Cloud Fast-Fallback):** Rotates multiple API keys for high-speed cloud inference.
+3. **OpenRouter (Tier 3 — Cloud Safety Net):** Final fallback if Groq limits are exhausted.

@@ -1,10 +1,9 @@
 """
 MetaArena: Runs the "Fast Duel" between the Original agent and the Challenger.
 
-Both are given the same single problem and run as isolated Python subprocesses
-using run_autonomous.py with --runs 1 --gens 1. The subprocess for the Clone
-uses a patched import that temporarily replaces the target agent's source with
-the challenger file.
+Both are given the same single problem and run sequentially as isolated Python
+subprocesses using duel_runner.py with --runs 1 --gens 1. The subprocess for the
+challenger temporarily replaces the target agent's source with the challenger file.
 
 Winner selection:
     - Parse the structured_reports/*.json produced by each run
@@ -45,10 +44,10 @@ class DuelResult:
 
 class MetaArena:
     """
-    Conducts the fast duel between the original agent and its challenger.
+    Conducts the fast duel between the original agent and its challenger sequentially.
 
-    The duel runs two isolated subprocesses. Each subprocess:
-        1. Runs run_autonomous.py with --runs 1 --gens 1 on a shared problem.
+    The duel runs two isolated subprocesses one after another. Each subprocess:
+        1. Runs duel_runner.py with --runs 1 --gens 1 on a shared problem.
         2. Writes a structured_report JSON to a temporary output directory.
         3. The MetaArena reads both JSON outputs and compares best_fitness.
 
@@ -60,7 +59,7 @@ class MetaArena:
 
     async def duel(self, original_path: str, challenger_path: str) -> DuelResult:
         """
-        Runs the fast duel between original and challenger.
+        Runs the fast duel between original and challenger sequentially.
 
         Args:
             original_path:    e.g. "src/agents/generator.py"
@@ -73,24 +72,21 @@ class MetaArena:
         print(f"[MetaArena] Original:   {original_path}")
         print(f"[MetaArena] Challenger: {challenger_path}")
 
-        # Create two temp dirs for isolated report output
-        with tempfile.TemporaryDirectory() as tmpdir_a, \
-             tempfile.TemporaryDirectory() as tmpdir_b:
+        # Run original and challenger runs sequentially to prevent file swap race conditions
+        with tempfile.TemporaryDirectory() as tmpdir_a:
+            original_fitness = await self._run_subprocess(
+                label="ORIGINAL",
+                agent_patch=None,  # no patch — use real file
+                original_path=original_path,
+                report_dir=tmpdir_a,
+            )
 
-            # Run both processes concurrently
-            original_fitness, challenger_fitness = await asyncio.gather(
-                self._run_subprocess(
-                    label="ORIGINAL",
-                    agent_patch=None,  # no patch — use real file
-                    original_path=original_path,
-                    report_dir=tmpdir_a,
-                ),
-                self._run_subprocess(
-                    label="CHALLENGER",
-                    agent_patch=challenger_path,  # patch with challenger
-                    original_path=original_path,
-                    report_dir=tmpdir_b,
-                ),
+        with tempfile.TemporaryDirectory() as tmpdir_b:
+            challenger_fitness = await self._run_subprocess(
+                label="CHALLENGER",
+                agent_patch=challenger_path,  # patch with challenger
+                original_path=original_path,
+                report_dir=tmpdir_b,
             )
 
         challenger_won = challenger_fitness > original_fitness

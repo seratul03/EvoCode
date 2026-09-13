@@ -3,10 +3,6 @@ from src.client import EvoClient
 from src.genome import AgentGenome
 from src.agents.memory_agent import MemoryHistorianAgent
 
-# Load the persistent agent memory once at module load time.
-# This is a static read — fast, no LLM call required.
-_AGENT_MEMORY: str = MemoryHistorianAgent.load_memory()
-
 class GeneratorAgent:
     """
     LLM-based Generator agent. Produces code solutions based on a genome strategy.
@@ -74,15 +70,18 @@ class GeneratorAgent:
 
         prompt = base_prompt + core
 
-        # Inject global historical memory if available and enabled.
-        # This gives the agent context about what has worked and failed in past runs.
-        if _AGENT_MEMORY and self.enable_memory:
-            prompt += (
-                "\n\n--- GLOBAL AGENT MEMORY (Lessons from Past Runs) ---\n"
-                + _AGENT_MEMORY
-                + "\n--- END OF AGENT MEMORY ---\n"
-                "Use the lessons above to guide your approach and avoid known failure patterns."
-            )
+        # Load the most recent memory entries dynamically each call so that
+        # newly synthesized lessons (written mid-run) are always included.
+        # max_entries=5 caps injection at ~5 passages to keep token usage sane.
+        if self.enable_memory:
+            recent_memory = MemoryHistorianAgent.load_memory(max_entries=5)
+            if recent_memory:
+                prompt += (
+                    "\n\n--- GLOBAL AGENT MEMORY (Lessons from Past Runs) ---\n"
+                    + recent_memory
+                    + "\n--- END OF AGENT MEMORY ---\n"
+                    "Use the lessons above to guide your approach and avoid known failure patterns."
+                )
 
         return prompt
 

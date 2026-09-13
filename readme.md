@@ -45,7 +45,7 @@ EvoGenesis is an engine for discovery, designed to solve complex programming puz
 - 🧠 **Multi-Agent Pipeline:** Distributes cognitive load across an Architect, Generator, Reviewer, Optimizer, and BugFixer.
 - 📚 **Historical Memory Synthesis:** Aggregates run data into long-term Insights to guide future generations.
 - 🧬 **Meta-Evolution:** The system can rewrite its own Python source files when performance degrades, validating the changes in an isolated Arena duel.
-- 🔄 **3-Tier LLM Fallback Chain:** Robust API handling that tries Groq Cloud (rotating keys), falls back to Ollama (Local LLMs), and ultimately OpenRouter.
+- 🔄 **3-Tier LLM Fallback Chain:** Robust API handling that tries Ollama (Local LLM, Tier 1), falls back to Groq Cloud (rotating keys, Tier 2), and ultimately OpenRouter (Tier 3).
 
 ---
 
@@ -171,7 +171,8 @@ EvoGenesis can rewrite its own source code when success rates drop below 50%.
 
 | Variable | Description | Example |
 |---|---|---|
-| `GROQ_API_KEYS` | Comma-separated list of Groq API keys. | `gsk_xxx,gsk_yyy` |
+| `OLLAMA_BASE_URL` | Local endpoint for Ollama (Tier 1 primary). | `http://localhost:11434/v1` |
+| `OLLAMA_MODEL` | The local model name to use. | `llama3` |
+| `GROQ_API_KEYS` | Comma-separated list of Groq API keys (Tier 2). | `gsk_xxx,gsk_yyy` |
 | `GROQ_MODEL` | The LLM model to use on Groq. | `llama-3.1-70b-versatile` |
-| `OLLAMA_BASE_URL` | Local endpoint for Ollama (Tier 2). | `http://localhost:11434/v1` |
 | `OPENROUTER_API_KEY` | Tier 3 fallback cloud provider key. | `sk-or-v1-xxx` |

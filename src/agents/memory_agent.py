@@ -220,14 +220,42 @@ class MemoryHistorianAgent:
             f.write(f"\n# SOURCE_REPORT:{source_filename}\n\n")
 
     @staticmethod
-    def load_memory() -> str:
+    def load_memory(max_entries: int = 5) -> str:
         """
-        Reads and returns the full content of `agent_memory.txt`.
-        Returns an empty string if the file doesn't exist yet.
-        Strips the hidden sentinel comment lines before returning.
+        Reads the content of `agent_memory.txt` and returns the most recent
+        memory entries as a single string.
+
+        Args:
+            max_entries: Maximum number of memory entries to return. Entries are
+                         delimited by '---' separators in the file. Pass 0 to
+                         return all entries (full file, useful for analysis).
+                         Default is 5 to keep prompts within token budgets.
+
+        Returns:
+            A string containing the selected memory entries, or "" if the file
+            doesn't exist yet. Hidden sentinel comment lines are always stripped.
         """
         if not os.path.exists(MEMORY_FILE):
             return ""
+
         with open(MEMORY_FILE, "r", encoding="utf-8") as f:
+            # Strip hidden sentinel lines used for deduplication tracking
             lines = [line for line in f.readlines() if not line.startswith("# SOURCE_REPORT:")]
-        return "".join(lines).strip()
+
+        full_text = "".join(lines).strip()
+
+        if not full_text or max_entries == 0:
+            return full_text
+
+        # Split into individual entries using the '---' delimiter that the
+        # MemoryHistorianAgent writes between passages.
+        # Each entry looks like:  --- \n [MEMORY ENTRY ...] \n --- \n
+        # After splitting we filter out blank/whitespace-only segments.
+        raw_segments = full_text.split("---")
+        entries = [seg.strip() for seg in raw_segments if seg.strip()]
+
+        # Take the last N (most recent) entries
+        recent = entries[-max_entries:]
+
+        # Re-join with the delimiter so the format matches what the LLM expects
+        return "\n---\n".join(recent)

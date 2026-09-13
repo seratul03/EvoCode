@@ -5,9 +5,6 @@ import random
 import copy
 from src.agents.memory_agent import MemoryHistorianAgent
 
-# Load persistent memory once at module load time (static read, no LLM call).
-_AGENT_MEMORY: str = MemoryHistorianAgent.load_memory()
-
 _PROMPT_STYLES = ["direct", "chain_of_thought", "test_first", "step_by_step"]
 _SYSTEM_VARIANTS = ["standard", "expert_coder", "pedantic_reviewer"]
 
@@ -126,11 +123,15 @@ class MutatorAgent:
         Uses the LLM to dynamically propose a mutated AgentGenome based on the diagnosis.
         Injects global agent memory so the mutator can draw on historical lessons.
         """
+        # Load the most recent 5 memory entries dynamically per call.
+        # This ensures newly synthesized lessons are always visible to the
+        # mutator, and caps token injection to stay within rate limits.
         memory_section = ""
-        if _AGENT_MEMORY:
+        recent_memory = MemoryHistorianAgent.load_memory(max_entries=5)
+        if recent_memory:
             memory_section = (
                 "\n\nGLOBAL AGENT MEMORY (Lessons from past runs — use these to guide your mutation):\n"
-                + _AGENT_MEMORY
+                + recent_memory
                 + "\n--- END OF AGENT MEMORY ---\n"
             )
 

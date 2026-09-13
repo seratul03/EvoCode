@@ -26,3 +26,10 @@ evo.md
 roadmap.md
 structured_reports
 Documentations
+# Runtime-generated directories
+workspaces/
+memory/
+scratch/
+# MetaArena temporary file-swap backups
+*.meta_backup
+*.test_backup
