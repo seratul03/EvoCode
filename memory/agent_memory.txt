@@ -821,3 +821,30 @@ LESSON: Runtime crashes often indicate deeper issues in the code logic or enviro
 LESSON: Mutation strategies must be carefully selected and validated to address the root cause of the problem.
 # SOURCE_REPORT:13092026_18-32-14.json
 
+---
+[MEMORY ENTRY - 2026-09-13T14:25:41.437101]
+Problem: 1 | Result: UNSOLVED | Best Fitness: 0.0000
+The population consistently crashed during each generation, despite multiple mutation attempts aimed at fixing crashes ('fix_crash', 'break_cache_loop'). The issue was likely due to a fundamental flaw in the code that was not addressed by these mutations. The lack of progress and consistent crashes indicate that the population was trapped in a suboptimal state, unable to evolve beyond the initial random mutations.
+LESSON: Always ensure that the initial population includes a variety of mutations that can address the root cause of crashes or errors, not just superficial fixes.
+LESSON: Implement robust error handling and logging to quickly identify and diagnose issues, rather than relying on random mutations to resolve them.
+---
+# SOURCE_REPORT:13092026_19-55-41.json
+
+---
+[MEMORY ENTRY - 2026-09-13T14:58:23.898109]
+Problem: 1 | Result: SOLVED | Best Fitness: 0.9000
+Genome 0 successfully solved the problem with a fitness of 0.9000. The other two genomes (1 and 2) failed due to timeouts, despite attempting to simplify logic and fix edge cases. These mutations did not improve fitness, indicating that the initial approach was not effective for this problem. 
+
+LESSON: Simplifying logic and fixing edge cases may not always lead to improved fitness and should be evaluated based on the problem's requirements.
+LESSON: Timeouts are a common issue when the solution does not converge quickly enough, and it's important to explore alternative strategies or increase the mutation rate to explore different solutions.
+---
+# SOURCE_REPORT:13092026_20-28-23.json
+
+[MEMORY ENTRY - 2026-09-13T16:05:11.097860]
+Problem: 1 | Result: SOLVED | Best Fitness: 0.9000
+The initial run with a population size of 3 and no specific genome parameters or prompt styles led to a successful solution in just one generation. Genome 2 achieved the highest fitness score of 0.9000, while Genome 0 and Genome 1 also passed all tests without any crashes or timeouts. No mutations were applied, indicating that the initial population was already well-suited for the problem. This suggests that a smaller population size and simpler parameters can lead to efficient problem-solving in EvoCode. 
+
+LESSON: Smaller population sizes and simpler parameters can often lead to faster and more efficient problem-solving in EvoCode.
+LESSON: Initial population quality can significantly impact the success rate of the evolutionary process.
+# SOURCE_REPORT:13092026_21-35-11.json
+

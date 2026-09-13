@@ -50,58 +50,47 @@ class EvoEvaluator:
         
         code_hash = hash((generator.language, _normalize_code(code), test_suite_repr))
         
-        is_cache_hit = False
-        cached_data = None
-        test_results = None
-        validation = None
-        
-        if code_hash in self.orchestrator.code_cache:
-            print(f"      [CACHE HIT] Generated code is identical to a previous run. Reusing results.")
-            cached_data = self.orchestrator.code_cache[code_hash]
-            is_cache_hit = True
-            test_results = cached_data["test_results"]
-            validation = cached_data["validation"]
+        self.orchestrator.tester.language = generator.language
+        is_genuine = await self.orchestrator.tester.evaluate(problem, code)
+        if not is_genuine:
+            print(f"      [Tester] {agent_name} generated INVALID/cheating code. Fitness set to 0.0.")
+            test_results = {
+                "passed_tests": 0, "total_tests": len(all_tests),
+                "failed_test_ids": [], "timeout_tests": [], "crash_tests": [],
+                "execution_time_ms": 0.0, "peak_memory_kb": 0.0, "test_outputs": [{"status": "crash", "error": "Code rejected by Evo_Tester as hardcoded/cheating."}]
+            }
         else:
-            self.orchestrator.tester.language = generator.language
-            is_genuine = await self.orchestrator.tester.evaluate(problem, code)
-            if not is_genuine:
-                print(f"      [Tester] {agent_name} generated INVALID/cheating code. Fitness set to 0.0.")
-                test_results = {
-                    "passed_tests": 0, "total_tests": len(all_tests),
-                    "failed_test_ids": [], "timeout_tests": [], "crash_tests": [],
-                    "execution_time_ms": 0.0, "peak_memory_kb": 0.0, "test_outputs": [{"status": "crash", "error": "Code rejected by Evo_Tester as hardcoded/cheating."}]
-                }
-            else:
-                import asyncio
-                test_results = await asyncio.to_thread(self.orchestrator.sandbox.run, code, all_tests, language=generator.language, template=template, agent_id=f"EVO_{generator.language.upper()}")
-                passed = test_results["passed_tests"]
-                total = test_results["total_tests"]
-                print(f"      [Sandbox] Passed {passed}/{total} tests (+{len(extra_tests)} ephemeral). Crashes: {len(test_results['crash_tests'])}")
-
+            import asyncio
+            unique_agent_id = f"prob{problem_id}_gen{generation_id}_{agent_name}"
+            test_results = await asyncio.to_thread(self.orchestrator.sandbox.run, code, all_tests, language=generator.language, template=template, agent_id=unique_agent_id)
             passed = test_results["passed_tests"]
             total = test_results["total_tests"]
-            self.orchestrator.logger.log_test_result(
-                problem_id, generation_id, i,
-                passed, total,
-                test_results["failed_test_ids"], test_results["timeout_tests"],
-                test_results["crash_tests"], test_results["execution_time_ms"],
-                test_results["peak_memory_kb"]
-            )
+            print(f"      [Sandbox] Passed {passed}/{total} tests (+{len(extra_tests)} ephemeral). Crashes: {len(test_results['crash_tests'])}")
 
-            if self.orchestrator.use_validator:
-                validation = await self.orchestrator.validator.validate(code, problem, test_results)
-            else:
-                validation = {
-                    "is_correct": passed == total and total > 0,
-                    "confidence": passed / max(total, 1),
-                    "issues": [] if passed == total else [f"Failed {total - passed}/{total} tests."]
-                }
-            self.orchestrator.logger.log_validation(
-                problem_id, generation_id, validation.get("is_correct", False),
-                validation.get("confidence", 0.0), str(validation.get("issues", [])), 0
-            )
+        passed = test_results["passed_tests"]
+        total = test_results["total_tests"]
+        self.orchestrator.logger.log_test_result(
+            problem_id, generation_id, i,
+            passed, total,
+            test_results["failed_test_ids"], test_results["timeout_tests"],
+            test_results["crash_tests"], test_results["execution_time_ms"],
+            test_results["peak_memory_kb"]
+        )
 
-        return code, test_results, validation, code_hash, is_cache_hit, cached_data
+        if self.orchestrator.use_validator:
+            validation = await self.orchestrator.validator.validate(code, problem, test_results)
+        else:
+            validation = {
+                "is_correct": passed == total and total > 0,
+                "confidence": passed / max(total, 1),
+                "issues": [] if passed == total else [f"Failed {total - passed}/{total} tests."]
+            }
+        self.orchestrator.logger.log_validation(
+            problem_id, generation_id, validation.get("is_correct", False),
+            validation.get("confidence", 0.0), str(validation.get("issues", [])), 0
+        )
+            
+        return code, test_results, validation, code_hash, False, None
 
     def _score_and_critique(self, i: int, generation_id: int, problem_id: int, code: str, test_results: dict, validation: dict, code_hash: int, is_cache_hit: bool, cached_data: dict, pop_stats: dict):
         generator = self.orchestrator.generators[i % len(self.orchestrator.generators)]
@@ -116,43 +105,26 @@ class EvoEvaluator:
         fitness = self.orchestrator.fitness_scorer.calculate_fitness(code, test_results, eval_genome, pop_stats)
         self.orchestrator.logger.log_fitness("generator", i, generation_id, problem_id, fitness["fitness_value"], fitness)
         
-        if is_cache_hit:
-            diagnosis = cached_data["diagnosis"]
-            if passed < total or total == 0 or len(test_results.get("crash_tests", [])) > 0:
-                if "break_cache_loop" not in diagnosis.get("recommended_mutations", []):
-                    diagnosis.setdefault("recommended_mutations", []).append("break_cache_loop")
-                if not any("WARNING: You generated this exact code" in str(iss) for iss in diagnosis.get("code_issues", [])):
-                    diagnosis.setdefault("code_issues", []).append("WARNING: You generated this exact code previously and it failed. Try a fundamentally different approach.")
+        if len(test_results["crash_tests"]) == total and total > 0:
+            print("      [Fast-Track] 100% Crash Rate. Bypassing Critic API.")
+            error_msgs = [out.get("error", "Unknown Crash") for out in test_results.get("test_outputs", []) if out.get("error")]
+            first_error = error_msgs[0] if error_msgs else "Unknown Crash"
+            diagnosis = {
+                "severity": 1.0,
+                "primary_failure": "runtime_crash",
+                "code_issues": [first_error],
+                "recommended_mutations": ["fix_crash"]
+            }
+        elif getattr(self.orchestrator, "disable_critic", False):
+            diagnosis = {
+                "severity": 0.5,
+                "primary_failure": "ablation_mode",
+                "code_issues": ["Critic disabled"],
+                "recommended_mutations": []
+            }
+            print("      [Ablation] Critic disabled. Returning generic diagnosis.")
         else:
-            if len(test_results["crash_tests"]) == total and total > 0:
-                print("      [Fast-Track] 100% Crash Rate. Bypassing Critic API.")
-                error_msgs = [out.get("error", "Unknown Crash") for out in test_results.get("test_outputs", []) if out.get("error")]
-                first_error = error_msgs[0] if error_msgs else "Unknown Crash"
-                diagnosis = {
-                    "severity": 1.0,
-                    "primary_failure": "runtime_crash",
-                    "code_issues": [first_error],
-                    "recommended_mutations": ["fix_crash"]
-                }
-            elif getattr(self.orchestrator, "disable_critic", False):
-                diagnosis = {
-                    "severity": 0.5,
-                    "primary_failure": "ablation_mode",
-                    "code_issues": ["Critic disabled"],
-                    "recommended_mutations": []
-                }
-                print("      [Ablation] Critic disabled. Returning generic diagnosis.")
-            else:
-                diagnosis = self.orchestrator.critic.critique(code, test_results, validation, crit_genome)
-            
-            if len(test_results.get("timeout_tests", [])) == 0:
-                self.orchestrator.code_cache[code_hash] = {
-                    "test_results": test_results,
-                    "validation": validation,
-                    "fitness": fitness,
-                    "diagnosis": diagnosis
-                }
-                
+            diagnosis = self.orchestrator.critic.critique(code, test_results, validation, crit_genome)
         severity = diagnosis.get("severity", 0.0)
         primary_fail = diagnosis.get("primary_failure", "none")
         rec_mutations = diagnosis.get("recommended_mutations", [])
@@ -226,12 +198,13 @@ class EvoEvaluator:
 
         templates = problem.get("templates", {})
 
-        task_outputs = []
-        phase1_results = []
-        for i in range(self.orchestrator.pop_size):
-            out = await self._generate_and_test(i, generation_id, problem, problem_id, templates, mode)
-            phase1_results.append(out)
-            
+        import asyncio
+        tasks = [
+            self._generate_and_test(i, generation_id, problem, problem_id, templates, mode)
+            for i in range(self.orchestrator.pop_size)
+        ]
+        phase1_results = await asyncio.gather(*tasks)
+        
         pop_stats = {
             "min_runtime": float('inf'),
             "max_runtime": -1.0,
@@ -250,6 +223,7 @@ class EvoEvaluator:
                     pop_stats["min_memory"] = min(pop_stats["min_memory"], mem)
                     pop_stats["max_memory"] = max(pop_stats["max_memory"], mem)
                     
+        task_outputs = []
         for i in range(self.orchestrator.pop_size):
             code, test_results, validation, code_hash, is_cache_hit, cached_data = phase1_results[i]
             out = self._score_and_critique(i, generation_id, problem_id, code, test_results, validation, code_hash, is_cache_hit, cached_data, pop_stats)
@@ -259,6 +233,20 @@ class EvoEvaluator:
         evaluation_logs = [out[1] for out in task_outputs]
         
         gen_report["evaluations"] = evaluation_logs
+
+        # Calculate Population Diversity Metrics
+        fitnesses = [r.get("fitness", 0.0) for r in generation_results]
+        if fitnesses:
+            mean_fitness = sum(fitnesses) / len(fitnesses)
+            variance = sum((f - mean_fitness) ** 2 for f in fitnesses) / len(fitnesses)
+            gen_report["population_diversity"] = {
+                "best_fitness": round(max(fitnesses), 6),
+                "worst_fitness": round(min(fitnesses), 6),
+                "mean_fitness": round(mean_fitness, 6),
+                "fitness_variance": round(variance, 6)
+            }
+        else:
+            gen_report["population_diversity"] = {}
             
         problem_report["generations"].append(gen_report)
         return generation_results, gen_report

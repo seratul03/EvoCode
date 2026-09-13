@@ -111,8 +111,6 @@ class EvoFlowOrchestrator:
         self.pop_mutator = [MutatorGenome() for _ in range(self.pop_size)]
         self.pop_evaluator = [EvaluatorGenome() for _ in range(self.pop_size)]
         
-        self.code_cache = {}
-
         # Layer 4: validator used only for evolve mode (set in run_generations)
         self.use_validator = True
 
@@ -254,11 +252,46 @@ class EvoFlowOrchestrator:
             # After finishing the problem (all generations), feed the best final result to TriggerMonitor
             if results:
                 best_final_result = max(results, key=lambda r: r["fitness"])
-                is_passed = best_final_result.get("passed_tests", 0) == best_final_result.get("total_tests", -1) and best_final_result.get("total_tests", 0) > 0
                 agent_id = f"EVO_{best_final_result['language'].upper()}"
                 category = problem.get("category", "general")
                 
-                self.trigger_monitor.add_result(agent_id, category, best_final_result["fitness"], is_passed)
+                # --- FINAL EVALUATION ON HIDDEN TEST SET ---
+                if mode == "evolve":
+                    print(f"\n  --- Final Evaluation on Hidden Test Set ---")
+                    code = best_final_result["generated_code"]
+                    language = best_final_result["language"]
+                    full_base_tests = problem.get("tests", [])
+                    
+                    import asyncio
+                    unique_agent_id = f"prob{problem_id}_final_eval_{agent_id}"
+                    try:
+                        final_test_results = await asyncio.to_thread(self.sandbox.run, code, full_base_tests, language=language, agent_id=unique_agent_id)
+                        final_passed = final_test_results["passed_tests"]
+                        final_total = final_test_results["total_tests"]
+                        print(f"  [Final Evaluation] {language} Passed {final_passed}/{final_total} tests on the full hidden suite.")
+                        
+                        problem_report["final_evaluation"] = {
+                            "language": language,
+                            "passed_tests": final_passed,
+                            "total_tests": final_total,
+                            "accuracy": final_passed / max(final_total, 1),
+                            "crash_tests": len(final_test_results["crash_tests"]),
+                            "execution_time_ms": final_test_results["execution_time_ms"],
+                            "peak_memory_kb": final_test_results["peak_memory_kb"]
+                        }
+                        
+                        # Update trigger monitor using the FINAL true fitness/passing state
+                        is_passed = final_passed == final_total and final_total > 0
+                        true_fitness = best_final_result["fitness"] * (final_passed / max(final_total, 1))
+                    except Exception as e:
+                        print(f"  [Final Evaluation] Failed to run final eval: {e}")
+                        is_passed = False
+                        true_fitness = 0.0
+                else:
+                    is_passed = best_final_result.get("passed_tests", 0) == best_final_result.get("total_tests", -1) and best_final_result.get("total_tests", 0) > 0
+                    true_fitness = best_final_result["fitness"]
+
+                self.trigger_monitor.add_result(agent_id, category, true_fitness, is_passed)
                 should_trigger, reason = self.trigger_monitor.evaluate(agent_id)
                 
                 if should_trigger and self.enable_evolution:

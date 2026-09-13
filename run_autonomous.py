@@ -269,6 +269,7 @@ async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
             # Make sure it's a list
             if not isinstance(problems, list):
                 problems = [problems]
+            problems = problems[:n_runs]
             print(f"[Autonomous] Loaded {len(problems)} problem(s) successfully.")
         except Exception as e:
             print(f"[Autonomous] Error loading dataset {dataset_path}: {e}")
@@ -286,7 +287,9 @@ async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
     print("-" * 60)
 
     # 3. Run EvoFlow on each problem
-    for run_idx, problem in enumerate(problems):
+    import asyncio
+
+    async def _process_run(run_idx, problem, skip_meta_evolution):
         print(f"\n{'='*60}")
         print(f"  AUTONOMOUS RUN {run_idx + 1}/{actual_runs}: {problem.get('title', 'Unknown')}")
         print(f"{'='*60}")
@@ -346,6 +349,16 @@ async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
             traceback.print_exc()
             print(f"\n[Autonomous] ERROR during run {run_idx + 1}: {e}")
             print("[Autonomous] Continuing with next problem...")
+            
+        return skip_meta_evolution
+
+    # Launch all problem runs concurrently
+    tasks = [_process_run(run_idx, problem, skip_meta_evolution) for run_idx, problem in enumerate(problems)]
+    results = await asyncio.gather(*tasks)
+    
+    # If any run said to skip meta evolution, we skip it
+    if any(results):
+        skip_meta_evolution = True
 
     # 4. Synthesize memory from ALL new reports generated during this session
     print(f"\n{'='*60}")
@@ -516,8 +529,19 @@ if __name__ == "__main__":
         default=3,
         help="Population size per generation (default: 3)."
     )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Random seed for reproducibility."
+    )
 
     args = parser.parse_args()
+    
+    if args.seed is not None:
+        import random
+        random.seed(args.seed)
+        print(f"[System] Random seed set to: {args.seed}")
 
     asyncio.run(run_autonomous_pipeline(
         n_runs=args.runs,

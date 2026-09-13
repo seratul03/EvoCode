@@ -121,7 +121,10 @@ class MetaArena:
         # Build the command
         python_exe = sys.executable
         cmd = [
-            python_exe, "src/meta_evolution/duel_runner.py"
+            python_exe, "run_autonomous.py",
+            "--dataset", "benchmark_suite.json",
+            "--runs", "3",
+            "--skip-meta-evolution"
         ]
 
         if agent_patch:

@@ -19,19 +19,37 @@ class Sandbox:
         """Converts Python-formatted inputs/expecteds into JSON-friendly native Python lists/primitives."""
         parsed = []
         for i, tc in enumerate(test_cases):
-            inp = str(tc.get("input", ""))
-            exp = str(tc.get("expected", ""))
+            inp_raw = tc.get("input", "")
+            exp_raw = tc.get("expected", "")
             
-            try:
-                node = ast.parse(inp, mode='eval')
-                args = [ast.literal_eval(arg) for arg in node.body.args]
-            except Exception:
-                args = [inp]
-                
-            try:
-                exp_val = ast.literal_eval(exp)
-            except Exception:
-                exp_val = exp
+            # --- Parse Input Args ---
+            args = []
+            if isinstance(inp_raw, dict):
+                args = list(inp_raw.values())
+            elif isinstance(inp_raw, list):
+                args = inp_raw
+            else:
+                inp = str(inp_raw)
+                try:
+                    node = ast.parse(inp, mode='eval')
+                    if isinstance(node.body, ast.Call):
+                        args = [ast.literal_eval(arg) for arg in node.body.args]
+                    elif isinstance(node.body, ast.Tuple):
+                        args = [ast.literal_eval(el) for el in node.body.elts]
+                    else:
+                        args = [ast.literal_eval(node.body)]
+                except Exception:
+                    args = [inp]
+            
+            # --- Parse Expected Value ---
+            if isinstance(exp_raw, (dict, list, int, float, bool)) or exp_raw is None:
+                exp_val = exp_raw
+            else:
+                exp = str(exp_raw)
+                try:
+                    exp_val = ast.literal_eval(exp)
+                except Exception:
+                    exp_val = exp
                 
             parsed.append({
                 "id": tc.get("id", i),
