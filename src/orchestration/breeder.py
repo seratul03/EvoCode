@@ -14,6 +14,30 @@ class EvoBreeder:
             self.orchestrator.pop_generator = [AgentGenome() for _ in range(self.orchestrator.pop_size)]
             return
 
+        if mode == "baseline_b":
+            r = results[0]
+            new_genome = AgentGenome(**r["gen_genome"].model_dump())
+            eval_record = next((e for e in gen_report.get("evaluations", []) if e.get("agent_index", 0) == r.get("index", 0)), None)
+            if eval_record:
+                new_genome.past_code = eval_record.get("generated_code", "")
+                issues = "\n- ".join(r["diagnosis"].get("code_issues", ["Unknown issues"]))
+                new_genome.critic_feedback = f"Failure type: {r['diagnosis'].get('primary_failure', 'Unknown')}\nIssues:\n- {issues}"
+            self.orchestrator.pop_generator = [new_genome]
+            return
+
+        if mode == "baseline_c":
+            new_pop_generator = []
+            for r in results:
+                new_genome = AgentGenome(**r["gen_genome"].model_dump())
+                eval_record = next((e for e in gen_report.get("evaluations", []) if e.get("agent_index", 0) == r.get("index", 0)), None)
+                if eval_record:
+                    new_genome.past_code = eval_record.get("generated_code", "")
+                    issues = "\n- ".join(r["diagnosis"].get("code_issues", ["Unknown issues"]))
+                    new_genome.critic_feedback = f"Failure type: {r['diagnosis'].get('primary_failure', 'Unknown')}\nIssues:\n- {issues}"
+                new_pop_generator.append(new_genome)
+            self.orchestrator.pop_generator = new_pop_generator
+            return
+
         viable = [r for r in results if r.get("passed_tests", 0) >= 1]
         if not viable:
             viable = results
@@ -26,29 +50,6 @@ class EvoBreeder:
 
         print("    [Selection & Breeding]")
         results.sort(key=lambda x: x["fitness"], reverse=True)
-
-        if mode == "baseline_b":
-            r = results[0]
-            new_genome = AgentGenome(**r["gen_genome"].model_dump())
-            new_genome.past_code = gen_report["evaluations"][0]["generated_code"]
-            issues = "\n- ".join(r["diagnosis"].get("code_issues", ["Unknown issues"]))
-            new_genome.critic_feedback = f"Failure type: {r['diagnosis'].get('primary_failure', 'Unknown')}\nIssues:\n- {issues}"
-            self.orchestrator.pop_generator = [new_genome]
-            return
-
-        if mode == "baseline_c":
-            new_pop_generator = []
-            for _ in range(self.orchestrator.pop_size):
-                parent_result = random.choice(results)
-                parent_genome = parent_result["gen_genome"]
-                mutator_genome = parent_result["mut_genome"]
-                blank_diagnosis = {"severity": 0.0, "primary_failure": "none", "code_issues": [], "recommended_mutations": []}
-                child_genome = await self.orchestrator.mutator.propose(blank_diagnosis, parent_genome, mutator_genome)
-                child_genome.parent_id = parent_result["index"]
-                child_genome.generation_id = generation_id
-                new_pop_generator.append(child_genome)
-            self.orchestrator.pop_generator = new_pop_generator
-            return
 
         top_k = min(2, len(results))
         top_results = results[:top_k]
@@ -104,14 +105,18 @@ class EvoBreeder:
             winner_code = winner_result.get("generated_code")
             winner_language = winner_result.get("language")
             
-            child_genome = await self.orchestrator.mutator.propose(
-                diagnosis, 
-                parent_genome, 
-                mutator_genome,
-                winner_code=winner_code,
-                winner_language=winner_language,
-                target_language=target_language
-            )
+            if getattr(self.orchestrator, "disable_mutation", False):
+                print(f"      [Ablation] Mutation disabled. Cloning parent directly.")
+                child_genome = parent_genome.model_copy(deep=True)
+            else:
+                child_genome = await self.orchestrator.mutator.propose(
+                    diagnosis, 
+                    parent_genome, 
+                    mutator_genome,
+                    winner_code=winner_code,
+                    winner_language=winner_language,
+                    target_language=target_language
+                )
             
             is_valid = await self.orchestrator.canary_pipeline.validate_mutation(child_genome, language=target_language)
             

@@ -38,7 +38,7 @@ class FitnessScorer:
         self.complexity = ComplexityEvaluator()
         self.robustness = RobustnessEvaluator()
 
-    def calculate_fitness(self, code: str, test_results: dict, genome: EvaluatorGenome) -> dict:
+    def calculate_fitness(self, code: str, test_results: dict, genome: EvaluatorGenome, pop_stats: dict = None) -> dict:
         """
         Returns a dict with 'fitness_value' (float in [0, 1]) and 'breakdown' (dict).
 
@@ -53,8 +53,8 @@ class FitnessScorer:
         correctness_rate = passed / total
 
         quality_scores = {
-            "runtime":    self.runtime.score(test_results, genome),
-            "memory":     self.memory.score(test_results, genome),
+            "runtime":    self.runtime.score(test_results, genome, pop_stats),
+            "memory":     self.memory.score(test_results, genome, pop_stats),
             "efficiency": self.efficiency.score(code, test_results, genome),
             "complexity": self.complexity.score(code, genome),
             "robustness": self.robustness.score(code, genome),

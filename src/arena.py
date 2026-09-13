@@ -109,80 +109,45 @@ class ArenaReferee:
 
         return groups
 
-    def _offline_simulate_run(self, genome: AgentGenome, seed: int, env_profile: EnvironmentProfile) -> dict:
+    async def _evaluate_genome_real(self, genome_data: dict) -> dict:
         """
-        Simulates an offline evaluation run for a single genome using the given seed and environment profile.
+        Instantiates a fresh pipeline and runs it for a single genome to get real scores.
         """
-        rng = random.Random(seed)
-        triggering_category = "recursion"
-        test_groups = self._sample_test_groups(triggering_category)
+        from src.evoflow import EvoFlowOrchestrator
+        orchestrator = EvoFlowOrchestrator(pop_size=1, enable_evolution=False, enable_collaboration=False)
+        eval_report = await orchestrator.run_eval_only(
+            problems=self.problems,
+            genome_config=genome_data,
+            condition_name="arena_eval"
+        )
         
-        group_scores = {}
-        total_score = 0.0
-        total_problems = 0
+        overall_score = eval_report["summary"]["solve_rate"]
         
-        for group_name, problems in test_groups.items():
-            if not problems:
-                continue
-                
-            group_score = 0.0
-            for p in problems:
-                base_perf = (
-                    (1.0 - abs(genome.temperature - 0.3)) * 0.5 + 
-                    (min(genome.reasoning.reasoning_depth, 10) / 10) * 0.2 +
-                    (min(genome.verification.verification_depth, 10) / 10) * 0.3
-                )
-                
-                # Environment Pressure modifications
-                # Under high pressure, base_perf must clear the base_correctness_threshold 
-                # to earn full efficiency and robustness bonuses.
-                efficiency_bonus = (min(genome.reasoning.reasoning_depth, 10) / 10) * env_profile.efficiency_weight
-                robustness_bonus = (min(genome.verification.verification_depth, 10) / 10) * env_profile.robustness_weight
-                
-                if base_perf < env_profile.base_correctness_threshold:
-                    # Penalize heavily if core correctness is lacking in a high pressure environment
-                    penalty = (env_profile.base_correctness_threshold - base_perf) * 0.5 * env_profile.level
-                    efficiency_bonus = 0
-                    robustness_bonus = 0
-                    base_perf -= penalty
-
-                # We add a slight random fuzz to simulate real-world noise, 
-                # but keep it heavily weighted towards genome parameters
-                noise = (rng.random() - 0.5) * 0.1
-                
-                raw_score = base_perf + efficiency_bonus + robustness_bonus + noise
-                score = max(0.0, min(1.0, raw_score))
-                
-                group_score += score
-                total_score += score
-                total_problems += 1
-                
-            group_scores[group_name] = round(group_score / len(problems), 4)
-            
-        avg_score = total_score / max(1, total_problems)
+        # Assign the overall score to group scores
+        group_scores = {
+            "known_solved": overall_score,
+            "triggering": overall_score,
+            "unseen_related": overall_score,
+            "unrelated": overall_score,
+            "adversarial": overall_score,
+            "regression": overall_score
+        }
+        
         return {
             "group_scores": group_scores,
-            "overall_score": round(avg_score, 4)
+            "overall_score": overall_score
         }
 
-    def compare(self, parent_genome_data: dict, candidate_genome_data: dict, env_profile: EnvironmentProfile = None) -> ArenaResult:
+    async def compare(self, parent_genome_data: dict, candidate_genome_data: dict, env_profile: EnvironmentProfile = None) -> ArenaResult:
         """
-        Runs both genomes through identical simulated task groups.
-        Uses the provided environment profile to adjust evaluation pressure.
+        Runs both genomes through the actual evaluation pipeline.
         """
         if env_profile is None:
             env_profile = EnvironmentProfile()
             
-        p_genome = AgentGenome(**parent_genome_data)
-        c_genome = AgentGenome(**candidate_genome_data)
-        
-        # 1. Prepare identical deterministically seeded runs
-        seed_p = int(hashlib.md5(b"parent_run").hexdigest(), 16)
-        seed_c = int(hashlib.md5(b"candidate_run").hexdigest(), 16)
-        
-        # 2. Simulate
-        p_results = self._offline_simulate_run(p_genome, seed_p, env_profile)
-        c_results = self._offline_simulate_run(c_genome, seed_c, env_profile)
+        # 1. Real evaluations
+        p_results = await self._evaluate_genome_real(parent_genome_data)
+        c_results = await self._evaluate_genome_real(candidate_genome_data)
         
         parent_score = p_results["overall_score"]
         candidate_score = c_results["overall_score"]

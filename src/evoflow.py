@@ -37,7 +37,7 @@ class EvoFlowOrchestrator:
     The main orchestrator for the Co-Evolutionary system.
     Manages the 4 populations, runs the generations, and records everything via EventLogger and JSON run logs.
     """
-    def __init__(self, pop_size=3, enable_evolution=True, enable_collaboration=True, enable_memory=True, single_agent_mode=False):
+    def __init__(self, pop_size=3, enable_evolution=True, enable_collaboration=True, enable_memory=True, single_agent_mode=False, disable_critic=False, disable_property_testing=False, disable_mutation=False):
         self.client = EvoClient()
         self.logger = EventLogger()
         self.sandbox = Sandbox(timeout_seconds=60)
@@ -49,6 +49,9 @@ class EvoFlowOrchestrator:
         self.enable_collaboration = enable_collaboration
         self.enable_memory = enable_memory
         self.single_agent_mode = single_agent_mode
+        self.disable_critic = disable_critic
+        self.disable_property_testing = disable_property_testing
+        self.disable_mutation = disable_mutation
 
         # 3 distinct base agents for generation
         if self.single_agent_mode:
@@ -125,11 +128,11 @@ class EvoFlowOrchestrator:
         self.breeder_module = EvoBreeder(self)
         self.meta_evolution_module = MetaEvolutionRunner(self)
 
-    async def _evaluate_single_genome(self, i: int, generation_id: int, problem: dict, problem_id: int, templates: dict | None = None):
-        return await self.evaluator_module.evaluate_single_genome(i, generation_id, problem, problem_id, templates)
+    async def _evaluate_single_genome(self, i: int, generation_id: int, problem: dict, problem_id: int, templates: dict | None = None, mode: str = "evolve"):
+        return await self.evaluator_module.evaluate_single_genome(i, generation_id, problem, problem_id, templates, mode)
 
-    async def evaluate_population(self, generation_id: int, problem: dict, problem_report: dict):
-        return await self.evaluator_module.evaluate_population(generation_id, problem, problem_report)
+    async def evaluate_population(self, generation_id: int, problem: dict, problem_report: dict, mode: str = "evolve"):
+        return await self.evaluator_module.evaluate_population(generation_id, problem, problem_report, mode)
 
     async def select_and_breed(self, generation_id: int, results: list, problem_id: int, gen_report: dict, mode: str = "evolve"):
         return await self.breeder_module.select_and_breed(results, generation_id, gen_report, mode)
@@ -174,7 +177,7 @@ class EvoFlowOrchestrator:
 
         for problem in problems:
             problem_report = {"problem_id": problem.get("id"), "generations": []}
-            results, _ = await self.evaluate_population(0, problem, problem_report)
+            results, _ = await self.evaluate_population(0, problem, problem_report, mode="eval_only")
             passed_count = sum(1 for r in results if r.get("passed_tests", 0) == r.get("total_tests", -1))
             problem_report["solved"] = passed_count > 0
             problem_report["best_fitness"] = max((r["fitness"] for r in results), default=0)
@@ -213,7 +216,27 @@ class EvoFlowOrchestrator:
             for gen in range(num_generations):
                 print(f"\n  --- Generation {gen+1}/{num_generations} ---")
                 
-                results, gen_report = await self.evaluate_population(gen, problem, problem_report)
+                results, gen_report = await self.evaluate_population(gen, problem, problem_report, mode=mode)
+                
+                # Calculate population diversity metrics
+                import statistics
+                fitness_values = [r.get("fitness", 0.0) for r in results]
+                if fitness_values:
+                    min_fit = min(fitness_values)
+                    max_fit = max(fitness_values)
+                    mean_fit = statistics.mean(fitness_values)
+                    var_fit = statistics.variance(fitness_values) if len(fitness_values) > 1 else 0.0
+                    
+                    # Add to report
+                    gen_report["population_stats"] = {
+                        "min_fitness": min_fit,
+                        "max_fitness": max_fit,
+                        "mean_fitness": mean_fit,
+                        "variance": var_fit
+                    }
+                    
+                    # Log to DB
+                    self.logger.log_population_stats(problem_id, gen+1, min_fit, max_fit, mean_fit, var_fit)
                 
                 # Check circuit breaker: If any genome achieves 100% correctness, we found a perfect solution!
                 best_fitness = max(r["fitness"] for r in results)

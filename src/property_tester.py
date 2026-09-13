@@ -138,6 +138,9 @@ class PropertyTester:
         th = type_hint.lower()
 
         if th in ("int", "integer") or th.startswith("optional[int"):
+            if rng.random() < 0.3:
+                import sys
+                return rng.choice([0, 1, -1, 10**9, -10**9, sys.maxsize, -sys.maxsize - 1])
             # Mix of small, large, and boundary values, capped at 20 to prevent DP/recursion hangs
             return rng.choice([
                 rng.randint(-20, 20),
@@ -145,17 +148,33 @@ class PropertyTester:
             ])
 
         if "float" in th:
+            if rng.random() < 0.3:
+                return rng.choice([0.0, -0.0, 1e9, -1e9, 1.0, -1.0])
             return round(rng.uniform(-1000.0, 1000.0), 3)
 
         if "bool" in th:
             return rng.choice([True, False])
 
         if th in ("str", "string") or (th.startswith("str") and "[" not in th):
+            if rng.random() < 0.3:
+                return rng.choice(["", "a", "A", " " * 10, "".join(rng.choices(string.ascii_lowercase, k=1000))])
             length = rng.randint(0, 20)
             charset = string.ascii_lowercase + string.digits + "!@#_- "
             return "".join(rng.choices(charset, k=length))
 
         if "list[int]" in th or th == "list[int]":
+            if rng.random() < 0.3:
+                import sys
+                edge_val = rng.choice([0, 1, -1, 10**9, -10**9, sys.maxsize, -sys.maxsize - 1])
+                return rng.choice([
+                    [],
+                    [0],
+                    [-1],
+                    [1],
+                    [edge_val],
+                    [edge_val] * 1000,
+                    [0] * 1000
+                ])
             size = rng.randint(0, 20)
             lo, hi = rng.choice([(-10, 10), (-10**6, 10**6), (0, 100)])
             vals = [rng.randint(lo, hi) for _ in range(size)]
@@ -171,6 +190,14 @@ class PropertyTester:
             return vals
 
         if "list[str]" in th:
+            if rng.random() < 0.3:
+                return rng.choice([
+                    [],
+                    [""],
+                    ["a"],
+                    ["a"] * 1000,
+                    [""] * 1000
+                ])
             size = rng.randint(0, 10)
             return ["".join(rng.choices(string.ascii_lowercase, k=rng.randint(1, 8)))
                     for _ in range(size)]

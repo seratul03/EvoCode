@@ -18,7 +18,7 @@ class Sandbox:
     def _parse_tests_to_json(self, test_cases: list[dict]) -> list[dict]:
         """Converts Python-formatted inputs/expecteds into JSON-friendly native Python lists/primitives."""
         parsed = []
-        for tc in test_cases:
+        for i, tc in enumerate(test_cases):
             inp = str(tc.get("input", ""))
             exp = str(tc.get("expected", ""))
             
@@ -34,7 +34,7 @@ class Sandbox:
                 exp_val = exp
                 
             parsed.append({
-                "id": tc["id"],
+                "id": tc.get("id", i),
                 "args": args,
                 "expected": exp_val
             })
@@ -123,9 +123,10 @@ if __name__ == '__main__':
             "test_outputs": []
         }
 
-        workspace_dir = os.path.abspath(os.path.join("workspaces", agent_id))
-        os.makedirs(workspace_dir, exist_ok=True)
-        temp_dir = workspace_dir  # alias to avoid rewriting everything
+        workspace_base = os.path.abspath("workspaces")
+        os.makedirs(workspace_base, exist_ok=True)
+        temp_dir_obj = tempfile.TemporaryDirectory(dir=workspace_base, prefix=f"{agent_id}_")
+        temp_dir = temp_dir_obj.name
 
         parsed_tests = self._parse_tests_to_json(test_cases)
         
@@ -220,6 +221,10 @@ if __name__ == '__main__':
                 results["timeout_tests"].append(tid)
                 results["test_outputs"].append({"id": tid, "status": "timeout"})
 
+        try:
+            temp_dir_obj.cleanup()
+        except Exception:
+            pass
         return results
 
     # ─── Test Harness Builders ─────────────────────────────────────────────────

@@ -1,0 +1,3402 @@
+[
+  {
+    "id": 1,
+    "category": "array manipulation",
+    "title": "Sum of Evens",
+    "description": "Given a list of integers, return the sum of all even numbers in the list.",
+    "difficulty": 1,
+    "function_signature": "def sum_of_evens(nums: list) -> int:",
+    "tests": [
+      {
+        "input": "sum_of_evens([1, 2, 3, 4])",
+        "expected": "6"
+      },
+      {
+        "input": "sum_of_evens([1, 3, 5])",
+        "expected": "0"
+      },
+      {
+        "input": "sum_of_evens([])",
+        "expected": "0"
+      },
+      {
+        "input": "sum_of_evens([-2, -4, 3])",
+        "expected": "-6"
+      },
+      {
+        "input": "sum_of_evens([0, 0, 0])",
+        "expected": "0"
+      },
+      {
+        "input": "sum_of_evens([2])",
+        "expected": "2"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "category": "string processing",
+    "title": "Run Length Compression",
+    "description": "Given a string, compress it using run-length encoding where each character is followed by the count of consecutive occurrences. Return the compressed string. Return an empty string if input is empty.",
+    "difficulty": 4,
+    "function_signature": "def compress_runs(text: str) -> str:",
+    "tests": [
+      {
+        "input": "compress_runs('aaabbc')",
+        "expected": "'a3b2c1'"
+      },
+      {
+        "input": "compress_runs('abcd')",
+        "expected": "'a1b1c1d1'"
+      },
+      {
+        "input": "compress_runs('')",
+        "expected": "''"
+      },
+      {
+        "input": "compress_runs('aaaaaaaaaa')",
+        "expected": "'a10'"
+      },
+      {
+        "input": "compress_runs('aabbaa')",
+        "expected": "'a2b2a2'"
+      },
+      {
+        "input": "compress_runs('z')",
+        "expected": "'z1'"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "category": "interval processing",
+    "title": "Merge Overlapping Intervals",
+    "description": "Given a list of intervals represented as [start, end] pairs, merge all overlapping intervals and return the resulting list of merged intervals sorted by start.",
+    "difficulty": 4,
+    "function_signature": "def merge_intervals(intervals: list) -> list:",
+    "tests": [
+      {
+        "input": "merge_intervals([[1, 3], [2, 6], [8, 10], [15, 18]])",
+        "expected": "[[1, 6], [8, 10], [15, 18]]"
+      },
+      {
+        "input": "merge_intervals([])",
+        "expected": "[]"
+      },
+      {
+        "input": "merge_intervals([[1, 4], [4, 5]])",
+        "expected": "[[1, 5]]"
+      },
+      {
+        "input": "merge_intervals([[1, 10], [2, 3], [4, 5]])",
+        "expected": "[[1, 10]]"
+      },
+      {
+        "input": "merge_intervals([[5, 6]])",
+        "expected": "[[5, 6]]"
+      },
+      {
+        "input": "merge_intervals([[1, 2], [3, 4], [5, 6]])",
+        "expected": "[[1, 2], [3, 4], [5, 6]]"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "category": "mathematics",
+    "title": "Find Missing Number",
+    "description": "Given a list containing n distinct numbers taken from the range 1 to n+1 with exactly one number missing, return the missing number.",
+    "difficulty": 2,
+    "function_signature": "def find_missing(nums: list) -> int:",
+    "tests": [
+      {
+        "input": "find_missing([1, 2, 4, 5])",
+        "expected": "3"
+      },
+      {
+        "input": "find_missing([2, 3, 4, 5])",
+        "expected": "1"
+      },
+      {
+        "input": "find_missing([1, 2, 3, 4])",
+        "expected": "5"
+      },
+      {
+        "input": "find_missing([1])",
+        "expected": "2"
+      },
+      {
+        "input": "find_missing([2])",
+        "expected": "1"
+      },
+      {
+        "input": "find_missing([1, 3])",
+        "expected": "2"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "category": "hashmap",
+    "title": "Group Anagrams by Signature",
+    "description": "Given a list of words, group the words that are anagrams of each other. Return a dictionary mapping the sorted-letter signature of each group to the list of words (in original order) belonging to that group.",
+    "difficulty": 4,
+    "function_signature": "def group_by_signature(words: list) -> dict:",
+    "tests": [
+      {
+        "input": "group_by_signature(['eat', 'tea', 'tan', 'ate', 'nat', 'bat'])",
+        "expected": "{'aet': ['eat', 'tea', 'ate'], 'ant': ['tan', 'nat'], 'abt': ['bat']}"
+      },
+      {
+        "input": "group_by_signature([])",
+        "expected": "{}"
+      },
+      {
+        "input": "group_by_signature(['abc'])",
+        "expected": "{'abc': ['abc']}"
+      },
+      {
+        "input": "group_by_signature(['ab', 'ba', 'cd'])",
+        "expected": "{'ab': ['ab', 'ba'], 'cd': ['cd']}"
+      },
+      {
+        "input": "group_by_signature(['aa', 'aa'])",
+        "expected": "{'aa': ['aa', 'aa']}"
+      },
+      {
+        "input": "group_by_signature(['xyz', 'zyx', 'yxz', 'abc'])",
+        "expected": "{'xyz': ['xyz', 'zyx', 'yxz'], 'abc': ['abc']}"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "category": "hashmap",
+    "title": "Two Sum Indices",
+    "description": "Given a list of integers and a target integer, return a list of the two indices (in order found) of the numbers that add up to the target, using the first valid pair found while scanning left to right. Return an empty list if no such pair exists.",
+    "difficulty": 2,
+    "function_signature": "def two_sum_indices(nums: list, target: int) -> list:",
+    "tests": [
+      {
+        "input": "two_sum_indices([2, 7, 11, 15], 9)",
+        "expected": "[0, 1]"
+      },
+      {
+        "input": "two_sum_indices([3, 2, 4], 6)",
+        "expected": "[1, 2]"
+      },
+      {
+        "input": "two_sum_indices([3, 3], 6)",
+        "expected": "[0, 1]"
+      },
+      {
+        "input": "two_sum_indices([1, 2, 3], 100)",
+        "expected": "[]"
+      },
+      {
+        "input": "two_sum_indices([-1, -2, -3, -4], -6)",
+        "expected": "[1, 3]"
+      },
+      {
+        "input": "two_sum_indices([0, 4, 3, 0], 0)",
+        "expected": "[0, 3]"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "category": "sorting",
+    "title": "Kth Largest Element",
+    "description": "Given a list of integers and an integer k, return the kth largest element in the list (1-indexed, counting duplicates separately).",
+    "difficulty": 2,
+    "function_signature": "def kth_largest(nums: list, k: int) -> int:",
+    "tests": [
+      {
+        "input": "kth_largest([3, 2, 1, 5, 6, 4], 2)",
+        "expected": "5"
+      },
+      {
+        "input": "kth_largest([3, 2, 3, 1, 2, 4, 5, 5, 6], 4)",
+        "expected": "4"
+      },
+      {
+        "input": "kth_largest([1], 1)",
+        "expected": "1"
+      },
+      {
+        "input": "kth_largest([5, 5, 5], 2)",
+        "expected": "5"
+      },
+      {
+        "input": "kth_largest([-1, -2, -3], 1)",
+        "expected": "-1"
+      },
+      {
+        "input": "kth_largest([9, 1, 8, 2], 4)",
+        "expected": "1"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "category": "searching",
+    "title": "Binary Search Insert Position",
+    "description": "Given a sorted list of distinct integers and a target value, return the index where the target should be inserted to keep the list sorted, using binary search. If the target already exists, return its index.",
+    "difficulty": 4,
+    "function_signature": "def binary_search_insert(nums: list, target: int) -> int:",
+    "tests": [
+      {
+        "input": "binary_search_insert([1, 3, 5, 6], 5)",
+        "expected": "2"
+      },
+      {
+        "input": "binary_search_insert([1, 3, 5, 6], 2)",
+        "expected": "1"
+      },
+      {
+        "input": "binary_search_insert([1, 3, 5, 6], 7)",
+        "expected": "4"
+      },
+      {
+        "input": "binary_search_insert([1, 3, 5, 6], 0)",
+        "expected": "0"
+      },
+      {
+        "input": "binary_search_insert([], 3)",
+        "expected": "0"
+      },
+      {
+        "input": "binary_search_insert([1], 1)",
+        "expected": "0"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "category": "two pointers",
+    "title": "Container With Most Water",
+    "description": "Given a list of non-negative integers representing vertical line heights at each index, find two lines that together with the x-axis form a container that holds the most water, and return the maximum amount of water it can store (computed as the width between indices times the shorter height).",
+    "difficulty": 5,
+    "function_signature": "def container_with_most_water(heights: list) -> int:",
+    "tests": [
+      {
+        "input": "container_with_most_water([1, 8, 6, 2, 5, 4, 8, 3, 7])",
+        "expected": "49"
+      },
+      {
+        "input": "container_with_most_water([1, 1])",
+        "expected": "1"
+      },
+      {
+        "input": "container_with_most_water([4, 3, 2, 1, 4])",
+        "expected": "16"
+      },
+      {
+        "input": "container_with_most_water([1, 2, 1])",
+        "expected": "2"
+      },
+      {
+        "input": "container_with_most_water([0, 0, 0])",
+        "expected": "0"
+      },
+      {
+        "input": "container_with_most_water([1, 2, 4, 3])",
+        "expected": "4"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "category": "sliding window",
+    "title": "Longest Substring Without Repeating Characters",
+    "description": "Given a string, return the length of the longest contiguous substring that contains no repeating characters.",
+    "difficulty": 4,
+    "function_signature": "def longest_unique_substring_len(s: str) -> int:",
+    "tests": [
+      {
+        "input": "longest_unique_substring_len('abcabcbb')",
+        "expected": "3"
+      },
+      {
+        "input": "longest_unique_substring_len('bbbbb')",
+        "expected": "1"
+      },
+      {
+        "input": "longest_unique_substring_len('pwwkew')",
+        "expected": "3"
+      },
+      {
+        "input": "longest_unique_substring_len('')",
+        "expected": "0"
+      },
+      {
+        "input": "longest_unique_substring_len('abcdef')",
+        "expected": "6"
+      },
+      {
+        "input": "longest_unique_substring_len('dvdf')",
+        "expected": "3"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "category": "stack",
+    "title": "Valid Parentheses Matching",
+    "description": "Given a string containing only the characters '(', ')', '{', '}', '[' and ']', determine whether the brackets are properly matched and nested. Return True if valid, False otherwise.",
+    "difficulty": 2,
+    "function_signature": "def valid_parentheses(s: str) -> bool:",
+    "tests": [
+      {
+        "input": "valid_parentheses('()')",
+        "expected": "True"
+      },
+      {
+        "input": "valid_parentheses('()[]{}')",
+        "expected": "True"
+      },
+      {
+        "input": "valid_parentheses('(]')",
+        "expected": "False"
+      },
+      {
+        "input": "valid_parentheses('([)]')",
+        "expected": "False"
+      },
+      {
+        "input": "valid_parentheses('{[]}')",
+        "expected": "True"
+      },
+      {
+        "input": "valid_parentheses('')",
+        "expected": "True"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "category": "queue",
+    "title": "Sliding Window Maximum",
+    "description": "Given a list of integers and a window size k, return a list containing the maximum value in each contiguous window of size k as it slides from the beginning to the end of the list.",
+    "difficulty": 7,
+    "function_signature": "def sliding_window_max(nums: list, k: int) -> list:",
+    "tests": [
+      {
+        "input": "sliding_window_max([1, 3, -1, -3, 5, 3, 6, 7], 3)",
+        "expected": "[3, 3, 5, 5, 6, 7]"
+      },
+      {
+        "input": "sliding_window_max([1], 1)",
+        "expected": "[1]"
+      },
+      {
+        "input": "sliding_window_max([9, 8, 7, 6], 2)",
+        "expected": "[9, 8, 7]"
+      },
+      {
+        "input": "sliding_window_max([4, 4, 4, 4], 2)",
+        "expected": "[4, 4, 4]"
+      },
+      {
+        "input": "sliding_window_max([1, 2, 3, 4, 5], 5)",
+        "expected": "[5]"
+      },
+      {
+        "input": "sliding_window_max([5, 3, 8, 1, 9, 2], 3)",
+        "expected": "[8, 8, 9, 9]"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "category": "recursion",
+    "title": "Fibonacci with Memoization",
+    "description": "Given a non-negative integer n, return the nth Fibonacci number using recursion with memoization, where fib(0)=0 and fib(1)=1.",
+    "difficulty": 2,
+    "function_signature": "def fib_memo(n: int) -> int:",
+    "tests": [
+      {
+        "input": "fib_memo(0)",
+        "expected": "0"
+      },
+      {
+        "input": "fib_memo(1)",
+        "expected": "1"
+      },
+      {
+        "input": "fib_memo(10)",
+        "expected": "55"
+      },
+      {
+        "input": "fib_memo(20)",
+        "expected": "6765"
+      },
+      {
+        "input": "fib_memo(2)",
+        "expected": "1"
+      },
+      {
+        "input": "fib_memo(30)",
+        "expected": "832040"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "category": "backtracking",
+    "title": "All Subsets",
+    "description": "Given a list of distinct integers, return all possible subsets (the power set), including the empty set and the full set. Return the result as a list of lists sorted first by subset length then lexicographically.",
+    "difficulty": 5,
+    "function_signature": "def subsets(nums: list) -> list:",
+    "tests": [
+      {
+        "input": "subsets([1, 2, 3])",
+        "expected": "[[], [1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 2, 3]]"
+      },
+      {
+        "input": "subsets([])",
+        "expected": "[[]]"
+      },
+      {
+        "input": "subsets([5])",
+        "expected": "[[], [5]]"
+      },
+      {
+        "input": "subsets([1, 2])",
+        "expected": "[[], [1], [2], [1, 2]]"
+      },
+      {
+        "input": "subsets([4, 1])",
+        "expected": "[[], [1], [4], [4, 1]]"
+      },
+      {
+        "input": "subsets([1, 2, 3, 4])",
+        "expected": "[[], [1], [2], [3], [4], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4], [1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4], [1, 2, 3, 4]]"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "category": "dynamic programming",
+    "title": "Minimum Coins for Amount",
+    "description": "Given a list of coin denominations and a target amount, return the minimum number of coins needed to make up that amount using unlimited supply of each denomination. Return -1 if the amount cannot be made.",
+    "difficulty": 7,
+    "function_signature": "def coin_change_min(coins: list, amount: int) -> int:",
+    "tests": [
+      {
+        "input": "coin_change_min([1, 2, 5], 11)",
+        "expected": "3"
+      },
+      {
+        "input": "coin_change_min([2], 3)",
+        "expected": "-1"
+      },
+      {
+        "input": "coin_change_min([1], 0)",
+        "expected": "0"
+      },
+      {
+        "input": "coin_change_min([1, 3, 4], 6)",
+        "expected": "2"
+      },
+      {
+        "input": "coin_change_min([5, 10], 3)",
+        "expected": "-1"
+      },
+      {
+        "input": "coin_change_min([1, 2, 5], 100)",
+        "expected": "20"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "category": "dynamic programming",
+    "title": "Equal Subset Sum Partition",
+    "description": "Given a list of positive integers, determine whether the list can be partitioned into two subsets such that the sum of elements in both subsets is equal. Return True or False.",
+    "difficulty": 7,
+    "function_signature": "def can_partition_equal_subset(nums: list) -> bool:",
+    "tests": [
+      {
+        "input": "can_partition_equal_subset([1, 5, 11, 5])",
+        "expected": "True"
+      },
+      {
+        "input": "can_partition_equal_subset([1, 2, 3, 5])",
+        "expected": "False"
+      },
+      {
+        "input": "can_partition_equal_subset([1, 1])",
+        "expected": "True"
+      },
+      {
+        "input": "can_partition_equal_subset([1])",
+        "expected": "False"
+      },
+      {
+        "input": "can_partition_equal_subset([2, 2, 3, 5])",
+        "expected": "False"
+      },
+      {
+        "input": "can_partition_equal_subset([1, 2, 3, 4, 5, 6, 7])",
+        "expected": "True"
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "category": "dynamic programming",
+    "title": "Maximum Subarray Sum (Kadane)",
+    "description": "Given a list of integers, return the largest possible sum of a contiguous subarray using Kadane's algorithm.",
+    "difficulty": 3,
+    "function_signature": "def max_subarray_sum(nums: list) -> int:",
+    "tests": [
+      {
+        "input": "max_subarray_sum([-2, 1, -3, 4, -1, 2, 1, -5, 4])",
+        "expected": "6"
+      },
+      {
+        "input": "max_subarray_sum([1])",
+        "expected": "1"
+      },
+      {
+        "input": "max_subarray_sum([-1, -2, -3])",
+        "expected": "-1"
+      },
+      {
+        "input": "max_subarray_sum([5, 4, -1, 7, 8])",
+        "expected": "23"
+      },
+      {
+        "input": "max_subarray_sum([0, 0, 0])",
+        "expected": "0"
+      },
+      {
+        "input": "max_subarray_sum([-5, 3, -2, 4])",
+        "expected": "5"
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "category": "greedy algorithms",
+    "title": "Maximum Non-Overlapping Activities",
+    "description": "Given a list of activities each represented as [start, end] times, return the maximum number of non-overlapping activities that can be scheduled, selecting greedily by earliest finish time.",
+    "difficulty": 5,
+    "function_signature": "def activity_selection(intervals: list) -> int:",
+    "tests": [
+      {
+        "input": "activity_selection([[1, 3], [2, 4], [3, 5], [0, 6], [5, 7], [3, 9], [5, 9], [6, 10], [8, 11], [8, 12], [2, 14], [12, 16]])",
+        "expected": "5"
+      },
+      {
+        "input": "activity_selection([])",
+        "expected": "0"
+      },
+      {
+        "input": "activity_selection([[1, 2]])",
+        "expected": "1"
+      },
+      {
+        "input": "activity_selection([[1, 10], [2, 3], [4, 5], [6, 7]])",
+        "expected": "3"
+      },
+      {
+        "input": "activity_selection([[1, 2], [1, 2], [1, 2]])",
+        "expected": "1"
+      },
+      {
+        "input": "activity_selection([[1, 4], [2, 3], [3, 5]])",
+        "expected": "2"
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "category": "number theory",
+    "title": "GCD of a List",
+    "description": "Given a list of positive integers, return the greatest common divisor (GCD) of all the numbers in the list.",
+    "difficulty": 2,
+    "function_signature": "def gcd_of_list(nums: list) -> int:",
+    "tests": [
+      {
+        "input": "gcd_of_list([12, 18, 24])",
+        "expected": "6"
+      },
+      {
+        "input": "gcd_of_list([7])",
+        "expected": "7"
+      },
+      {
+        "input": "gcd_of_list([5, 10, 15])",
+        "expected": "5"
+      },
+      {
+        "input": "gcd_of_list([17, 19])",
+        "expected": "1"
+      },
+      {
+        "input": "gcd_of_list([100, 75, 50])",
+        "expected": "25"
+      },
+      {
+        "input": "gcd_of_list([8, 8, 8])",
+        "expected": "8"
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "category": "number theory",
+    "title": "Count Primes Below N",
+    "description": "Given an integer n, return the count of prime numbers strictly less than n, using the Sieve of Eratosthenes.",
+    "difficulty": 4,
+    "function_signature": "def count_primes_below(n: int) -> int:",
+    "tests": [
+      {
+        "input": "count_primes_below(10)",
+        "expected": "4"
+      },
+      {
+        "input": "count_primes_below(0)",
+        "expected": "0"
+      },
+      {
+        "input": "count_primes_below(1)",
+        "expected": "0"
+      },
+      {
+        "input": "count_primes_below(2)",
+        "expected": "0"
+      },
+      {
+        "input": "count_primes_below(30)",
+        "expected": "10"
+      },
+      {
+        "input": "count_primes_below(100)",
+        "expected": "25"
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "category": "combinatorics",
+    "title": "Count Unique Permutations",
+    "description": "Given a list of integers that may contain duplicates, return the number of distinct permutations of the list.",
+    "difficulty": 5,
+    "function_signature": "def unique_permutations_count(nums: list) -> int:",
+    "tests": [
+      {
+        "input": "unique_permutations_count([1, 1, 2])",
+        "expected": "3"
+      },
+      {
+        "input": "unique_permutations_count([1, 2, 3])",
+        "expected": "6"
+      },
+      {
+        "input": "unique_permutations_count([1, 1, 1])",
+        "expected": "1"
+      },
+      {
+        "input": "unique_permutations_count([])",
+        "expected": "1"
+      },
+      {
+        "input": "unique_permutations_count([1])",
+        "expected": "1"
+      },
+      {
+        "input": "unique_permutations_count([1, 1, 2, 2])",
+        "expected": "6"
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "category": "matrix manipulation",
+    "title": "Rotate Matrix by 90 Degrees k Times",
+    "description": "Given a square matrix (list of lists) and an integer k, rotate the matrix 90 degrees clockwise k times and return the resulting matrix.",
+    "difficulty": 4,
+    "function_signature": "def rotate_matrix(matrix: list, k: int) -> list:",
+    "tests": [
+      {
+        "input": "rotate_matrix([[1, 2], [3, 4]], 1)",
+        "expected": "[[3, 1], [4, 2]]"
+      },
+      {
+        "input": "rotate_matrix([[1, 2], [3, 4]], 2)",
+        "expected": "[[4, 3], [2, 1]]"
+      },
+      {
+        "input": "rotate_matrix([[1, 2], [3, 4]], 0)",
+        "expected": "[[1, 2], [3, 4]]"
+      },
+      {
+        "input": "rotate_matrix([[1, 2], [3, 4]], 4)",
+        "expected": "[[1, 2], [3, 4]]"
+      },
+      {
+        "input": "rotate_matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 1)",
+        "expected": "[[7, 4, 1], [8, 5, 2], [9, 6, 3]]"
+      },
+      {
+        "input": "rotate_matrix([[1]], 5)",
+        "expected": "[[1]]"
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "category": "matrix manipulation",
+    "title": "Spiral Matrix Traversal",
+    "description": "Given a matrix (list of lists of integers), return all elements visited in spiral order starting from the top-left corner moving clockwise.",
+    "difficulty": 4,
+    "function_signature": "def spiral_order(matrix: list) -> list:",
+    "tests": [
+      {
+        "input": "spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]])",
+        "expected": "[1, 2, 3, 6, 9, 8, 7, 4, 5]"
+      },
+      {
+        "input": "spiral_order([[1, 2, 3, 4]])",
+        "expected": "[1, 2, 3, 4]"
+      },
+      {
+        "input": "spiral_order([[1], [2], [3]])",
+        "expected": "[1, 2, 3]"
+      },
+      {
+        "input": "spiral_order([])",
+        "expected": "[]"
+      },
+      {
+        "input": "spiral_order([[1, 2], [3, 4]])",
+        "expected": "[1, 2, 4, 3]"
+      },
+      {
+        "input": "spiral_order([[1, 2, 3], [4, 5, 6]])",
+        "expected": "[1, 2, 3, 6, 5, 4]"
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "category": "simulation",
+    "title": "Conway's Game of Life Single Step",
+    "description": "Given a 2D board (list of lists of 0s and 1s) representing Conway's Game of Life, compute and return the next state of the board after applying one step of the standard rules: a live cell with 2 or 3 live neighbors survives, a dead cell with exactly 3 live neighbors becomes alive, all other cells die or stay dead.",
+    "difficulty": 7,
+    "function_signature": "def game_of_life_step(board: list) -> list:",
+    "tests": [
+      {
+        "input": "game_of_life_step([[0, 1, 0], [0, 1, 0], [0, 1, 0]])",
+        "expected": "[[0, 0, 0], [1, 1, 1], [0, 0, 0]]"
+      },
+      {
+        "input": "game_of_life_step([[0, 0], [0, 0]])",
+        "expected": "[[0, 0], [0, 0]]"
+      },
+      {
+        "input": "game_of_life_step([[1, 1], [1, 1]])",
+        "expected": "[[1, 1], [1, 1]]"
+      },
+      {
+        "input": "game_of_life_step([[0, 1, 0], [0, 0, 1], [1, 1, 1], [0, 0, 0]])",
+        "expected": "[[0, 0, 0], [1, 0, 1], [0, 1, 1], [0, 1, 0]]"
+      },
+      {
+        "input": "game_of_life_step([[1]])",
+        "expected": "[[0]]"
+      },
+      {
+        "input": "game_of_life_step([[0, 0, 0], [1, 1, 1], [0, 0, 0]])",
+        "expected": "[[0, 1, 0], [0, 1, 0], [0, 1, 0]]"
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "category": "bit manipulation",
+    "title": "Count Set Bits",
+    "description": "Given a non-negative integer n, return the number of 1 bits in its binary representation.",
+    "difficulty": 1,
+    "function_signature": "def count_set_bits(n: int) -> int:",
+    "tests": [
+      {
+        "input": "count_set_bits(0)",
+        "expected": "0"
+      },
+      {
+        "input": "count_set_bits(1)",
+        "expected": "1"
+      },
+      {
+        "input": "count_set_bits(7)",
+        "expected": "3"
+      },
+      {
+        "input": "count_set_bits(255)",
+        "expected": "8"
+      },
+      {
+        "input": "count_set_bits(1024)",
+        "expected": "1"
+      },
+      {
+        "input": "count_set_bits(13)",
+        "expected": "3"
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "category": "bit manipulation",
+    "title": "Find the Single Number",
+    "description": "Given a list of integers where every element appears exactly twice except for one element which appears exactly once, return the element that appears only once, using bitwise XOR.",
+    "difficulty": 4,
+    "function_signature": "def single_number(nums: list) -> int:",
+    "tests": [
+      {
+        "input": "single_number([2, 2, 1])",
+        "expected": "1"
+      },
+      {
+        "input": "single_number([4, 1, 2, 1, 2])",
+        "expected": "4"
+      },
+      {
+        "input": "single_number([1])",
+        "expected": "1"
+      },
+      {
+        "input": "single_number([0, 0, 5])",
+        "expected": "5"
+      },
+      {
+        "input": "single_number([-1, -1, -2])",
+        "expected": "-2"
+      },
+      {
+        "input": "single_number([7, 3, 7, 3, 9])",
+        "expected": "9"
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "category": "prefix sums",
+    "title": "Range Sum Queries",
+    "description": "Given a list of integers and a list of queries where each query is a [start, end] pair (inclusive indices), return a list containing the sum of elements in each queried range, computed efficiently using a prefix sum array.",
+    "difficulty": 4,
+    "function_signature": "def prefix_sum_range_queries(nums: list, queries: list) -> list:",
+    "tests": [
+      {
+        "input": "prefix_sum_range_queries([1, 2, 3, 4, 5], [[0, 2], [1, 3], [0, 4]])",
+        "expected": "[6, 9, 15]"
+      },
+      {
+        "input": "prefix_sum_range_queries([5], [[0, 0]])",
+        "expected": "[5]"
+      },
+      {
+        "input": "prefix_sum_range_queries([1, 1, 1, 1], [[0, 3]])",
+        "expected": "[4]"
+      },
+      {
+        "input": "prefix_sum_range_queries([-1, 2, -3, 4], [[0, 1], [2, 3]])",
+        "expected": "[1, 1]"
+      },
+      {
+        "input": "prefix_sum_range_queries([0, 0, 0], [[0, 2]])",
+        "expected": "[0]"
+      },
+      {
+        "input": "prefix_sum_range_queries([10, 20, 30, 40], [[1, 1], [0, 0], [2, 3]])",
+        "expected": "[20, 10, 70]"
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "category": "frequency counting",
+    "title": "Top K Frequent Words",
+    "description": "Given a block of text and an integer k, tokenize the text into lowercase words (ignoring punctuation) and return a list of the k most frequent words. Ties are broken by the order the word first appears in the text.",
+    "difficulty": 5,
+    "function_signature": "def word_frequency_top_k(text: str, k: int) -> list:",
+    "tests": [
+      {
+        "input": "word_frequency_top_k('the quick brown fox the quick fox', 2)",
+        "expected": "['the', 'quick']"
+      },
+      {
+        "input": "word_frequency_top_k('a a b b c', 1)",
+        "expected": "['a']"
+      },
+      {
+        "input": "word_frequency_top_k('hello world hello', 3)",
+        "expected": "['hello', 'world']"
+      },
+      {
+        "input": "word_frequency_top_k('one', 1)",
+        "expected": "['one']"
+      },
+      {
+        "input": "word_frequency_top_k('cat dog cat dog cat bird', 2)",
+        "expected": "['cat', 'dog']"
+      },
+      {
+        "input": "word_frequency_top_k('It is what it Is', 2)",
+        "expected": "['it', 'is']"
+      }
+    ]
+  },
+  {
+    "id": 29,
+    "category": "parsing",
+    "title": "Parse Key-Value String",
+    "description": "Given a string containing key=value pairs separated by semicolons (with optional surrounding whitespace), parse it into a dictionary mapping each key to its corresponding value string.",
+    "difficulty": 4,
+    "function_signature": "def parse_key_value_string(s: str) -> dict:",
+    "tests": [
+      {
+        "input": "parse_key_value_string('a=1; b=2; c=3')",
+        "expected": "{'a': '1', 'b': '2', 'c': '3'}"
+      },
+      {
+        "input": "parse_key_value_string('')",
+        "expected": "{}"
+      },
+      {
+        "input": "parse_key_value_string('x=hello')",
+        "expected": "{'x': 'hello'}"
+      },
+      {
+        "input": "parse_key_value_string('a=1;;b=2')",
+        "expected": "{'a': '1', 'b': '2'}"
+      },
+      {
+        "input": "parse_key_value_string(' a = 1 ; b = 2 ')",
+        "expected": "{'a': '1', 'b': '2'}"
+      },
+      {
+        "input": "parse_key_value_string('k1=v1;k2=v2;k3=v3')",
+        "expected": "{'k1': 'v1', 'k2': 'v2', 'k3': 'v3'}"
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "category": "graph traversal",
+    "title": "Detect Cycle in Directed Graph",
+    "description": "Given a directed graph represented as an adjacency dictionary mapping each node to a list of nodes it points to, determine whether the graph contains a cycle. Return True if a cycle exists, False otherwise.",
+    "difficulty": 7,
+    "function_signature": "def has_cycle(graph: dict) -> bool:",
+    "tests": [
+      {
+        "input": "has_cycle({0: [1], 1: [2], 2: [0]})",
+        "expected": "True"
+      },
+      {
+        "input": "has_cycle({0: [1], 1: [2], 2: []})",
+        "expected": "False"
+      },
+      {
+        "input": "has_cycle({0: [1, 2], 1: [], 2: []})",
+        "expected": "False"
+      },
+      {
+        "input": "has_cycle({})",
+        "expected": "False"
+      },
+      {
+        "input": "has_cycle({0: [0]})",
+        "expected": "True"
+      },
+      {
+        "input": "has_cycle({0: [1], 1: [], 2: [3], 3: [2]})",
+        "expected": "True"
+      }
+    ]
+  },
+  {
+    "id": 31,
+    "category": "graph traversal",
+    "title": "Shortest Path in Unweighted Graph",
+    "description": "Given an undirected/directed unweighted graph as an adjacency dictionary, and a start and end node, return the length of the shortest path (number of edges) from start to end using breadth-first search. Return -1 if no path exists.",
+    "difficulty": 5,
+    "function_signature": "def shortest_path_bfs(graph: dict, start, end) -> int:",
+    "tests": [
+      {
+        "input": "shortest_path_bfs({0: [1, 2], 1: [3], 2: [3], 3: []}, 0, 3)",
+        "expected": "2"
+      },
+      {
+        "input": "shortest_path_bfs({0: [1], 1: []}, 1, 0)",
+        "expected": "-1"
+      },
+      {
+        "input": "shortest_path_bfs({0: [1]}, 0, 5)",
+        "expected": "-1"
+      },
+      {
+        "input": "shortest_path_bfs({0: []}, 0, 0)",
+        "expected": "0"
+      },
+      {
+        "input": "shortest_path_bfs({'a': ['b'], 'b': ['c'], 'c': []}, 'a', 'c')",
+        "expected": "2"
+      },
+      {
+        "input": "shortest_path_bfs({0: [1], 1: [2], 2: [3], 3: [4]}, 0, 4)",
+        "expected": "4"
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "category": "tree algorithms",
+    "title": "Maximum Depth of Tree",
+    "description": "Given a tree represented as a dictionary mapping each node to a list of its children, and a root node, return the maximum depth of the tree (the root counts as depth 1).",
+    "difficulty": 3,
+    "function_signature": "def tree_max_depth(tree: dict, root) -> int:",
+    "tests": [
+      {
+        "input": "tree_max_depth({1: [2, 3], 2: [4], 3: [], 4: []}, 1)",
+        "expected": "3"
+      },
+      {
+        "input": "tree_max_depth({1: []}, 1)",
+        "expected": "1"
+      },
+      {
+        "input": "tree_max_depth({1: [2], 2: [3], 3: [4], 4: []}, 1)",
+        "expected": "4"
+      },
+      {
+        "input": "tree_max_depth({'a': ['b', 'c'], 'b': [], 'c': ['d'], 'd': []}, 'a')",
+        "expected": "3"
+      },
+      {
+        "input": "tree_max_depth({0: [1, 2, 3]}, 0)",
+        "expected": "2"
+      },
+      {
+        "input": "tree_max_depth({5: [6, 7], 6: [8, 9], 7: [], 8: [], 9: []}, 5)",
+        "expected": "3"
+      }
+    ]
+  },
+  {
+    "id": 33,
+    "category": "linked-list concepts",
+    "title": "Detect Cycle in Linked List",
+    "description": "Given a linked list represented as a dictionary mapping each node's identifier to the identifier of the next node (or None if it is the tail), and a starting node, determine whether the linked list contains a cycle using Floyd's slow/fast pointer technique. Return True or False.",
+    "difficulty": 5,
+    "function_signature": "def linked_list_cycle_detect(next_map: dict, start) -> bool:",
+    "tests": [
+      {
+        "input": "linked_list_cycle_detect({1: 2, 2: 3, 3: 4, 4: 2}, 1)",
+        "expected": "True"
+      },
+      {
+        "input": "linked_list_cycle_detect({1: 2, 2: 3, 3: None}, 1)",
+        "expected": "False"
+      },
+      {
+        "input": "linked_list_cycle_detect({1: None}, 1)",
+        "expected": "False"
+      },
+      {
+        "input": "linked_list_cycle_detect({1: 1}, 1)",
+        "expected": "True"
+      },
+      {
+        "input": "linked_list_cycle_detect({1: 2, 2: None}, 1)",
+        "expected": "False"
+      },
+      {
+        "input": "linked_list_cycle_detect({'a': 'b', 'b': 'c', 'c': 'a'}, 'a')",
+        "expected": "True"
+      }
+    ]
+  },
+  {
+    "id": 34,
+    "category": "data transformation",
+    "title": "Flatten Arbitrarily Nested List",
+    "description": "Given a list that may contain arbitrarily nested sub-lists, return a single flat list containing all the non-list elements in their original left-to-right order.",
+    "difficulty": 4,
+    "function_signature": "def flatten_nested_list(nested: list) -> list:",
+    "tests": [
+      {
+        "input": "flatten_nested_list([1, [2, 3], [4, [5, 6]]])",
+        "expected": "[1, 2, 3, 4, 5, 6]"
+      },
+      {
+        "input": "flatten_nested_list([])",
+        "expected": "[]"
+      },
+      {
+        "input": "flatten_nested_list([1, 2, 3])",
+        "expected": "[1, 2, 3]"
+      },
+      {
+        "input": "flatten_nested_list([[1, [2, [3, [4]]]]])",
+        "expected": "[1, 2, 3, 4]"
+      },
+      {
+        "input": "flatten_nested_list([[], [1], []])",
+        "expected": "[1]"
+      },
+      {
+        "input": "flatten_nested_list([1, [2, [3, [4, [5]]]], 6])",
+        "expected": "[1, 2, 3, 4, 5, 6]"
+      }
+    ]
+  },
+  {
+    "id": 35,
+    "category": "pattern detection",
+    "title": "Count Overlapping Pattern Occurrences",
+    "description": "Given a string s and a pattern string, count the number of occurrences of the pattern in s, including overlapping occurrences.",
+    "difficulty": 4,
+    "function_signature": "def find_pattern_repeats(s: str, pattern: str) -> int:",
+    "tests": [
+      {
+        "input": "find_pattern_repeats('aaaa', 'aa')",
+        "expected": "3"
+      },
+      {
+        "input": "find_pattern_repeats('abcabcabc', 'abc')",
+        "expected": "3"
+      },
+      {
+        "input": "find_pattern_repeats('', 'a')",
+        "expected": "0"
+      },
+      {
+        "input": "find_pattern_repeats('aaa', 'b')",
+        "expected": "0"
+      },
+      {
+        "input": "find_pattern_repeats('abababab', 'aba')",
+        "expected": "3"
+      },
+      {
+        "input": "find_pattern_repeats('mississippi', 'issi')",
+        "expected": "2"
+      }
+    ]
+  },
+  {
+    "id": 36,
+    "category": "state tracking",
+    "title": "Traffic Light State at Time T",
+    "description": "Given an elapsed time in seconds and a cycle tuple/list (red_duration, yellow_duration, green_duration) describing a repeating traffic light cycle that starts at green, return the state of the light ('green', 'yellow', or 'red') at the given time.",
+    "difficulty": 4,
+    "function_signature": "def traffic_light_state(seconds: int, cycle: list) -> str:",
+    "tests": [
+      {
+        "input": "traffic_light_state(0, [5, 2, 10])",
+        "expected": "'green'"
+      },
+      {
+        "input": "traffic_light_state(10, [5, 2, 10])",
+        "expected": "'yellow'"
+      },
+      {
+        "input": "traffic_light_state(11, [5, 2, 10])",
+        "expected": "'yellow'"
+      },
+      {
+        "input": "traffic_light_state(16, [5, 2, 10])",
+        "expected": "'red'"
+      },
+      {
+        "input": "traffic_light_state(17, [5, 2, 10])",
+        "expected": "'green'"
+      },
+      {
+        "input": "traffic_light_state(34, [5, 2, 10])",
+        "expected": "'green'"
+      }
+    ]
+  },
+  {
+    "id": 37,
+    "category": "scheduling",
+    "title": "Weighted Job Scheduling Max Profit",
+    "description": "Given a list of jobs each represented as [start, end, profit], select a subset of non-overlapping jobs (a job can start only when a previous selected job has ended) to maximize total profit. Return the maximum achievable profit.",
+    "difficulty": 9,
+    "function_signature": "def job_scheduling_max_profit(jobs: list) -> int:",
+    "tests": [
+      {
+        "input": "job_scheduling_max_profit([[1, 2, 50], [3, 5, 20], [6, 19, 100], [2, 100, 200]])",
+        "expected": "250"
+      },
+      {
+        "input": "job_scheduling_max_profit([])",
+        "expected": "0"
+      },
+      {
+        "input": "job_scheduling_max_profit([[1, 2, 10]])",
+        "expected": "10"
+      },
+      {
+        "input": "job_scheduling_max_profit([[1, 3, 5], [2, 5, 6], [4, 6, 5], [6, 7, 4]])",
+        "expected": "14"
+      },
+      {
+        "input": "job_scheduling_max_profit([[1, 2, 5], [1, 2, 5]])",
+        "expected": "5"
+      },
+      {
+        "input": "job_scheduling_max_profit([[1, 4, 3], [2, 5, 4], [3, 6, 2], [5, 7, 7]])",
+        "expected": "11"
+      }
+    ]
+  },
+  {
+    "id": 38,
+    "category": "array manipulation",
+    "title": "Find Local Peak Indices",
+    "description": "Given a list of integers, return a list of indices where the value is a local peak, meaning it is strictly greater than its immediate neighbors (boundary elements only need to be greater than their single neighbor).",
+    "difficulty": 4,
+    "function_signature": "def find_local_peaks(nums: list) -> list:",
+    "tests": [
+      {
+        "input": "find_local_peaks([1, 3, 2, 4, 1])",
+        "expected": "[1, 3]"
+      },
+      {
+        "input": "find_local_peaks([1, 2, 3, 4, 5])",
+        "expected": "[4]"
+      },
+      {
+        "input": "find_local_peaks([5, 4, 3, 2, 1])",
+        "expected": "[0]"
+      },
+      {
+        "input": "find_local_peaks([1])",
+        "expected": "[0]"
+      },
+      {
+        "input": "find_local_peaks([1, 1, 1])",
+        "expected": "[]"
+      },
+      {
+        "input": "find_local_peaks([1, 3, 1, 3, 1])",
+        "expected": "[1, 3]"
+      }
+    ]
+  },
+  {
+    "id": 39,
+    "category": "sorting",
+    "title": "Dutch National Flag Sort",
+    "description": "Given a list containing only the integers 0, 1, and 2, sort the list in-place order (return a new sorted list) using the Dutch National Flag algorithm in a single pass with three pointers, without using a general-purpose sort.",
+    "difficulty": 4,
+    "function_signature": "def dutch_flag_sort(nums: list) -> list:",
+    "tests": [
+      {
+        "input": "dutch_flag_sort([2, 0, 2, 1, 1, 0])",
+        "expected": "[0, 0, 1, 1, 2, 2]"
+      },
+      {
+        "input": "dutch_flag_sort([0])",
+        "expected": "[0]"
+      },
+      {
+        "input": "dutch_flag_sort([2, 1, 0])",
+        "expected": "[0, 1, 2]"
+      },
+      {
+        "input": "dutch_flag_sort([])",
+        "expected": "[]"
+      },
+      {
+        "input": "dutch_flag_sort([1, 1, 1])",
+        "expected": "[1, 1, 1]"
+      },
+      {
+        "input": "dutch_flag_sort([0, 0, 1, 2, 2, 1, 0])",
+        "expected": "[0, 0, 0, 1, 1, 2, 2]"
+      }
+    ]
+  },
+  {
+    "id": 40,
+    "category": "dynamic programming",
+    "title": "Matrix Chain Multiplication Cost",
+    "description": "Given a list of matrix dimensions where consecutive matrices A1..An have dimensions dims[i-1] x dims[i], return the minimum number of scalar multiplications needed to multiply the entire chain of matrices together, using dynamic programming.",
+    "difficulty": 9,
+    "function_signature": "def matrix_chain_min_mult(dims: list) -> int:",
+    "tests": [
+      {
+        "input": "matrix_chain_min_mult([40, 20, 30, 10, 30])",
+        "expected": "26000"
+      },
+      {
+        "input": "matrix_chain_min_mult([10, 20])",
+        "expected": "0"
+      },
+      {
+        "input": "matrix_chain_min_mult([10, 20, 30])",
+        "expected": "6000"
+      },
+      {
+        "input": "matrix_chain_min_mult([5, 10, 3, 12, 5, 50, 6])",
+        "expected": "2010"
+      },
+      {
+        "input": "matrix_chain_min_mult([1, 2, 3, 4])",
+        "expected": "18"
+      },
+      {
+        "input": "matrix_chain_min_mult([10, 30, 5, 60])",
+        "expected": "4500"
+      }
+    ]
+  },
+  {
+    "id": 41,
+    "category": "dynamic programming",
+    "title": "Longest Common Subsequence Length",
+    "description": "Given two strings, return the length of their longest common subsequence (characters that appear in both strings in the same relative order, not necessarily contiguous).",
+    "difficulty": 5,
+    "function_signature": "def longest_common_subsequence(a: str, b: str) -> int:",
+    "tests": [
+      {
+        "input": "longest_common_subsequence('abcde', 'ace')",
+        "expected": "3"
+      },
+      {
+        "input": "longest_common_subsequence('abc', 'abc')",
+        "expected": "3"
+      },
+      {
+        "input": "longest_common_subsequence('abc', 'def')",
+        "expected": "0"
+      },
+      {
+        "input": "longest_common_subsequence('', 'abc')",
+        "expected": "0"
+      },
+      {
+        "input": "longest_common_subsequence('aggtab', 'gxtxayb')",
+        "expected": "4"
+      },
+      {
+        "input": "longest_common_subsequence('bl', 'yby')",
+        "expected": "1"
+      }
+    ]
+  },
+  {
+    "id": 42,
+    "category": "dynamic programming",
+    "title": "Minimum Edit Distance",
+    "description": "Given two strings, return the minimum number of single-character insertions, deletions, or substitutions required to transform the first string into the second (Levenshtein distance).",
+    "difficulty": 7,
+    "function_signature": "def edit_distance(a: str, b: str) -> int:",
+    "tests": [
+      {
+        "input": "edit_distance('horse', 'ros')",
+        "expected": "3"
+      },
+      {
+        "input": "edit_distance('intention', 'execution')",
+        "expected": "5"
+      },
+      {
+        "input": "edit_distance('', 'abc')",
+        "expected": "3"
+      },
+      {
+        "input": "edit_distance('abc', '')",
+        "expected": "3"
+      },
+      {
+        "input": "edit_distance('same', 'same')",
+        "expected": "0"
+      },
+      {
+        "input": "edit_distance('kitten', 'sitting')",
+        "expected": "3"
+      }
+    ]
+  },
+  {
+    "id": 43,
+    "category": "mathematics",
+    "title": "Check Power of Base",
+    "description": "Given two integers n and base, determine whether n is a power of base (i.e., n = base^k for some non-negative integer k). Return True or False.",
+    "difficulty": 4,
+    "function_signature": "def is_power_of_number(n: int, base: int) -> bool:",
+    "tests": [
+      {
+        "input": "is_power_of_number(8, 2)",
+        "expected": "True"
+      },
+      {
+        "input": "is_power_of_number(9, 3)",
+        "expected": "True"
+      },
+      {
+        "input": "is_power_of_number(10, 2)",
+        "expected": "False"
+      },
+      {
+        "input": "is_power_of_number(1, 5)",
+        "expected": "True"
+      },
+      {
+        "input": "is_power_of_number(0, 2)",
+        "expected": "False"
+      },
+      {
+        "input": "is_power_of_number(27, 3)",
+        "expected": "True"
+      }
+    ]
+  },
+  {
+    "id": 44,
+    "category": "mathematics",
+    "title": "Collatz Sequence Length",
+    "description": "Given a positive integer n, return the number of steps required for the Collatz sequence starting at n to reach 1, where each step applies n -> n/2 if n is even, or n -> 3n+1 if n is odd.",
+    "difficulty": 4,
+    "function_signature": "def collatz_steps(n: int) -> int:",
+    "tests": [
+      {
+        "input": "collatz_steps(1)",
+        "expected": "0"
+      },
+      {
+        "input": "collatz_steps(6)",
+        "expected": "8"
+      },
+      {
+        "input": "collatz_steps(27)",
+        "expected": "111"
+      },
+      {
+        "input": "collatz_steps(2)",
+        "expected": "1"
+      },
+      {
+        "input": "collatz_steps(7)",
+        "expected": "16"
+      },
+      {
+        "input": "collatz_steps(19)",
+        "expected": "20"
+      }
+    ]
+  },
+  {
+    "id": 45,
+    "category": "parsing",
+    "title": "Roman Numeral to Integer",
+    "description": "Given a string representing a valid Roman numeral, convert it to and return its integer value.",
+    "difficulty": 4,
+    "function_signature": "def roman_to_int(s: str) -> int:",
+    "tests": [
+      {
+        "input": "roman_to_int('III')",
+        "expected": "3"
+      },
+      {
+        "input": "roman_to_int('LVIII')",
+        "expected": "58"
+      },
+      {
+        "input": "roman_to_int('MCMXCIV')",
+        "expected": "1994"
+      },
+      {
+        "input": "roman_to_int('IV')",
+        "expected": "4"
+      },
+      {
+        "input": "roman_to_int('IX')",
+        "expected": "9"
+      },
+      {
+        "input": "roman_to_int('XL')",
+        "expected": "40"
+      }
+    ]
+  },
+  {
+    "id": 46,
+    "category": "mathematics",
+    "title": "Integer to Roman Numeral",
+    "description": "Given an integer between 1 and 3999, convert it to and return its standard Roman numeral representation.",
+    "difficulty": 4,
+    "function_signature": "def int_to_roman(num: int) -> str:",
+    "tests": [
+      {
+        "input": "int_to_roman(3)",
+        "expected": "'III'"
+      },
+      {
+        "input": "int_to_roman(58)",
+        "expected": "'LVIII'"
+      },
+      {
+        "input": "int_to_roman(1994)",
+        "expected": "'MCMXCIV'"
+      },
+      {
+        "input": "int_to_roman(4)",
+        "expected": "'IV'"
+      },
+      {
+        "input": "int_to_roman(9)",
+        "expected": "'IX'"
+      },
+      {
+        "input": "int_to_roman(2023)",
+        "expected": "'MMXXIII'"
+      }
+    ]
+  },
+  {
+    "id": 47,
+    "category": "array manipulation",
+    "title": "Rotate Array Right by K",
+    "description": "Given a list of integers and an integer k, rotate the list to the right by k positions and return the resulting list.",
+    "difficulty": 2,
+    "function_signature": "def rotate_array_right(nums: list, k: int) -> list:",
+    "tests": [
+      {
+        "input": "rotate_array_right([1, 2, 3, 4, 5, 6, 7], 3)",
+        "expected": "[5, 6, 7, 1, 2, 3, 4]"
+      },
+      {
+        "input": "rotate_array_right([-1, -100, 3, 99], 2)",
+        "expected": "[3, 99, -1, -100]"
+      },
+      {
+        "input": "rotate_array_right([1], 5)",
+        "expected": "[1]"
+      },
+      {
+        "input": "rotate_array_right([], 3)",
+        "expected": "[]"
+      },
+      {
+        "input": "rotate_array_right([1, 2, 3], 0)",
+        "expected": "[1, 2, 3]"
+      },
+      {
+        "input": "rotate_array_right([1, 2, 3], 3)",
+        "expected": "[1, 2, 3]"
+      }
+    ]
+  },
+  {
+    "id": 48,
+    "category": "matrix manipulation",
+    "title": "Matrix Transpose",
+    "description": "Given a matrix (list of lists), return its transpose, where rows become columns.",
+    "difficulty": 2,
+    "function_signature": "def matrix_transpose(matrix: list) -> list:",
+    "tests": [
+      {
+        "input": "matrix_transpose([[1, 2, 3], [4, 5, 6]])",
+        "expected": "[[1, 4], [2, 5], [3, 6]]"
+      },
+      {
+        "input": "matrix_transpose([[1]])",
+        "expected": "[[1]]"
+      },
+      {
+        "input": "matrix_transpose([[1, 2], [3, 4]])",
+        "expected": "[[1, 3], [2, 4]]"
+      },
+      {
+        "input": "matrix_transpose([[1, 2, 3]])",
+        "expected": "[[1], [2], [3]]"
+      },
+      {
+        "input": "matrix_transpose([[1], [2], [3]])",
+        "expected": "[[1, 2, 3]]"
+      },
+      {
+        "input": "matrix_transpose([[1, 2], [3, 4], [5, 6]])",
+        "expected": "[[1, 3, 5], [2, 4, 6]]"
+      }
+    ]
+  },
+  {
+    "id": 49,
+    "category": "matrix manipulation",
+    "title": "Check Magic Square",
+    "description": "Given a square matrix of integers, determine whether it is a magic square, meaning the sums of every row, every column, and both main diagonals are all equal. Return True or False.",
+    "difficulty": 5,
+    "function_signature": "def is_magic_square(matrix: list) -> bool:",
+    "tests": [
+      {
+        "input": "is_magic_square([[2, 7, 6], [9, 5, 1], [4, 3, 8]])",
+        "expected": "True"
+      },
+      {
+        "input": "is_magic_square([[1, 2], [3, 4]])",
+        "expected": "False"
+      },
+      {
+        "input": "is_magic_square([[1]])",
+        "expected": "True"
+      },
+      {
+        "input": "is_magic_square([[3, 1, 2], [1, 2, 3], [2, 3, 1]])",
+        "expected": "True"
+      },
+      {
+        "input": "is_magic_square([[16, 2, 3, 13], [5, 11, 10, 8], [9, 7, 6, 12], [4, 14, 15, 1]])",
+        "expected": "True"
+      },
+      {
+        "input": "is_magic_square([[1, 2, 3], [4, 5, 6], [7, 8, 9]])",
+        "expected": "False"
+      }
+    ]
+  },
+  {
+    "id": 50,
+    "category": "simulation",
+    "title": "Elevator Total Travel Distance",
+    "description": "Given a list of requested floors in the order they must be visited and a starting floor, simulate an elevator visiting each requested floor in order and return the total distance traveled (sum of absolute differences between consecutive floors).",
+    "difficulty": 2,
+    "function_signature": "def simulate_elevator(requests: list, start_floor: int) -> int:",
+    "tests": [
+      {
+        "input": "simulate_elevator([3, 1, 5], 0)",
+        "expected": "9"
+      },
+      {
+        "input": "simulate_elevator([], 5)",
+        "expected": "0"
+      },
+      {
+        "input": "simulate_elevator([5], 5)",
+        "expected": "0"
+      },
+      {
+        "input": "simulate_elevator([1, 2, 3, 4], 0)",
+        "expected": "4"
+      },
+      {
+        "input": "simulate_elevator([10, 0, 10], 5)",
+        "expected": "25"
+      },
+      {
+        "input": "simulate_elevator([-1, -5, 3], 0)",
+        "expected": "13"
+      }
+    ]
+  },
+  {
+    "id": 51,
+    "category": "stack",
+    "title": "Score of Balanced Parentheses",
+    "description": "Given a balanced parentheses string, compute its score according to these rules: '()' has score 1; AB (concatenation) has score A+B; (A) has score 2*A. Return the final score of the whole string.",
+    "difficulty": 7,
+    "function_signature": "def bracket_score(s: str) -> int:",
+    "tests": [
+      {
+        "input": "bracket_score('()')",
+        "expected": "1"
+      },
+      {
+        "input": "bracket_score('(())')",
+        "expected": "2"
+      },
+      {
+        "input": "bracket_score('()()')",
+        "expected": "2"
+      },
+      {
+        "input": "bracket_score('(()(()))')",
+        "expected": "6"
+      },
+      {
+        "input": "bracket_score('((()))')",
+        "expected": "4"
+      },
+      {
+        "input": "bracket_score('()(())')",
+        "expected": "3"
+      }
+    ]
+  },
+  {
+    "id": 52,
+    "category": "stack",
+    "title": "Next Greater Element",
+    "description": "Given a list of integers, for each element return the next element to its right that is strictly greater than it. If no such element exists, use -1. Return the result as a list in the same order as the input.",
+    "difficulty": 4,
+    "function_signature": "def next_greater_elements(nums: list) -> list:",
+    "tests": [
+      {
+        "input": "next_greater_elements([2, 1, 2, 4, 3])",
+        "expected": "[4, 2, 4, -1, -1]"
+      },
+      {
+        "input": "next_greater_elements([1, 2, 3, 4])",
+        "expected": "[2, 3, 4, -1]"
+      },
+      {
+        "input": "next_greater_elements([4, 3, 2, 1])",
+        "expected": "[-1, -1, -1, -1]"
+      },
+      {
+        "input": "next_greater_elements([1])",
+        "expected": "[-1]"
+      },
+      {
+        "input": "next_greater_elements([])",
+        "expected": "[]"
+      },
+      {
+        "input": "next_greater_elements([5, 4, 3, 5])",
+        "expected": "[-1, 5, 5, -1]"
+      }
+    ]
+  },
+  {
+    "id": 53,
+    "category": "stack",
+    "title": "Min Stack Query Simulation",
+    "description": "Given a list of operations to perform on a stack, where each operation is a tuple like ('push', value), ('pop',), ('top',), or ('min',), simulate the operations on a stack that supports retrieving the minimum element in O(1). Return a list containing the results of every 'top' and 'min' query, in the order they occur.",
+    "difficulty": 7,
+    "function_signature": "def min_stack_operations(operations: list) -> list:",
+    "tests": [
+      {
+        "input": "min_stack_operations([('push', 5), ('push', 2), ('push', 7), ('min',), ('pop',), ('min',), ('top',)])",
+        "expected": "[2, 2, 2]"
+      },
+      {
+        "input": "min_stack_operations([('push', 1), ('top',)])",
+        "expected": "[1]"
+      },
+      {
+        "input": "min_stack_operations([('push', 3), ('push', 1), ('push', 2), ('min',)])",
+        "expected": "[1]"
+      },
+      {
+        "input": "min_stack_operations([('push', -1), ('min',), ('top',)])",
+        "expected": "[-1, -1]"
+      },
+      {
+        "input": "min_stack_operations([('push', 4), ('push', 4), ('pop',), ('min',)])",
+        "expected": "[4]"
+      },
+      {
+        "input": "min_stack_operations([('push', 10), ('push', 20), ('push', 5), ('pop',), ('min',), ('top',)])",
+        "expected": "[10, 20]"
+      }
+    ]
+  },
+  {
+    "id": 54,
+    "category": "queue",
+    "title": "Reconstruct Queue by Height",
+    "description": "Given a list of people represented as [height, k] where k is the number of people in front of this person who have a height greater than or equal to theirs, reconstruct and return the queue order that satisfies all these constraints.",
+    "difficulty": 7,
+    "function_signature": "def queue_reconstruction(people: list) -> list:",
+    "tests": [
+      {
+        "input": "queue_reconstruction([[7, 0], [4, 4], [7, 1], [5, 0], [6, 1], [5, 2]])",
+        "expected": "[[5, 0], [7, 0], [5, 2], [6, 1], [4, 4], [7, 1]]"
+      },
+      {
+        "input": "queue_reconstruction([[6, 0], [5, 0], [4, 0], [3, 2], [2, 2], [1, 4]])",
+        "expected": "[[4, 0], [5, 0], [2, 2], [3, 2], [1, 4], [6, 0]]"
+      },
+      {
+        "input": "queue_reconstruction([[1, 0]])",
+        "expected": "[[1, 0]]"
+      },
+      {
+        "input": "queue_reconstruction([])",
+        "expected": "[]"
+      },
+      {
+        "input": "queue_reconstruction([[5, 0], [5, 0]])",
+        "expected": "[[5, 0], [5, 0]]"
+      },
+      {
+        "input": "queue_reconstruction([[3, 0], [2, 0], [1, 0]])",
+        "expected": "[[1, 0], [2, 0], [3, 0]]"
+      }
+    ]
+  },
+  {
+    "id": 55,
+    "category": "queue",
+    "title": "Circular Queue Operation Simulation",
+    "description": "Given a fixed capacity and a list of operations such as ('enqueue', value), ('dequeue',), or ('front',), simulate a circular queue of that capacity. Enqueue returns True if successful or False if full. Dequeue returns True if successful or False if empty. Front returns the front value or -1 if empty. Return a list of all operation results in order.",
+    "difficulty": 5,
+    "function_signature": "def circular_queue_simulation(capacity: int, operations: list) -> list:",
+    "tests": [
+      {
+        "input": "circular_queue_simulation(2, [('enqueue', 1), ('enqueue', 2), ('enqueue', 3), ('front',), ('dequeue',), ('enqueue', 3), ('front',)])",
+        "expected": "[True, True, False, 1, True, True, 2]"
+      },
+      {
+        "input": "circular_queue_simulation(1, [('enqueue', 5), ('dequeue',), ('dequeue',)])",
+        "expected": "[True, True, False]"
+      },
+      {
+        "input": "circular_queue_simulation(3, [('front',)])",
+        "expected": "[-1]"
+      },
+      {
+        "input": "circular_queue_simulation(2, [('enqueue', 1), ('dequeue',), ('dequeue',)])",
+        "expected": "[True, True, False]"
+      },
+      {
+        "input": "circular_queue_simulation(5, [('enqueue', 1), ('enqueue', 2), ('front',)])",
+        "expected": "[True, True, 1]"
+      },
+      {
+        "input": "circular_queue_simulation(1, [('enqueue', 9), ('front',), ('enqueue', 10)])",
+        "expected": "[True, 9, False]"
+      }
+    ]
+  },
+  {
+    "id": 56,
+    "category": "combinatorics",
+    "title": "Permutations With Repetition",
+    "description": "Given a list of elements and a length r, return a sorted list of all strings of length r formed by choosing elements from the list with repetition allowed, where each string is the concatenation of the string forms of chosen elements.",
+    "difficulty": 4,
+    "function_signature": "def permutations_with_repeats(elements: list, r: int) -> list:",
+    "tests": [
+      {
+        "input": "permutations_with_repeats([1, 2], 2)",
+        "expected": "['11', '12', '21', '22']"
+      },
+      {
+        "input": "permutations_with_repeats(['a', 'b'], 1)",
+        "expected": "['a', 'b']"
+      },
+      {
+        "input": "permutations_with_repeats([0, 1], 3)",
+        "expected": "['000', '001', '010', '011', '100', '101', '110', '111']"
+      },
+      {
+        "input": "permutations_with_repeats([1], 3)",
+        "expected": "['111']"
+      },
+      {
+        "input": "permutations_with_repeats([1, 2, 3], 1)",
+        "expected": "['1', '2', '3']"
+      },
+      {
+        "input": "permutations_with_repeats(['x', 'y'], 2)",
+        "expected": "['xx', 'xy', 'yx', 'yy']"
+      }
+    ]
+  },
+  {
+    "id": 57,
+    "category": "combinatorics",
+    "title": "Nth Catalan Number",
+    "description": "Given a non-negative integer n, return the nth Catalan number, computed using dynamic programming with the recurrence C(n) = sum over j of C(j)*C(n-1-j).",
+    "difficulty": 5,
+    "function_signature": "def catalan_number(n: int) -> int:",
+    "tests": [
+      {
+        "input": "catalan_number(0)",
+        "expected": "1"
+      },
+      {
+        "input": "catalan_number(1)",
+        "expected": "1"
+      },
+      {
+        "input": "catalan_number(2)",
+        "expected": "2"
+      },
+      {
+        "input": "catalan_number(5)",
+        "expected": "42"
+      },
+      {
+        "input": "catalan_number(10)",
+        "expected": "16796"
+      },
+      {
+        "input": "catalan_number(3)",
+        "expected": "5"
+      }
+    ]
+  },
+  {
+    "id": 58,
+    "category": "probability",
+    "title": "Probability of At Least One Six",
+    "description": "Given the number of dice rolled together and the number of independent rolls performed, return the probability (rounded to 6 decimal places) that at least one six appears among the dice in at least one of the rolls.",
+    "difficulty": 5,
+    "function_signature": "def probability_at_least_one_six(num_dice: int, num_rolls: int) -> float:",
+    "tests": [
+      {
+        "input": "probability_at_least_one_six(1, 1)",
+        "expected": "0.166667"
+      },
+      {
+        "input": "probability_at_least_one_six(2, 1)",
+        "expected": "0.305556"
+      },
+      {
+        "input": "probability_at_least_one_six(1, 4)",
+        "expected": "0.517747"
+      },
+      {
+        "input": "probability_at_least_one_six(6, 1)",
+        "expected": "0.665102"
+      },
+      {
+        "input": "probability_at_least_one_six(1, 0)",
+        "expected": "0.0"
+      },
+      {
+        "input": "probability_at_least_one_six(3, 2)",
+        "expected": "0.665102"
+      }
+    ]
+  },
+  {
+    "id": 59,
+    "category": "probability",
+    "title": "Expected Value of a Fair Die",
+    "description": "Given the number of sides of a fair die (labeled 1 through sides), return the expected value of a single roll, rounded to 4 decimal places.",
+    "difficulty": 2,
+    "function_signature": "def expected_value_dice(sides: int) -> float:",
+    "tests": [
+      {
+        "input": "expected_value_dice(6)",
+        "expected": "3.5"
+      },
+      {
+        "input": "expected_value_dice(4)",
+        "expected": "2.5"
+      },
+      {
+        "input": "expected_value_dice(1)",
+        "expected": "1.0"
+      },
+      {
+        "input": "expected_value_dice(20)",
+        "expected": "10.5"
+      },
+      {
+        "input": "expected_value_dice(2)",
+        "expected": "1.5"
+      },
+      {
+        "input": "expected_value_dice(10)",
+        "expected": "5.5"
+      }
+    ]
+  },
+  {
+    "id": 60,
+    "category": "geometry",
+    "title": "Polygon Area via Shoelace Formula",
+    "description": "Given a list of (x, y) coordinate pairs representing the vertices of a simple polygon in order, return the area of the polygon computed using the shoelace formula, rounded to 4 decimal places.",
+    "difficulty": 5,
+    "function_signature": "def polygon_area_shoelace(points: list) -> float:",
+    "tests": [
+      {
+        "input": "polygon_area_shoelace([[0, 0], [4, 0], [4, 4], [0, 4]])",
+        "expected": "16.0"
+      },
+      {
+        "input": "polygon_area_shoelace([[0, 0], [4, 0], [0, 4]])",
+        "expected": "8.0"
+      },
+      {
+        "input": "polygon_area_shoelace([[0, 0], [1, 0], [1, 1], [0, 1]])",
+        "expected": "1.0"
+      },
+      {
+        "input": "polygon_area_shoelace([[0, 0], [6, 0], [6, 6], [0, 6]])",
+        "expected": "36.0"
+      },
+      {
+        "input": "polygon_area_shoelace([[1, 1], [3, 1], [3, 3], [1, 3]])",
+        "expected": "4.0"
+      },
+      {
+        "input": "polygon_area_shoelace([[0, 0], [2, 0], [2, 2]])",
+        "expected": "2.0"
+      }
+    ]
+  },
+  {
+    "id": 61,
+    "category": "geometry",
+    "title": "Point Inside Circle Check",
+    "description": "Given the coordinates of a point (px, py), the center of a circle (cx, cy), and its radius r, determine whether the point lies inside or on the boundary of the circle. Return True or False.",
+    "difficulty": 2,
+    "function_signature": "def point_in_circle(px: float, py: float, cx: float, cy: float, r: float) -> bool:",
+    "tests": [
+      {
+        "input": "point_in_circle(0, 0, 0, 0, 5)",
+        "expected": "True"
+      },
+      {
+        "input": "point_in_circle(5, 0, 0, 0, 5)",
+        "expected": "True"
+      },
+      {
+        "input": "point_in_circle(6, 0, 0, 0, 5)",
+        "expected": "False"
+      },
+      {
+        "input": "point_in_circle(3, 4, 0, 0, 5)",
+        "expected": "True"
+      },
+      {
+        "input": "point_in_circle(-3, -4, 0, 0, 5)",
+        "expected": "True"
+      },
+      {
+        "input": "point_in_circle(0, 5.1, 0, 0, 5)",
+        "expected": "False"
+      }
+    ]
+  },
+  {
+    "id": 62,
+    "category": "geometry",
+    "title": "Closest Pair of Points Distance",
+    "description": "Given a list of 2D points, return the Euclidean distance between the two closest points in the set, rounded to 4 decimal places.",
+    "difficulty": 5,
+    "function_signature": "def closest_pair_distance(points: list) -> float:",
+    "tests": [
+      {
+        "input": "closest_pair_distance([[0, 0], [3, 4], [1, 1]])",
+        "expected": "1.4142"
+      },
+      {
+        "input": "closest_pair_distance([[0, 0], [10, 10]])",
+        "expected": "14.1421"
+      },
+      {
+        "input": "closest_pair_distance([[0, 0], [0, 1], [0, 2]])",
+        "expected": "1.0"
+      },
+      {
+        "input": "closest_pair_distance([[1, 1], [1, 1], [5, 5]])",
+        "expected": "0.0"
+      },
+      {
+        "input": "closest_pair_distance([[0, 0], [1, 0], [0, 1], [1, 1]])",
+        "expected": "1.0"
+      },
+      {
+        "input": "closest_pair_distance([[-1, -1], [2, 2], [0, 0]])",
+        "expected": "1.4142"
+      }
+    ]
+  },
+  {
+    "id": 63,
+    "category": "state tracking",
+    "title": "Validate State Machine Sequence",
+    "description": "Given a finite state machine defined by a transitions dictionary mapping (state, event) tuples to next states, a start state, a sequence of events, and a set/list of accepting states, determine whether processing the sequence of events from the start state ends in an accepting state. Return False immediately if any event has no valid transition.",
+    "difficulty": 5,
+    "function_signature": "def is_valid_state_machine_sequence(transitions: dict, start, sequence: list, accept_states: list) -> bool:",
+    "tests": [
+      {
+        "input": "is_valid_state_machine_sequence({('A', 'x'): 'B', ('B', 'y'): 'C'}, 'A', ['x', 'y'], ['C'])",
+        "expected": "True"
+      },
+      {
+        "input": "is_valid_state_machine_sequence({('A', 'x'): 'B'}, 'A', ['x', 'z'], ['B'])",
+        "expected": "False"
+      },
+      {
+        "input": "is_valid_state_machine_sequence({('A', 'x'): 'A'}, 'A', [], ['A'])",
+        "expected": "True"
+      },
+      {
+        "input": "is_valid_state_machine_sequence({('A', 'x'): 'A'}, 'A', [], ['B'])",
+        "expected": "False"
+      },
+      {
+        "input": "is_valid_state_machine_sequence({('S', 'a'): 'S', ('S', 'b'): 'F'}, 'S', ['a', 'a', 'b'], ['F'])",
+        "expected": "True"
+      },
+      {
+        "input": "is_valid_state_machine_sequence({('S', 'a'): 'S'}, 'S', ['a', 'a', 'a'], ['S'])",
+        "expected": "True"
+      }
+    ]
+  },
+  {
+    "id": 64,
+    "category": "optimization",
+    "title": "0/1 Knapsack Maximum Value",
+    "description": "Given lists of item weights and item values (same length), and a knapsack capacity, return the maximum total value achievable by selecting a subset of items whose total weight does not exceed the capacity, where each item can be used at most once.",
+    "difficulty": 7,
+    "function_signature": "def optimal_knapsack(weights: list, values: list, capacity: int) -> int:",
+    "tests": [
+      {
+        "input": "optimal_knapsack([1, 3, 4, 5], [1, 4, 5, 7], 7)",
+        "expected": "9"
+      },
+      {
+        "input": "optimal_knapsack([1, 2, 3], [6, 10, 12], 5)",
+        "expected": "22"
+      },
+      {
+        "input": "optimal_knapsack([5], [10], 4)",
+        "expected": "0"
+      },
+      {
+        "input": "optimal_knapsack([1, 1, 1], [10, 20, 30], 2)",
+        "expected": "50"
+      },
+      {
+        "input": "optimal_knapsack([2, 2, 2], [3, 3, 3], 6)",
+        "expected": "9"
+      },
+      {
+        "input": "optimal_knapsack([1, 2, 3, 4, 5], [10, 20, 30, 40, 50], 10)",
+        "expected": "100"
+      }
+    ]
+  },
+  {
+    "id": 65,
+    "category": "dynamic programming",
+    "title": "Longest Increasing Subsequence Length",
+    "description": "Given a list of integers, return the length of the longest strictly increasing subsequence (elements need not be contiguous).",
+    "difficulty": 7,
+    "function_signature": "def longest_increasing_subsequence(nums: list) -> int:",
+    "tests": [
+      {
+        "input": "longest_increasing_subsequence([10, 9, 2, 5, 3, 7, 101, 18])",
+        "expected": "4"
+      },
+      {
+        "input": "longest_increasing_subsequence([0, 1, 0, 3, 2, 3])",
+        "expected": "4"
+      },
+      {
+        "input": "longest_increasing_subsequence([7, 7, 7, 7])",
+        "expected": "1"
+      },
+      {
+        "input": "longest_increasing_subsequence([])",
+        "expected": "0"
+      },
+      {
+        "input": "longest_increasing_subsequence([1])",
+        "expected": "1"
+      },
+      {
+        "input": "longest_increasing_subsequence([4, 10, 4, 3, 8, 9])",
+        "expected": "3"
+      }
+    ]
+  },
+  {
+    "id": 66,
+    "category": "dynamic programming",
+    "title": "Word Break Feasibility",
+    "description": "Given a string s and a list of dictionary words, determine whether s can be segmented into a sequence of one or more dictionary words (words may be reused). Return True or False.",
+    "difficulty": 7,
+    "function_signature": "def word_break_possible(s: str, word_dict: list) -> bool:",
+    "tests": [
+      {
+        "input": "word_break_possible('leetcode', ['leet', 'code'])",
+        "expected": "True"
+      },
+      {
+        "input": "word_break_possible('applepenapple', ['apple', 'pen'])",
+        "expected": "True"
+      },
+      {
+        "input": "word_break_possible('catsandog', ['cats', 'dog', 'sand', 'and', 'cat'])",
+        "expected": "False"
+      },
+      {
+        "input": "word_break_possible('', ['a'])",
+        "expected": "True"
+      },
+      {
+        "input": "word_break_possible('a', [])",
+        "expected": "False"
+      },
+      {
+        "input": "word_break_possible('aaaaaaa', ['aaaa', 'aaa'])",
+        "expected": "True"
+      }
+    ]
+  },
+  {
+    "id": 67,
+    "category": "graph traversal",
+    "title": "Count Islands in Grid",
+    "description": "Given a 2D grid of 0s (water) and 1s (land), count the number of islands, where an island is a group of adjacent (horizontally or vertically connected) land cells surrounded by water.",
+    "difficulty": 7,
+    "function_signature": "def number_of_islands(grid: list) -> int:",
+    "tests": [
+      {
+        "input": "number_of_islands([[1, 1, 0, 0], [1, 0, 0, 1], [0, 0, 1, 1]])",
+        "expected": "2"
+      },
+      {
+        "input": "number_of_islands([[0, 0], [0, 0]])",
+        "expected": "0"
+      },
+      {
+        "input": "number_of_islands([[1, 1], [1, 1]])",
+        "expected": "1"
+      },
+      {
+        "input": "number_of_islands([])",
+        "expected": "0"
+      },
+      {
+        "input": "number_of_islands([[1]])",
+        "expected": "1"
+      },
+      {
+        "input": "number_of_islands([[1, 0, 1, 0, 1]])",
+        "expected": "3"
+      }
+    ]
+  },
+  {
+    "id": 68,
+    "category": "graph traversal",
+    "title": "Topological Sort of DAG",
+    "description": "Given a directed acyclic graph as an adjacency dictionary, return a valid topological ordering of all nodes (using Kahn's algorithm, breaking ties by choosing the smallest available node first). Return an empty list if the graph contains a cycle.",
+    "difficulty": 7,
+    "function_signature": "def topological_sort(graph: dict) -> list:",
+    "tests": [
+      {
+        "input": "topological_sort({1: [2, 3], 2: [4], 3: [4], 4: []})",
+        "expected": "[1, 2, 3, 4]"
+      },
+      {
+        "input": "topological_sort({1: [2], 2: [1]})",
+        "expected": "[]"
+      },
+      {
+        "input": "topological_sort({})",
+        "expected": "[]"
+      },
+      {
+        "input": "topological_sort({1: []})",
+        "expected": "[1]"
+      },
+      {
+        "input": "topological_sort({'a': ['b'], 'b': ['c'], 'c': []})",
+        "expected": "['a', 'b', 'c']"
+      },
+      {
+        "input": "topological_sort({1: [3], 2: [3]})",
+        "expected": "[1, 2, 3]"
+      }
+    ]
+  },
+  {
+    "id": 69,
+    "category": "string processing",
+    "title": "Zigzag String Conversion",
+    "description": "Given a string and a number of rows, arrange the characters of the string in a zigzag pattern across that many rows (like writing in a 'Z' pattern down and diagonally up repeatedly), then read the result row by row and return the resulting string.",
+    "difficulty": 5,
+    "function_signature": "def zigzag_conversion(s: str, rows: int) -> str:",
+    "tests": [
+      {
+        "input": "zigzag_conversion('PAYPALISHIRING', 3)",
+        "expected": "'PAHNAPLSIIGYIR'"
+      },
+      {
+        "input": "zigzag_conversion('PAYPALISHIRING', 4)",
+        "expected": "'PINALSIGYAHRPI'"
+      },
+      {
+        "input": "zigzag_conversion('A', 1)",
+        "expected": "'A'"
+      },
+      {
+        "input": "zigzag_conversion('AB', 1)",
+        "expected": "'AB'"
+      },
+      {
+        "input": "zigzag_conversion('ABCD', 2)",
+        "expected": "'ACBD'"
+      },
+      {
+        "input": "zigzag_conversion('ABCDE', 5)",
+        "expected": "'ABCDE'"
+      }
+    ]
+  },
+  {
+    "id": 70,
+    "category": "sliding window",
+    "title": "Find All Anagram Start Indices",
+    "description": "Given a string s and a pattern string p, return a list of all starting indices in s where an anagram of p begins (i.e., a contiguous substring of s that has exactly the same character counts as p).",
+    "difficulty": 5,
+    "function_signature": "def find_anagram_indices(s: str, p: str) -> list:",
+    "tests": [
+      {
+        "input": "find_anagram_indices('cbaebabacd', 'abc')",
+        "expected": "[0, 6]"
+      },
+      {
+        "input": "find_anagram_indices('abab', 'ab')",
+        "expected": "[0, 1, 2]"
+      },
+      {
+        "input": "find_anagram_indices('af', 'be')",
+        "expected": "[]"
+      },
+      {
+        "input": "find_anagram_indices('', 'a')",
+        "expected": "[]"
+      },
+      {
+        "input": "find_anagram_indices('aaaaaaaaaa', 'aa')",
+        "expected": "[0, 1, 2, 3, 4, 5, 6, 7, 8]"
+      },
+      {
+        "input": "find_anagram_indices('abcdefg', 'gfe')",
+        "expected": "[4]"
+      }
+    ]
+  },
+  {
+    "id": 71,
+    "category": "sliding window",
+    "title": "Minimum Window Substring",
+    "description": "Given two strings s and t, return the minimum-length contiguous substring of s that contains all the characters of t (including duplicates). Return an empty string if no such substring exists.",
+    "difficulty": 9,
+    "function_signature": "def min_window_substring(s: str, t: str) -> str:",
+    "tests": [
+      {
+        "input": "min_window_substring('ADOBECODEBANC', 'ABC')",
+        "expected": "'BANC'"
+      },
+      {
+        "input": "min_window_substring('a', 'a')",
+        "expected": "'a'"
+      },
+      {
+        "input": "min_window_substring('a', 'aa')",
+        "expected": "''"
+      },
+      {
+        "input": "min_window_substring('ab', 'b')",
+        "expected": "'b'"
+      },
+      {
+        "input": "min_window_substring('', 'a')",
+        "expected": "''"
+      },
+      {
+        "input": "min_window_substring('aa', 'aa')",
+        "expected": "'aa'"
+      }
+    ]
+  },
+  {
+    "id": 72,
+    "category": "two pointers",
+    "title": "Three Sum Zero Triplets",
+    "description": "Given a list of integers, find all unique triplets [a, b, c] from the list such that a + b + c == 0. Return the triplets as a list of lists, each sorted in ascending order, with no duplicate triplets.",
+    "difficulty": 7,
+    "function_signature": "def three_sum_unique_triplets(nums: list) -> list:",
+    "tests": [
+      {
+        "input": "three_sum_unique_triplets([-1, 0, 1, 2, -1, -4])",
+        "expected": "[[-1, -1, 2], [-1, 0, 1]]"
+      },
+      {
+        "input": "three_sum_unique_triplets([])",
+        "expected": "[]"
+      },
+      {
+        "input": "three_sum_unique_triplets([0, 0, 0])",
+        "expected": "[[0, 0, 0]]"
+      },
+      {
+        "input": "three_sum_unique_triplets([1, 2, -2, -1])",
+        "expected": "[]"
+      },
+      {
+        "input": "three_sum_unique_triplets([-2, 0, 0, 2, 2])",
+        "expected": "[[-2, 0, 2]]"
+      },
+      {
+        "input": "three_sum_unique_triplets([3, -2, 1, 0, -1, -2])",
+        "expected": "[[-2, -1, 3], [-1, 0, 1]]"
+      }
+    ]
+  },
+  {
+    "id": 73,
+    "category": "two pointers",
+    "title": "Trapping Rain Water",
+    "description": "Given a list of non-negative integers representing an elevation map where each value is the height of a bar of width 1, compute how much water can be trapped between the bars after raining, and return the total trapped water volume.",
+    "difficulty": 7,
+    "function_signature": "def trapping_rain_water(heights: list) -> int:",
+    "tests": [
+      {
+        "input": "trapping_rain_water([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1])",
+        "expected": "6"
+      },
+      {
+        "input": "trapping_rain_water([4, 2, 0, 3, 2, 5])",
+        "expected": "9"
+      },
+      {
+        "input": "trapping_rain_water([])",
+        "expected": "0"
+      },
+      {
+        "input": "trapping_rain_water([1, 1, 1])",
+        "expected": "0"
+      },
+      {
+        "input": "trapping_rain_water([5, 4, 3, 2, 1])",
+        "expected": "0"
+      },
+      {
+        "input": "trapping_rain_water([0, 0, 0, 0])",
+        "expected": "0"
+      }
+    ]
+  },
+  {
+    "id": 74,
+    "category": "matrix manipulation",
+    "title": "Validate Partial Sudoku Board",
+    "description": "Given a 9x9 Sudoku board (list of lists) where empty cells are represented as 0, determine whether the currently filled cells satisfy Sudoku rules: no repeated non-zero digit within any row, column, or 3x3 box. Return True if valid so far, False otherwise.",
+    "difficulty": 7,
+    "function_signature": "def sudoku_row_col_box_valid(board: list) -> bool:",
+    "tests": [
+      {
+        "input": "sudoku_row_col_box_valid([[5, 3, 0, 0, 7, 0, 0, 0, 0], [6, 0, 0, 1, 9, 5, 0, 0, 0], [0, 9, 8, 0, 0, 0, 0, 6, 0], [8, 0, 0, 0, 6, 0, 0, 0, 3], [4, 0, 0, 8, 0, 3, 0, 0, 1], [7, 0, 0, 0, 2, 0, 0, 0, 6], [0, 6, 0, 0, 0, 0, 2, 8, 0], [0, 0, 0, 4, 1, 9, 0, 0, 5], [0, 0, 0, 0, 8, 0, 0, 7, 9]])",
+        "expected": "True"
+      },
+      {
+        "input": "sudoku_row_col_box_valid([[5, 5, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]])",
+        "expected": "False"
+      },
+      {
+        "input": "sudoku_row_col_box_valid([[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]])",
+        "expected": "True"
+      },
+      {
+        "input": "sudoku_row_col_box_valid([[1, 2, 3, 4, 5, 6, 7, 8, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]])",
+        "expected": "True"
+      },
+      {
+        "input": "sudoku_row_col_box_valid([[1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]])",
+        "expected": "False"
+      },
+      {
+        "input": "sudoku_row_col_box_valid([[1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]])",
+        "expected": "False"
+      }
+    ]
+  },
+  {
+    "id": 75,
+    "category": "string processing",
+    "title": "Hamming Distance Between Equal-Length Strings",
+    "description": "Given two strings of equal length, return the Hamming distance between them, defined as the number of positions at which the corresponding characters differ.",
+    "difficulty": 2,
+    "function_signature": "def hamming_distance(a: str, b: str) -> int:",
+    "tests": [
+      {
+        "input": "hamming_distance('karolin', 'kathrin')",
+        "expected": "3"
+      },
+      {
+        "input": "hamming_distance('aaaa', 'aaaa')",
+        "expected": "0"
+      },
+      {
+        "input": "hamming_distance('', '')",
+        "expected": "0"
+      },
+      {
+        "input": "hamming_distance('1011101', '1001001')",
+        "expected": "2"
+      },
+      {
+        "input": "hamming_distance('abc', 'abd')",
+        "expected": "1"
+      },
+      {
+        "input": "hamming_distance('hello', 'hxllo')",
+        "expected": "1"
+      }
+    ]
+  },
+  {
+    "id": 76,
+    "category": "string processing",
+    "title": "Caesar Cipher Encoder",
+    "description": "Given a text string and an integer shift, encode the text using a Caesar cipher that shifts each alphabetic character by the given amount (wrapping around the alphabet), leaving non-alphabetic characters unchanged and preserving case. Return the encoded string.",
+    "difficulty": 3,
+    "function_signature": "def caesar_cipher(text: str, shift: int) -> str:",
+    "tests": [
+      {
+        "input": "caesar_cipher('abc', 1)",
+        "expected": "'bcd'"
+      },
+      {
+        "input": "caesar_cipher('xyz', 3)",
+        "expected": "'abc'"
+      },
+      {
+        "input": "caesar_cipher('Hello, World!', 5)",
+        "expected": "'Mjqqt, Btwqi!'"
+      },
+      {
+        "input": "caesar_cipher('ABC', 26)",
+        "expected": "'ABC'"
+      },
+      {
+        "input": "caesar_cipher('abc', -1)",
+        "expected": "'zab'"
+      },
+      {
+        "input": "caesar_cipher('Zebra', 2)",
+        "expected": "'Bgdtc'"
+      }
+    ]
+  },
+  {
+    "id": 77,
+    "category": "frequency counting",
+    "title": "Can Form Palindrome Permutation",
+    "description": "Given a string, determine whether some permutation of its characters (ignoring spaces and case) could form a palindrome. Return True or False.",
+    "difficulty": 4,
+    "function_signature": "def is_palindrome_permutation(s: str) -> bool:",
+    "tests": [
+      {
+        "input": "is_palindrome_permutation('Tact Coa')",
+        "expected": "True"
+      },
+      {
+        "input": "is_palindrome_permutation('hello')",
+        "expected": "False"
+      },
+      {
+        "input": "is_palindrome_permutation('a')",
+        "expected": "True"
+      },
+      {
+        "input": "is_palindrome_permutation('')",
+        "expected": "True"
+      },
+      {
+        "input": "is_palindrome_permutation('aabb')",
+        "expected": "True"
+      },
+      {
+        "input": "is_palindrome_permutation('aabbc')",
+        "expected": "True"
+      }
+    ]
+  },
+  {
+    "id": 78,
+    "category": "array manipulation",
+    "title": "Majority Element (Boyer-Moore)",
+    "description": "Given a list of integers where a majority element (appearing more than n/2 times) is guaranteed to exist, return that majority element using the Boyer-Moore voting algorithm.",
+    "difficulty": 4,
+    "function_signature": "def majority_element(nums: list) -> int:",
+    "tests": [
+      {
+        "input": "majority_element([3, 2, 3])",
+        "expected": "3"
+      },
+      {
+        "input": "majority_element([2, 2, 1, 1, 1, 2, 2])",
+        "expected": "2"
+      },
+      {
+        "input": "majority_element([1])",
+        "expected": "1"
+      },
+      {
+        "input": "majority_element([1, 1, 1, 2, 2])",
+        "expected": "1"
+      },
+      {
+        "input": "majority_element([5, 5, 5, 5, 1])",
+        "expected": "5"
+      },
+      {
+        "input": "majority_element([6, 6, 6, 7, 7, 6, 6])",
+        "expected": "6"
+      }
+    ]
+  },
+  {
+    "id": 79,
+    "category": "prefix sums",
+    "title": "Product of Array Except Self",
+    "description": "Given a list of integers, return a new list where each element at index i is the product of all elements in the original list except the one at index i, without using division.",
+    "difficulty": 5,
+    "function_signature": "def product_except_self(nums: list) -> list:",
+    "tests": [
+      {
+        "input": "product_except_self([1, 2, 3, 4])",
+        "expected": "[24, 12, 8, 6]"
+      },
+      {
+        "input": "product_except_self([0, 1, 2, 3])",
+        "expected": "[6, 0, 0, 0]"
+      },
+      {
+        "input": "product_except_self([0, 0])",
+        "expected": "[0, 0]"
+      },
+      {
+        "input": "product_except_self([5])",
+        "expected": "[1]"
+      },
+      {
+        "input": "product_except_self([-1, 1, -1, 1])",
+        "expected": "[-1, 1, -1, 1]"
+      },
+      {
+        "input": "product_except_self([2, 3])",
+        "expected": "[3, 2]"
+      }
+    ]
+  },
+  {
+    "id": 80,
+    "category": "greedy algorithms",
+    "title": "Best Time to Buy and Sell Stock",
+    "description": "Given a list of daily stock prices, return the maximum profit achievable by buying on one day and selling on a later day (a single transaction). Return 0 if no profit is possible.",
+    "difficulty": 4,
+    "function_signature": "def max_profit_one_transaction(prices: list) -> int:",
+    "tests": [
+      {
+        "input": "max_profit_one_transaction([7, 1, 5, 3, 6, 4])",
+        "expected": "5"
+      },
+      {
+        "input": "max_profit_one_transaction([7, 6, 4, 3, 1])",
+        "expected": "0"
+      },
+      {
+        "input": "max_profit_one_transaction([1])",
+        "expected": "0"
+      },
+      {
+        "input": "max_profit_one_transaction([])",
+        "expected": "0"
+      },
+      {
+        "input": "max_profit_one_transaction([1, 2])",
+        "expected": "1"
+      },
+      {
+        "input": "max_profit_one_transaction([3, 3, 3, 3])",
+        "expected": "0"
+      }
+    ]
+  },
+  {
+    "id": 81,
+    "category": "greedy algorithms",
+    "title": "Best Time to Buy and Sell Stock Multiple Times",
+    "description": "Given a list of daily stock prices, return the maximum total profit achievable by making as many buy-sell transactions as desired (buying and selling on different days, and not holding more than one share at a time).",
+    "difficulty": 4,
+    "function_signature": "def max_profit_multiple_transactions(prices: list) -> int:",
+    "tests": [
+      {
+        "input": "max_profit_multiple_transactions([7, 1, 5, 3, 6, 4])",
+        "expected": "7"
+      },
+      {
+        "input": "max_profit_multiple_transactions([1, 2, 3, 4, 5])",
+        "expected": "4"
+      },
+      {
+        "input": "max_profit_multiple_transactions([7, 6, 4, 3, 1])",
+        "expected": "0"
+      },
+      {
+        "input": "max_profit_multiple_transactions([])",
+        "expected": "0"
+      },
+      {
+        "input": "max_profit_multiple_transactions([1])",
+        "expected": "0"
+      },
+      {
+        "input": "max_profit_multiple_transactions([5, 1, 5, 1, 5])",
+        "expected": "8"
+      }
+    ]
+  },
+  {
+    "id": 82,
+    "category": "sorting",
+    "title": "Compute H-Index",
+    "description": "Given a list of citation counts for a researcher's papers, return the h-index, defined as the maximum value h such that the researcher has at least h papers with at least h citations each.",
+    "difficulty": 5,
+    "function_signature": "def h_index(citations: list) -> int:",
+    "tests": [
+      {
+        "input": "h_index([3, 0, 6, 1, 5])",
+        "expected": "3"
+      },
+      {
+        "input": "h_index([1, 3, 1])",
+        "expected": "1"
+      },
+      {
+        "input": "h_index([0, 0, 0])",
+        "expected": "0"
+      },
+      {
+        "input": "h_index([100])",
+        "expected": "1"
+      },
+      {
+        "input": "h_index([])",
+        "expected": "0"
+      },
+      {
+        "input": "h_index([10, 8, 5, 4, 3])",
+        "expected": "4"
+      }
+    ]
+  },
+  {
+    "id": 83,
+    "category": "frequency counting",
+    "title": "Find All Duplicate Elements",
+    "description": "Given a list of integers, return a sorted list of all elements that appear more than once, with each duplicate value listed only once regardless of how many extra times it repeats.",
+    "difficulty": 2,
+    "function_signature": "def find_all_duplicates(nums: list) -> list:",
+    "tests": [
+      {
+        "input": "find_all_duplicates([4, 3, 2, 7, 8, 2, 3, 1])",
+        "expected": "[2, 3]"
+      },
+      {
+        "input": "find_all_duplicates([1, 1, 2])",
+        "expected": "[1]"
+      },
+      {
+        "input": "find_all_duplicates([])",
+        "expected": "[]"
+      },
+      {
+        "input": "find_all_duplicates([1, 2, 3])",
+        "expected": "[]"
+      },
+      {
+        "input": "find_all_duplicates([5, 5, 5, 5])",
+        "expected": "[5, 5, 5]"
+      },
+      {
+        "input": "find_all_duplicates([1, 2, 2, 3, 3, 3])",
+        "expected": "[2, 3, 3]"
+      }
+    ]
+  },
+  {
+    "id": 84,
+    "category": "sorting",
+    "title": "Merge K Sorted Lists",
+    "description": "Given a list of k sorted lists of integers, merge them all into a single sorted list and return it.",
+    "difficulty": 5,
+    "function_signature": "def merge_sorted_lists(lists: list) -> list:",
+    "tests": [
+      {
+        "input": "merge_sorted_lists([[1, 4, 5], [1, 3, 4], [2, 6]])",
+        "expected": "[1, 1, 2, 3, 4, 4, 5, 6]"
+      },
+      {
+        "input": "merge_sorted_lists([[]])",
+        "expected": "[]"
+      },
+      {
+        "input": "merge_sorted_lists([])",
+        "expected": "[]"
+      },
+      {
+        "input": "merge_sorted_lists([[1, 2, 3]])",
+        "expected": "[1, 2, 3]"
+      },
+      {
+        "input": "merge_sorted_lists([[5], [1], [3]])",
+        "expected": "[1, 3, 5]"
+      },
+      {
+        "input": "merge_sorted_lists([[1, 1, 1], [2, 2, 2]])",
+        "expected": "[1, 1, 1, 2, 2, 2]"
+      }
+    ]
+  },
+  {
+    "id": 85,
+    "category": "searching",
+    "title": "Median of Two Sorted Arrays",
+    "description": "Given two sorted lists of integers, return the median of the combined data set as a float.",
+    "difficulty": 7,
+    "function_signature": "def median_of_two_sorted(a: list, b: list) -> float:",
+    "tests": [
+      {
+        "input": "median_of_two_sorted([1, 3], [2])",
+        "expected": "2.0"
+      },
+      {
+        "input": "median_of_two_sorted([1, 2], [3, 4])",
+        "expected": "2.5"
+      },
+      {
+        "input": "median_of_two_sorted([], [1])",
+        "expected": "1.0"
+      },
+      {
+        "input": "median_of_two_sorted([0, 0], [0, 0])",
+        "expected": "0.0"
+      },
+      {
+        "input": "median_of_two_sorted([1], [2, 3, 4])",
+        "expected": "2.5"
+      },
+      {
+        "input": "median_of_two_sorted([2, 3, 4], [1])",
+        "expected": "2.5"
+      }
+    ]
+  },
+  {
+    "id": 86,
+    "category": "searching",
+    "title": "Find a Peak Element Index",
+    "description": "Given a list of integers where nums[i] != nums[i+1] for all valid i, return the index of any peak element (an element strictly greater than its neighbors, with boundaries treated as negative infinity), found using binary search in logarithmic time.",
+    "difficulty": 5,
+    "function_signature": "def find_peak_element(nums: list) -> int:",
+    "tests": [
+      {
+        "input": "find_peak_element([1, 2, 3, 1])",
+        "expected": "2"
+      },
+      {
+        "input": "find_peak_element([1, 2, 1, 3, 5, 6, 4])",
+        "expected": "5"
+      },
+      {
+        "input": "find_peak_element([1])",
+        "expected": "0"
+      },
+      {
+        "input": "find_peak_element([1, 2])",
+        "expected": "1"
+      },
+      {
+        "input": "find_peak_element([2, 1])",
+        "expected": "0"
+      },
+      {
+        "input": "find_peak_element([5, 10, 20, 15, 2, 23, 90, 67])",
+        "expected": "2"
+      }
+    ]
+  },
+  {
+    "id": 87,
+    "category": "searching",
+    "title": "Search in Rotated Sorted Array",
+    "description": "Given a list of distinct integers that was originally sorted in ascending order and then rotated at some unknown pivot, and a target value, return the index of the target in the list using an O(log n) modified binary search. Return -1 if the target is not found.",
+    "difficulty": 7,
+    "function_signature": "def search_rotated_sorted(nums: list, target: int) -> int:",
+    "tests": [
+      {
+        "input": "search_rotated_sorted([4, 5, 6, 7, 0, 1, 2], 0)",
+        "expected": "4"
+      },
+      {
+        "input": "search_rotated_sorted([4, 5, 6, 7, 0, 1, 2], 3)",
+        "expected": "-1"
+      },
+      {
+        "input": "search_rotated_sorted([1], 0)",
+        "expected": "-1"
+      },
+      {
+        "input": "search_rotated_sorted([1], 1)",
+        "expected": "0"
+      },
+      {
+        "input": "search_rotated_sorted([5, 1, 3], 5)",
+        "expected": "0"
+      },
+      {
+        "input": "search_rotated_sorted([3, 1], 1)",
+        "expected": "1"
+      }
+    ]
+  },
+  {
+    "id": 88,
+    "category": "string processing",
+    "title": "Run Length Decode",
+    "description": "Given a run-length encoded string where each character is immediately followed by a positive integer count (e.g., 'a3b2c1'), decode it back into the original expanded string and return it.",
+    "difficulty": 3,
+    "function_signature": "def run_length_decode(s: str) -> str:",
+    "tests": [
+      {
+        "input": "run_length_decode('a3b2c1')",
+        "expected": "'aaabbc'"
+      },
+      {
+        "input": "run_length_decode('a1')",
+        "expected": "'a'"
+      },
+      {
+        "input": "run_length_decode('')",
+        "expected": "''"
+      },
+      {
+        "input": "run_length_decode('z10')",
+        "expected": "'zzzzzzzzzz'"
+      },
+      {
+        "input": "run_length_decode('a2b2c2')",
+        "expected": "'aabbcc'"
+      },
+      {
+        "input": "run_length_decode('x1y1z1')",
+        "expected": "'xyz'"
+      }
+    ]
+  },
+  {
+    "id": 89,
+    "category": "matrix manipulation",
+    "title": "Matrix Multiplication",
+    "description": "Given two matrices a and b represented as lists of lists, where the number of columns of a equals the number of rows of b, return their matrix product as a new matrix.",
+    "difficulty": 4,
+    "function_signature": "def matrix_multiply(a: list, b: list) -> list:",
+    "tests": [
+      {
+        "input": "matrix_multiply([[1, 2], [3, 4]], [[5, 6], [7, 8]])",
+        "expected": "[[19, 22], [43, 50]]"
+      },
+      {
+        "input": "matrix_multiply([[1, 0], [0, 1]], [[9, 8], [7, 6]])",
+        "expected": "[[9, 8], [7, 6]]"
+      },
+      {
+        "input": "matrix_multiply([[1, 2, 3]], [[1], [2], [3]])",
+        "expected": "[[14]]"
+      },
+      {
+        "input": "matrix_multiply([[2]], [[3]])",
+        "expected": "[[6]]"
+      },
+      {
+        "input": "matrix_multiply([[1, 2], [3, 4], [5, 6]], [[1, 0], [0, 1]])",
+        "expected": "[[1, 2], [3, 4], [5, 6]]"
+      },
+      {
+        "input": "matrix_multiply([[0, 0], [0, 0]], [[1, 2], [3, 4]])",
+        "expected": "[[0, 0], [0, 0]]"
+      }
+    ]
+  },
+  {
+    "id": 90,
+    "category": "matrix manipulation",
+    "title": "Diagonal Zigzag Matrix Traversal",
+    "description": "Given a matrix (list of lists), return all its elements traversed in the diagonal zigzag order used by many image compression algorithms, alternating the direction of traversal for each diagonal.",
+    "difficulty": 7,
+    "function_signature": "def diagonal_traverse(matrix: list) -> list:",
+    "tests": [
+      {
+        "input": "diagonal_traverse([[1, 2, 3], [4, 5, 6], [7, 8, 9]])",
+        "expected": "[1, 2, 4, 7, 5, 3, 6, 8, 9]"
+      },
+      {
+        "input": "diagonal_traverse([[1, 2], [3, 4]])",
+        "expected": "[1, 2, 3, 4]"
+      },
+      {
+        "input": "diagonal_traverse([[1]])",
+        "expected": "[1]"
+      },
+      {
+        "input": "diagonal_traverse([])",
+        "expected": "[]"
+      },
+      {
+        "input": "diagonal_traverse([[1, 2, 3]])",
+        "expected": "[1, 2, 3]"
+      },
+      {
+        "input": "diagonal_traverse([[1], [2], [3]])",
+        "expected": "[1, 2, 3]"
+      }
+    ]
+  },
+  {
+    "id": 91,
+    "category": "stack",
+    "title": "Largest Rectangle in Histogram",
+    "description": "Given a list of non-negative integers representing the heights of histogram bars of width 1, return the area of the largest rectangle that can be formed within the histogram, using a monotonic stack.",
+    "difficulty": 9,
+    "function_signature": "def largest_rectangle_histogram(heights: list) -> int:",
+    "tests": [
+      {
+        "input": "largest_rectangle_histogram([2, 1, 5, 6, 2, 3])",
+        "expected": "10"
+      },
+      {
+        "input": "largest_rectangle_histogram([2, 4])",
+        "expected": "4"
+      },
+      {
+        "input": "largest_rectangle_histogram([])",
+        "expected": "0"
+      },
+      {
+        "input": "largest_rectangle_histogram([5])",
+        "expected": "5"
+      },
+      {
+        "input": "largest_rectangle_histogram([1, 1, 1, 1])",
+        "expected": "4"
+      },
+      {
+        "input": "largest_rectangle_histogram([6, 7, 5, 2, 4, 5, 9, 3])",
+        "expected": "16"
+      }
+    ]
+  },
+  {
+    "id": 92,
+    "category": "prefix sums",
+    "title": "Count Subarrays With Sum K",
+    "description": "Given a list of integers and a target sum k, return the count of contiguous subarrays whose elements sum exactly to k, computed efficiently using prefix sums and a hashmap.",
+    "difficulty": 7,
+    "function_signature": "def subarray_sum_equals_k(nums: list, k: int) -> int:",
+    "tests": [
+      {
+        "input": "subarray_sum_equals_k([1, 1, 1], 2)",
+        "expected": "2"
+      },
+      {
+        "input": "subarray_sum_equals_k([1, 2, 3], 3)",
+        "expected": "2"
+      },
+      {
+        "input": "subarray_sum_equals_k([1, -1, 0], 0)",
+        "expected": "3"
+      },
+      {
+        "input": "subarray_sum_equals_k([], 0)",
+        "expected": "0"
+      },
+      {
+        "input": "subarray_sum_equals_k([3, 4, 7, 2, -3, 1, 4, 2], 7)",
+        "expected": "4"
+      },
+      {
+        "input": "subarray_sum_equals_k([1], 0)",
+        "expected": "0"
+      }
+    ]
+  },
+  {
+    "id": 93,
+    "category": "geometry",
+    "title": "Maximum Points on a Line",
+    "description": "Given a list of 2D integer points, return the maximum number of points that lie on the same straight line.",
+    "difficulty": 10,
+    "function_signature": "def max_points_on_line(points: list) -> int:",
+    "tests": [
+      {
+        "input": "max_points_on_line([[1, 1], [2, 2], [3, 3]])",
+        "expected": "3"
+      },
+      {
+        "input": "max_points_on_line([[1, 1], [3, 2], [5, 3], [4, 1], [2, 3], [1, 4]])",
+        "expected": "4"
+      },
+      {
+        "input": "max_points_on_line([[0, 0]])",
+        "expected": "1"
+      },
+      {
+        "input": "max_points_on_line([[0, 0], [1, 1]])",
+        "expected": "2"
+      },
+      {
+        "input": "max_points_on_line([[1, 1], [1, 1], [1, 1]])",
+        "expected": "3"
+      },
+      {
+        "input": "max_points_on_line([[0, 0], [1, 0], [2, 0], [0, 1]])",
+        "expected": "3"
+      }
+    ]
+  },
+  {
+    "id": 94,
+    "category": "combinatorics",
+    "title": "Kth Permutation Sequence",
+    "description": "Given an integer n and an integer k, return the kth permutation (1-indexed) of the sequence of digits 1 to n, listed in lexicographic order, as a string.",
+    "difficulty": 7,
+    "function_signature": "def find_kth_permutation(n: int, k: int) -> str:",
+    "tests": [
+      {
+        "input": "find_kth_permutation(3, 3)",
+        "expected": "'213'"
+      },
+      {
+        "input": "find_kth_permutation(4, 9)",
+        "expected": "'2314'"
+      },
+      {
+        "input": "find_kth_permutation(1, 1)",
+        "expected": "'1'"
+      },
+      {
+        "input": "find_kth_permutation(3, 1)",
+        "expected": "'123'"
+      },
+      {
+        "input": "find_kth_permutation(3, 6)",
+        "expected": "'321'"
+      },
+      {
+        "input": "find_kth_permutation(2, 2)",
+        "expected": "'21'"
+      }
+    ]
+  },
+  {
+    "id": 95,
+    "category": "string processing",
+    "title": "Longest Palindromic Substring",
+    "description": "Given a string, return the longest contiguous substring that is a palindrome. If multiple substrings of the same maximum length exist, return the first one found scanning from the left.",
+    "difficulty": 7,
+    "function_signature": "def longest_palindromic_substring(s: str) -> str:",
+    "tests": [
+      {
+        "input": "longest_palindromic_substring('babad')",
+        "expected": "'bab'"
+      },
+      {
+        "input": "longest_palindromic_substring('cbbd')",
+        "expected": "'bb'"
+      },
+      {
+        "input": "longest_palindromic_substring('a')",
+        "expected": "'a'"
+      },
+      {
+        "input": "longest_palindromic_substring('')",
+        "expected": "''"
+      },
+      {
+        "input": "longest_palindromic_substring('racecar')",
+        "expected": "'racecar'"
+      },
+      {
+        "input": "longest_palindromic_substring('abcde')",
+        "expected": "'a'"
+      }
+    ]
+  },
+  {
+    "id": 96,
+    "category": "bit manipulation",
+    "title": "Bitwise AND of Number Range",
+    "description": "Given two non-negative integers m and n where m <= n, return the bitwise AND of all integers in the inclusive range [m, n], computed efficiently by finding the common binary prefix.",
+    "difficulty": 7,
+    "function_signature": "def bitwise_and_range(m: int, n: int) -> int:",
+    "tests": [
+      {
+        "input": "bitwise_and_range(5, 7)",
+        "expected": "4"
+      },
+      {
+        "input": "bitwise_and_range(0, 0)",
+        "expected": "0"
+      },
+      {
+        "input": "bitwise_and_range(1, 2147483647)",
+        "expected": "0"
+      },
+      {
+        "input": "bitwise_and_range(5, 5)",
+        "expected": "5"
+      },
+      {
+        "input": "bitwise_and_range(8, 12)",
+        "expected": "8"
+      },
+      {
+        "input": "bitwise_and_range(0, 1)",
+        "expected": "0"
+      }
+    ]
+  },
+  {
+    "id": 97,
+    "category": "bit manipulation",
+    "title": "Generate Gray Code Sequence",
+    "description": "Given a non-negative integer n, generate the n-bit Gray code sequence (a sequence of 2^n integers where consecutive values, including the wrap-around from last to first, differ in exactly one bit) and return it as a list in standard order starting from 0.",
+    "difficulty": 4,
+    "function_signature": "def gray_code_sequence(n: int) -> list:",
+    "tests": [
+      {
+        "input": "gray_code_sequence(0)",
+        "expected": "[0]"
+      },
+      {
+        "input": "gray_code_sequence(1)",
+        "expected": "[0, 1]"
+      },
+      {
+        "input": "gray_code_sequence(2)",
+        "expected": "[0, 1, 3, 2]"
+      },
+      {
+        "input": "gray_code_sequence(3)",
+        "expected": "[0, 1, 3, 2, 6, 7, 5, 4]"
+      },
+      {
+        "input": "gray_code_sequence(4)",
+        "expected": "[0, 1, 3, 2, 6, 7, 5, 4, 12, 13, 15, 14, 10, 11, 9, 8]"
+      },
+      {
+        "input": "gray_code_sequence(5)",
+        "expected": "[0, 1, 3, 2, 6, 7, 5, 4, 12, 13, 15, 14, 10, 11, 9, 8, 24, 25, 27, 26, 30, 31, 29, 28, 20, 21, 23, 22, 18, 19, 17, 16]"
+      }
+    ]
+  },
+  {
+    "id": 98,
+    "category": "graph traversal",
+    "title": "Check if Graph is Bipartite",
+    "description": "Given an undirected graph represented as an adjacency dictionary, determine whether the graph can be colored using two colors such that no two adjacent nodes share the same color (i.e., the graph is bipartite). Return True or False.",
+    "difficulty": 7,
+    "function_signature": "def graph_bipartite_check(graph: dict) -> bool:",
+    "tests": [
+      {
+        "input": "graph_bipartite_check({0: [1, 3], 1: [0, 2], 2: [1, 3], 3: [0, 2]})",
+        "expected": "True"
+      },
+      {
+        "input": "graph_bipartite_check({0: [1, 2, 3], 1: [0, 2], 2: [0, 1, 3], 3: [0, 2]})",
+        "expected": "False"
+      },
+      {
+        "input": "graph_bipartite_check({})",
+        "expected": "True"
+      },
+      {
+        "input": "graph_bipartite_check({0: []})",
+        "expected": "True"
+      },
+      {
+        "input": "graph_bipartite_check({0: [1], 1: [0]})",
+        "expected": "True"
+      },
+      {
+        "input": "graph_bipartite_check({0: [1], 1: [2], 2: [0]})",
+        "expected": "False"
+      }
+    ]
+  },
+  {
+    "id": 99,
+    "category": "sorting",
+    "title": "Counting Sort of Bounded Integers",
+    "description": "Given a list of non-negative integers and the maximum possible value among them, sort the list in ascending order using the counting sort algorithm and return the sorted list.",
+    "difficulty": 3,
+    "function_signature": "def counting_sort_stability(nums: list, max_val: int) -> list:",
+    "tests": [
+      {
+        "input": "counting_sort_stability([4, 2, 2, 8, 3, 3, 1], 8)",
+        "expected": "[1, 2, 2, 3, 3, 4, 8]"
+      },
+      {
+        "input": "counting_sort_stability([], 5)",
+        "expected": "[]"
+      },
+      {
+        "input": "counting_sort_stability([0, 0, 0], 0)",
+        "expected": "[0, 0, 0]"
+      },
+      {
+        "input": "counting_sort_stability([5, 4, 3, 2, 1], 5)",
+        "expected": "[1, 2, 3, 4, 5]"
+      },
+      {
+        "input": "counting_sort_stability([1], 10)",
+        "expected": "[1]"
+      },
+      {
+        "input": "counting_sort_stability([3, 3, 3, 3], 3)",
+        "expected": "[3, 3, 3, 3]"
+      }
+    ]
+  },
+  {
+    "id": 100,
+    "category": "string processing",
+    "title": "Levenshtein Similarity Ratio",
+    "description": "Given two strings, compute a similarity ratio between 0 and 1 based on their Levenshtein (edit) distance, defined as (len(a)+len(b)-edit_distance) / (len(a)+len(b)). Return the ratio rounded to 4 decimal places. Return 1.0 if both strings are empty.",
+    "difficulty": 5,
+    "function_signature": "def levenshtein_similarity_ratio(a: str, b: str) -> float:",
+    "tests": [
+      {
+        "input": "levenshtein_similarity_ratio('kitten', 'sitting')",
+        "expected": "0.7692"
+      },
+      {
+        "input": "levenshtein_similarity_ratio('', '')",
+        "expected": "1.0"
+      },
+      {
+        "input": "levenshtein_similarity_ratio('abc', 'abc')",
+        "expected": "1.0"
+      },
+      {
+        "input": "levenshtein_similarity_ratio('abc', 'xyz')",
+        "expected": "0.5"
+      },
+      {
+        "input": "levenshtein_similarity_ratio('a', 'ab')",
+        "expected": "0.6667"
+      },
+      {
+        "input": "levenshtein_similarity_ratio('hello', 'hallo')",
+        "expected": "0.9"
+      }
+    ]
+  }
+]

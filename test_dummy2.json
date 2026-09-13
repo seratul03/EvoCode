@@ -1,0 +1,15 @@
+[
+    {
+        "id": 1,
+        "title": "Add Two Numbers",
+        "description": "Write a function that returns the sum of two integers.",
+        "category": "Math",
+        "difficulty": "Easy",
+        "function_signature": "def add(a: int, b: int) -> int:",
+        "tests": [
+            {"input": {"a": 1, "b": 2}, "expected": 3},
+            {"input": {"a": -1, "b": -1}, "expected": -2},
+            {"input": {"a": 100, "b": 200}, "expected": 300}
+        ]
+    }
+]

@@ -227,7 +227,12 @@ async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
                                   enable_collaboration: bool = True,
                                   enable_memory: bool = True,
                                   single_agent_mode: bool = False,
-                                  skip_meta_evolution: bool = False):
+                                  skip_meta_evolution: bool = False,
+                                  disable_critic: bool = False,
+                                  disable_property_testing: bool = False,
+                                  disable_mutation: bool = False,
+                                  baseline: str = "none",
+                                  pop_size: int = 3):
     print("=" * 60)
     print("       EvoCode Autonomous Self-Training Pipeline")
     print("=" * 60)
@@ -287,20 +292,58 @@ async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
         print(f"{'='*60}")
 
         try:
+            # Baseline overrides
+            actual_pop_size = pop_size
+            actual_n_gens = n_gens
+            mode = "evolve"
+            use_evolution = enable_evolution
+            use_collaboration = enable_collaboration
+            use_memory = enable_memory
+            
+            if baseline == "single-shot":
+                actual_pop_size = 1
+                actual_n_gens = 1
+                mode = "baseline_a"
+                use_evolution = False
+                use_collaboration = False
+                use_memory = False
+                skip_meta_evolution = True
+            elif baseline == "iterative":
+                actual_pop_size = 1
+                mode = "baseline_b"
+                use_evolution = False
+                use_collaboration = False
+                use_memory = False
+                skip_meta_evolution = True
+            elif baseline == "static-pop":
+                mode = "baseline_c"
+                use_evolution = False
+                use_collaboration = False
+                use_memory = False
+                skip_meta_evolution = True
+
+            actual_disable_collab = (not enable_collaboration) or (baseline != "none")
+            actual_disable_mem = (not enable_memory) or (baseline != "none")
+
             orchestrator = EvoFlowOrchestrator(
-                pop_size=3,
-                enable_evolution=enable_evolution,
-                enable_collaboration=enable_collaboration,
-                enable_memory=enable_memory,
-                single_agent_mode=single_agent_mode
+                pop_size=actual_pop_size,
+                enable_evolution=use_evolution,
+                enable_collaboration=(not actual_disable_collab),
+                enable_memory=(not actual_disable_mem),
+                single_agent_mode=single_agent_mode,
+                disable_critic=disable_critic,
+                disable_property_testing=disable_property_testing,
+                disable_mutation=disable_mutation
             )
             await orchestrator.run_generations(
-                num_generations=n_gens,
+                num_generations=actual_n_gens,
                 problems=[problem],
-                mode="evolve",
-                disable_circuit_breaker=False
+                mode=mode,
+                disable_circuit_breaker=(baseline != "none")
             )
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             print(f"\n[Autonomous] ERROR during run {run_idx + 1}: {e}")
             print("[Autonomous] Continuing with next problem...")
 
@@ -440,10 +483,38 @@ if __name__ == "__main__":
         help="Skip the Phase 17 meta-evolution upgrade check after the pipeline."
     )
     parser.add_argument(
+        "--disable-critic",
+        action="store_true",
+        help="Disable the CriticAgent feedback. Used for ablation."
+    )
+    parser.add_argument(
+        "--disable-property-testing",
+        action="store_true",
+        help="Disable the PropertyTester ephemeral test generation. Used for ablation."
+    )
+    parser.add_argument(
+        "--disable-mutation",
+        action="store_true",
+        help="Disable the MutatorAgent during crossover (parents are cloned exactly). Used for ablation."
+    )
+    parser.add_argument(
         "--dataset",
         type=str,
         default=None,
         help="Path to a JSON file containing an array of pre-defined problems to run, bypassing autonomous generation."
+    )
+    parser.add_argument(
+        "--baseline",
+        type=str,
+        choices=["none", "single-shot", "iterative", "static-pop"],
+        default="none",
+        help="Run in a baseline mode for comparison (disables advanced EvoCode features)."
+    )
+    parser.add_argument(
+        "--pop-size",
+        type=int,
+        default=3,
+        help="Population size per generation (default: 3)."
     )
 
     args = parser.parse_args()
@@ -455,7 +526,12 @@ if __name__ == "__main__":
         dataset_path=args.dataset,
         enable_evolution=not args.disable_evolution,
         enable_collaboration=not args.disable_collaboration,
-        enable_memory=not args.disable_memory,
+        enable_memory=(not args.disable_memory),
         single_agent_mode=args.single_agent,
         skip_meta_evolution=args.skip_meta_evolution,
+        disable_critic=args.disable_critic,
+        disable_property_testing=args.disable_property_testing,
+        disable_mutation=args.disable_mutation,
+        baseline=args.baseline,
+        pop_size=args.pop_size
     ))

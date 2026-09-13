@@ -120,10 +120,25 @@ class EventLogger:
             )
         ''')
         
+        # 8. Population Stats (Diversity and variance)
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS population_stats (
+                stat_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                problem_id INTEGER,
+                generation_id INTEGER,
+                min_fitness REAL,
+                max_fitness REAL,
+                mean_fitness REAL,
+                variance REAL,
+                timestamp DATETIME
+            )
+        ''')
+        
         # Create composite indices as recommended in evo.md
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_llm_calls_prob_gen ON llm_calls(problem_id, generation_id)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_test_results_prob_gen ON test_results(problem_id, generation_id)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_fitness_scores_prob_gen ON fitness_scores(problem_id, generation_id)')
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_pop_stats_prob_gen ON population_stats(problem_id, generation_id)')
         
         self.conn.commit()
 
@@ -181,6 +196,14 @@ class EventLogger:
             INSERT INTO validation_results (problem_id, generation_id, is_correct, confidence, issues_found, tokens_used, timestamp)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         ''', (problem_id, generation_id, is_correct, confidence, issues_found, tokens_used, datetime.utcnow()))
+        self.conn.commit()
+
+    def log_population_stats(self, problem_id: int, generation_id: int, min_fitness: float, max_fitness: float, mean_fitness: float, variance: float):
+        cursor = self.conn.cursor()
+        cursor.execute('''
+            INSERT INTO population_stats (problem_id, generation_id, min_fitness, max_fitness, mean_fitness, variance, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (problem_id, generation_id, min_fitness, max_fitness, mean_fitness, variance, datetime.utcnow()))
         self.conn.commit()
 
     def close(self):

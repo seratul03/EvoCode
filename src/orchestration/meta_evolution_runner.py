@@ -46,7 +46,7 @@ class MetaEvolutionRunner:
                 print(f"  [Verifier] Candidate '{clone.candidate_id}' PASSED all stages. Staged for arena.")
                 print(f"  [Arena] Refereeing competition between {clone.parent_hash[:8]} and {clone.candidate_hash[:8]} at Pressure Level {self.orchestrator.environment.profile.level}...")
                 arena = ArenaReferee()
-                arena_result = arena.compare(
+                arena_result = await arena.compare(
                     clone.parent_genome,
                     clone.candidate_genome,
                     env_profile=self.orchestrator.environment.profile

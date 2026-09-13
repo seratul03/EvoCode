@@ -15,21 +15,33 @@ class CorrectnessEvaluator(Evaluator):
         return min(1.0, base_score * genome.sensitivity)
 
 class RuntimeEvaluator(Evaluator):
-    def score(self, test_results: dict, genome: EvaluatorGenome) -> float:
-        # Dummy comparison, assuming 1000ms is standard timeout
-        # In full implementation, compare vs a reference solution
+    def score(self, test_results: dict, genome: EvaluatorGenome, pop_stats: dict = None) -> float:
         exec_ms = test_results["execution_time_ms"]
         if exec_ms <= 0: return 1.0
-        score = 1.0 - (exec_ms / 1000.0)
+        
+        if pop_stats and "max_runtime" in pop_stats and "min_runtime" in pop_stats and pop_stats["max_runtime"] > pop_stats["min_runtime"]:
+            min_r = pop_stats["min_runtime"]
+            max_r = pop_stats["max_runtime"]
+            score = 1.0 - ((exec_ms - min_r) / (max_r - min_r))
+        else:
+            # Fallback
+            score = 1.0 - (exec_ms / 1000.0)
+            
         return max(0.0, min(1.0, score * genome.sensitivity))
 
 class MemoryEvaluator(Evaluator):
-    def score(self, test_results: dict, genome: EvaluatorGenome) -> float:
-        # Dummy comparison. 
-        # In full implementation, compare vs a reference solution
+    def score(self, test_results: dict, genome: EvaluatorGenome, pop_stats: dict = None) -> float:
         mem_kb = test_results["peak_memory_kb"]
         if mem_kb <= 0: return 1.0
-        score = 1.0 - (mem_kb / 50000.0) # 50MB arbitrary max
+        
+        if pop_stats and "max_memory" in pop_stats and "min_memory" in pop_stats and pop_stats["max_memory"] > pop_stats["min_memory"]:
+            min_m = pop_stats["min_memory"]
+            max_m = pop_stats["max_memory"]
+            score = 1.0 - ((mem_kb - min_m) / (max_m - min_m))
+        else:
+            # Fallback
+            score = 1.0 - (mem_kb / 50000.0) # 50MB arbitrary max
+            
         return max(0.0, min(1.0, score * genome.sensitivity))
 
 class CodeEfficiencyEvaluator(Evaluator):
