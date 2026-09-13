@@ -1,7 +1,7 @@
 # EvoGenesis Algorithm Specification
 
 ## 1. Executive Summary
-EvoGenesis is a **Recursive Evolutionary AI Engine**. It moves beyond standard single-prompt LLM generation by structuring software development as an evolutionary process. The algorithm merges genetic algorithms, multi-agent debate, continuous learning (memory synthesis), and recursive self-improvement (Meta-Evolution).
+EvoGenesis is a **Recursive Evolutionary AI Engine** that powers the EvoCode system. It moves beyond standard single-prompt LLM generation by structuring software development as an evolutionary process. The algorithm merges genetic algorithms, multi-agent debate, continuous learning (memory synthesis), and recursive self-improvement (Meta-Evolution).
 
 The goal of the algorithm is to autonomously discover, optimize, and self-heal software solutions by simulating biological evolution inside an isolated computational environment.
 

@@ -1,6 +1,6 @@
-# 🏛️ EvoGenesis Architecture Deep Dive
+# 🏛️ EvoCode Architecture Deep Dive
 
-This document provides a highly detailed architectural overview of the **EvoGenesis** system. It explores the internal mechanics of the 3-Tier LLM Client, the Secure Docker Sandbox, the Co-Evolutionary Agent framework, the Historical Memory synthesis, and the Meta-Evolution self-improvement engine.
+This document provides a highly detailed architectural overview of the **EvoCode** system. It explores the internal mechanics of the 3-Tier LLM Client, the Secure Docker Sandbox, the Co-Evolutionary Agent framework (powered by the EvoGenesis algorithm), the Historical Memory synthesis, and the Meta-Evolution self-improvement engine.
 
 ---
 
@@ -18,7 +18,7 @@ This document provides a highly detailed architectural overview of the **EvoGene
 
 ## 🏗️ High-Level Architecture
 
-EvoGenesis is an orchestration of specialized systems working in tandem to produce, verify, and improve software.
+EvoCode is an orchestration of specialized systems working in tandem to produce, verify, and improve software.
 
 1. **The Intelligence Layer:** Consists of the LLM Client, Rate Limiters, and the API providers (Groq, Ollama, OpenRouter).
 2. **The Agency Layer:** Contains the specialized AI personas (`Architect`, `Generator`, `Reviewer`, `Optimizer`, `BugFixer`).
@@ -45,7 +45,7 @@ The system enforces a rigorous 4-layer evaluation protocol to ensure code correc
 
 ## 🧬 The Co-Evolutionary Agent Framework
 
-EvoGenesis models a genetic algorithm where the "DNA" is the prompt engineering configuration. Each agent is driven by a Pydantic "Genome".
+The EvoGenesis algorithm models a genetic algorithm where the "DNA" is the prompt engineering configuration. Each agent is driven by a Pydantic "Genome".
 
 ### Agent Behaviors
 - **Architect:** Analyzes the problem and proposes a high-level structural design.
@@ -67,7 +67,7 @@ A unique architectural feature is cross-language pollination. The Orchestrator t
 
 ## 🔒 Secure Sandboxing System
 
-Executing AI-generated code on a host machine is a severe security risk. EvoGenesis utilizes a strict Docker abstraction.
+Executing AI-generated code on a host machine is a severe security risk. EvoCode utilizes a strict Docker abstraction.
 
 ### `sandbox.py` Mechanics
 1. **Harness Injection:** The sandbox dynamically builds a JSON-driven testing harness for Python, Java, and C++.
@@ -82,7 +82,7 @@ Executing AI-generated code on a host machine is a severe security risk. EvoGene
 
 ## 🧠 Historical Memory Synthesis
 
-EvoGenesis learns over time.
+EvoCode learns over time.
 1. **Structured Reports:** Every generation produces a JSON report detailing the code, fitness score, and errors.
 2. **Memory Historian:** Aggregates reports and synthesizes them into actionable "Insights".
 3. **Feedback Loop:** These synthesized insights are injected into the system prompts of future Generations, effectively giving the algorithm long-term memory without requiring model fine-tuning.
@@ -91,7 +91,7 @@ EvoGenesis learns over time.
 
 ## 🤖 Meta-Evolution Engine
 
-EvoGenesis can upgrade its own source code when performance degrades.
+EvoCode can upgrade its own source code when performance degrades.
 
 1. **The Watcher:** Monitors rolling success rates of agents.
 2. **The CloneBuilder:** Extracts specific methods using AST and spawns LLMs to propose targeted patches (minimizing hallucination).

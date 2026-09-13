@@ -1,6 +1,6 @@
-# 🔄 EvoGenesis Operational Workflow
+# 🔄 EvoCode Operational Workflow
 
-This document details the step-by-step operational flow of the **EvoGenesis** system during an autonomous run. It tracks the journey of problem definitions as they pass through the multi-agent co-evolutionary pipeline, memory synthesis, and self-improvement phases.
+This document details the step-by-step operational flow of the **EvoCode** system during an autonomous run. It tracks the journey of problem definitions as they pass through the multi-agent co-evolutionary pipeline (powered by the EvoGenesis algorithm), memory synthesis, and self-improvement phases.
 
 ---
 
@@ -14,7 +14,7 @@ This document details the step-by-step operational flow of the **EvoGenesis** sy
 
 ## 🎬 1. Autonomous Execution Mode
 
-The primary operational mode for EvoGenesis is autonomous execution, managed by `run_autonomous.py`.
+The primary operational mode for EvoCode is autonomous execution, managed by `run_autonomous.py`.
 
 1. **Problem Generation:** The system fetches problems from the LLM based on user settings (e.g., `--runs 5`).
 2. **Sequential Processing:** For each generated problem, the `EvoFlowOrchestrator` runs a set number of generations (`--gens 3`).
@@ -38,7 +38,7 @@ For each specific problem, the core evolutionary loop (EvoFlow) is executed:
 
 ## 🧠 3. Memory Synthesis Phase
 
-At the conclusion of the generation cycles, EvoGenesis compiles its learnings.
+At the conclusion of the generation cycles, EvoCode compiles its learnings.
 
 1. **Structured Reports:** The entire run's data is dumped into JSON reports.
 2. **Historian Agent:** The `MemoryHistorianAgent` reads all unprocessed reports and extracts core strategies, common pitfalls, and successful patterns.

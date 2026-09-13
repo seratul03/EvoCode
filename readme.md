@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>🧬 EvoGenesis</h1>
+  <h1>🧬 EvoCode</h1>
   <p><strong>A Recursive Evolutionary AI Engine for Code Generation & Self-Improvement</strong></p>
   <p>Multi-agent, multi-language, sandbox-secured code generation powered by genetic algorithms and meta-evolution.</p>
 </div>
@@ -26,15 +26,15 @@
 
 ## 🚀 Introduction
 
-**EvoGenesis** (formerly EvoCode) is an advanced AI code generation system that moves beyond simple zero-shot prompting. By employing a **co-evolutionary multi-agent architecture**, EvoGenesis generates, tests, critiques, and mutates code solutions across multiple programming languages (Python, Java, C++) simultaneously.
+**EvoCode** is an advanced AI code generation system that moves beyond simple zero-shot prompting. By employing a **co-evolutionary multi-agent algorithm (EvoGenesis)**, EvoCode generates, tests, critiques, and mutates code solutions across multiple programming languages (Python, Java, C++) simultaneously.
 
-Instead of relying on a single LLM call to get it right, EvoGenesis simulates a Darwinian process:
+Instead of relying on a single LLM call to get it right, EvoCode simulates a Darwinian process:
 - A **population of specialized agents** plans, writes, and reviews code.
 - A **secure Docker Sandbox** executes the code against test cases to evaluate fitness (Correctness, AST Complexity, Time/Memory).
 - A **Feedback Loop** allows the algorithm to learn over time by synthesizing memory from past runs.
 - **Meta-Evolution:** The system actively monitors its own source code's success rate and can dynamically rewrite, test, and upgrade itself.
 
-EvoGenesis is an engine for discovery, designed to solve complex programming puzzles autonomously.
+EvoCode is an engine for discovery, designed to solve complex programming puzzles autonomously.
 
 ---
 
@@ -51,7 +51,7 @@ EvoGenesis is an engine for discovery, designed to solve complex programming puz
 
 ## 💻 System Requirements
 
-To run EvoGenesis, your system must meet the following prerequisites:
+To run EvoCode, your system must meet the following prerequisites:
 
 1. **Operating System:** Windows 10/11, macOS, or Linux.
 2. **Python:** Version 3.10 or higher.
@@ -101,7 +101,7 @@ cp .env.example .env
 ## 🎮 Usage Instructions
 
 ### Autonomous Mode
-The primary way to use EvoGenesis is to let it run autonomously across a series of generated problems, synthesize memory, and trigger meta-evolution.
+The primary way to use EvoCode is to let it run autonomously across a series of generated problems, synthesize memory, and trigger meta-evolution.
 
 ```bash
 python run_autonomous.py --runs 5 --gens 3
@@ -142,13 +142,13 @@ EvoCode/
 ---
 
 ## 🏗️ System Architecture Overview
-Read the detailed [Algorithm Specification](algorithm.md) and [Architecture Design](architecture.md) for a deep dive into how EvoGenesis works.
+Read the detailed [Algorithm Specification](algorithm.md) and [Architecture Design](architecture.md) for a deep dive into how the EvoGenesis algorithm powers EvoCode.
 
 ---
 
 ## 🧬 Evolutionary Agents & Pipeline
 
-Instead of a monolithic prompt, EvoGenesis uses specialized agents:
+Instead of a monolithic prompt, EvoCode uses specialized agents:
 1. **Architect:** Proposes a high-level solution design.
 2. **Generator:** Translates the design into source code.
 3. **Reviewer:** Critiques the generated code.
@@ -159,7 +159,7 @@ Instead of a monolithic prompt, EvoGenesis uses specialized agents:
 ---
 
 ## 🤖 Meta-Evolution (Recursive Self-Improvement)
-EvoGenesis can rewrite its own source code when success rates drop below 50%.
+EvoCode can rewrite its own source code when success rates drop below 50%.
 - **CloneBuilder:** Extracts the underperforming logic and generates targeted patches via LLMs.
 - **SourceJudge:** Selects the best patch.
 - **Referee:** Static analysis safety gate to prevent corruption.
