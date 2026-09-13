@@ -54,4 +54,4 @@ After memory is synthesized, the system checks if it needs to evolve its own sou
 2. **CloneBuilder:** The `CloneBuilder` uses AST parsing to extract the failing method from the agent's Python file. It spawns two LLM Architects to propose targeted patches.
 3. **SourceJudge:** Two LLM Judges vote on the best proposed patch.
 4. **Referee:** The winning patch is statically analyzed by the `Referee` to ensure no syntax errors or unauthorized imports exist.
-5. **MetaArena Duel:** The original agent and the newly patched agent fight in a lightweight `duel_runner.py` environment on a baseline problem. If the Challenger wins, it atomically overwrites the original source code.
+5. **MetaArena Duel:** The original agent and the newly patched agent fight in a real, rigorous competition by running `run_autonomous.py` against a subset of the 100-problem `benchmark_suite.json`. If the Challenger achieves a higher normalized fitness score, it atomically overwrites the original source code. If it ties or loses, a strict rollback occurs to guarantee system stability.

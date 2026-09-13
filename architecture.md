@@ -70,13 +70,14 @@ A unique architectural feature is cross-language pollination. The Orchestrator t
 Executing AI-generated code on a host machine is a severe security risk. EvoCode utilizes a strict Docker abstraction.
 
 ### `sandbox.py` Mechanics
-1. **Harness Injection:** The sandbox dynamically builds a JSON-driven testing harness for Python, Java, and C++.
-2. **Docker Constraints:**
+1. **Workspace Isolation:** Every candidate gets its own ephemeral, isolated directory (`workspaces/run_X/candidate_Y`) to prevent state leakage or cross-contamination between parallel evaluations.
+2. **Harness Injection:** The sandbox dynamically builds a JSON-driven testing harness for Python, Java, and C++.
+3. **Docker Constraints:**
     - `--network none`: No internet access.
     - `--memory 256m`: Hard memory limit.
     - `--cpus 0.5`: CPU throttling.
     - `timeout=15`: Native subprocess timeout to kill infinite loops.
-3. **Telemetry Extraction:** Parses standard output for time elapsed, peak memory allocated, and exception stack traces.
+4. **Telemetry Extraction:** Parses standard output for time elapsed, peak memory allocated, and exception stack traces.
 
 ---
 
@@ -97,7 +98,7 @@ EvoCode can upgrade its own source code when performance degrades.
 2. **The CloneBuilder:** Extracts specific methods using AST and spawns LLMs to propose targeted patches (minimizing hallucination).
 3. **The SourceJudge:** Panel of LLM judges vote on the best patch based on prompt engineering best practices.
 4. **The Referee:** Static safety gate that blocks patches with syntax errors, bad imports, or unauthorized file access.
-5. **The MetaArena:** A lightweight "Fast Duel" pitting the surviving patch against the original source code on a baseline problem. The winner is atomically promoted.
+5. **The MetaArena:** A rigorous "Fast Duel" pitting the surviving patch against the original source code. Instead of a lightweight mock script, the Arena executes a fast-tracked slice of the 100-problem `benchmark_suite.json` via `run_autonomous.py`. The winner is atomically promoted based on normalized fitness scores, with a strict rollback protocol if a tie occurs.
 
 ---
 

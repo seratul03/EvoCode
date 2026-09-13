@@ -41,10 +41,12 @@ EvoCode is an engine for discovery, designed to solve complex programming puzzle
 ## ✨ Key Features
 
 - 🌐 **Polyglot Code Generation:** Natively supports evaluating and evolving Python, Java, and C++ code within the same population.
-- 🛡️ **Secure Docker Sandboxing:** All AI-generated code is executed in an isolated, network-disabled Docker container (`evocode-sandbox`).
+- 🛡️ **Secure Docker Sandboxing:** AI-generated code is executed in an isolated, network-disabled Docker container (`evocode-sandbox`). Every candidate runs in a dedicated ephemeral workspace to prevent state leakage.
 - 🧠 **Multi-Agent Pipeline:** Distributes cognitive load across an Architect, Generator, Reviewer, Optimizer, and BugFixer.
 - 📚 **Historical Memory Synthesis:** Aggregates run data into long-term Insights to guide future generations.
-- 🧬 **Meta-Evolution:** The system can rewrite its own Python source files when performance degrades, validating the changes in an isolated Arena duel.
+- 🧬 **Meta-Evolution:** The system rewrites its own Python source files when performance degrades, validating the changes in a rigorous Arena duel against the 100-problem benchmark suite.
+- 🧪 **Scientific Benchmarking:** Evaluate performance using built-in 100-problem datasets, reproducible random seeds, and population diversity tracking (fitness variance/mean).
+- 📊 **Baseline Comparisons:** Built-in flags to compare EvoCode against standard LLM paradigms (Single-Shot, Iterative, and Static Population).
 - 🔄 **3-Tier LLM Fallback Chain:** Robust API handling that tries Ollama (Local LLM, Tier 1), falls back to Groq Cloud (rotating keys, Tier 2), and ultimately OpenRouter (Tier 3).
 
 ---
@@ -104,11 +106,20 @@ cp .env.example .env
 The primary way to use EvoCode is to let it run autonomously across a series of generated problems, synthesize memory, and trigger meta-evolution.
 
 ```bash
-python run_autonomous.py --runs 5 --gens 3
+python run_autonomous.py --runs 5 --gens 3 --dataset benchmark_suite.json
 ```
-You can disable specific features if you want a faster, isolated run:
+You can test the performance of the system against standard LLM approaches using the baseline flag:
 ```bash
-python run_autonomous.py --disable-memory --skip-meta-evolution
+python run_autonomous.py --dataset test_dummy2.json --baseline single-shot
+# Options: single-shot, iterative, static-pop, none
+```
+You can enforce strict reproducibility for experiments:
+```bash
+python run_autonomous.py --dataset test_dummy2.json --seed 42
+```
+You can disable specific features for ablation studies or isolated runs:
+```bash
+python run_autonomous.py --disable-memory --disable-critic --disable-mutation --skip-meta-evolution
 ```
 
 ### Interactive Chat Mode

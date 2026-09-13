@@ -71,5 +71,5 @@ The proposed patches are reviewed by a panel of LLM judges that vote on the best
 ### 6.4 The Referee (Static Safety Gate)
 A hardcoded, non-LLM safety layer. The Referee parses the winning patch and blocks it if it contains syntax errors, disallowed imports, or attempts to modify restricted files. This ensures the system cannot irreparably corrupt itself.
 
-### 6.5 The MetaArena (Fast Duel)
-The surviving patch (Challenger) is pitted against the original source code (Original) in a lightweight, isolated **Duel**. Both versions attempt to solve a baseline problem. If the Challenger achieves a higher fitness score, it atomically replaces the Original file. The system has successfully evolved itself.
+### 6.5 The MetaArena (Rigorous Duel)
+The surviving patch (Challenger) is pitted against the original source code (Original) in a rigorous, isolated **Duel**. Instead of a simple baseline script, the Arena executes a fast-tracked slice of the 100-problem `benchmark_suite.json` using the full autonomous pipeline. Both versions are graded on normalized runtime, memory, and correctness fitness scores. If the Challenger achieves a higher normalized fitness score, it atomically replaces the Original file. If there is a tie or degradation, the system safely rolls back. The system has successfully evolved itself.
