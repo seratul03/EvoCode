@@ -60,5 +60,5 @@ if __name__ == '__main__':
     _run_tests()
 """)
 
-with open("c:/Users/iamsu/Downloads/Evocode/EvoCode/scratch/test_harness2.py", "w") as f:
+with open("scratch/test_harness2.py", "w") as f:
     f.write(code + harness)

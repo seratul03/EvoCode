@@ -5,15 +5,17 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 sys.stdout.reconfigure(encoding='utf-8')
 
+import pytest
 from src.client import EvoClient
 
+@pytest.mark.asyncio
 async def test_api():
     print("Initializing EvoClient...")
     try:
         client = EvoClient()
-        print(f"Groq Keys Loaded: {len(client.groq_keys)}")
-        print(f"Groq Model: {client.groq_model}")
-        print(f"OpenRouter Model: {client.openrouter_model}")
+        print(f"Groq Keys Loaded: {len(client.groq.keys)}")
+        print(f"Groq Model: {client.groq.model}")
+        print(f"OpenRouter Model: {client.openrouter.model}")
         
         messages = [
             {"role": "system", "content": "You are a helpful Python code assistant."},

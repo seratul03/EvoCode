@@ -3,10 +3,12 @@ import sys
 
 sys.path.insert(0, '.')
 from src.client import EvoClient
-from src.genome import GeneratorGenome
+from src.genome import AgentGenome
+import pytest
 from src.agents.generator import GeneratorAgent
 from src.agents.code_validator import CodeValidatorAgent
 
+@pytest.mark.asyncio
 async def test_generator_and_validator():
     print("Initializing EvoClient...")
     client = EvoClient()
@@ -21,7 +23,7 @@ async def test_generator_and_validator():
         "tests": []
     }
     
-    genome = GeneratorGenome(
+    genome = AgentGenome(
         system_instruction_variant="expert_coder",
         prompt_style="direct",
         temperature=0.0
