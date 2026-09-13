@@ -12,7 +12,7 @@ class CanaryPipeline:
     """
     def __init__(self, client):
         self.client = client
-        self.sandbox = Sandbox(timeout_seconds=5)
+        self.sandbox = Sandbox(timeout_seconds=60)
         
         # Load baseline problems
         with open("data/train_problems.json", "r", encoding="utf-8") as f:

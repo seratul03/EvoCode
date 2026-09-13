@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1000,
+        "title": "Add Two Numbers",
+        "description": "Write a function named `solve` that takes two integers as input and returns their sum.",
+        "tests": [
+            {"id": 1, "input": "solve(1, 2)", "expected": "3"},
+            {"id": 2, "input": "solve(-1, 5)", "expected": "4"},
+            {"id": 3, "input": "solve(0, 0)", "expected": "0"}
+        ]
+    }
+]

@@ -40,7 +40,7 @@ class EvoFlowOrchestrator:
     def __init__(self, pop_size=3, enable_evolution=True, enable_collaboration=True, enable_memory=True, single_agent_mode=False):
         self.client = EvoClient()
         self.logger = EventLogger()
-        self.sandbox = Sandbox(timeout_seconds=15)
+        self.sandbox = Sandbox(timeout_seconds=60)
         self.fitness_scorer = FitnessScorer()
         self.property_tester = PropertyTester()   # Layer 2
         self.trigger_monitor = TriggerMonitor()

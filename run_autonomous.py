@@ -222,6 +222,7 @@ async def generate_problems(client: EvoClient, n: int, start_id: int) -> list[di
 # ─── Main Pipeline ────────────────────────────────────────────────────────────
 
 async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
+                                  dataset_path: str = None,
                                   enable_evolution: bool = True,
                                   enable_collaboration: bool = True,
                                   enable_memory: bool = True,
@@ -254,11 +255,25 @@ async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
         return
 
     # ── Full Autonomous Pipeline ──────────────────────────────────────────────
-    # 2. Generate problems
-    start_id = _get_next_problem_id()
-    problems = await generate_problems(client, n_runs, start_id)
+    # 2. Generate or Load problems
+    if dataset_path:
+        print(f"\n[Autonomous] Loading problems from dataset: {dataset_path}")
+        try:
+            with open(dataset_path, "r", encoding="utf-8") as f:
+                problems = json.load(f)
+            # Make sure it's a list
+            if not isinstance(problems, list):
+                problems = [problems]
+            print(f"[Autonomous] Loaded {len(problems)} problem(s) successfully.")
+        except Exception as e:
+            print(f"[Autonomous] Error loading dataset {dataset_path}: {e}")
+            return
+    else:
+        start_id = _get_next_problem_id()
+        problems = await generate_problems(client, n_runs, start_id)
+        
     if not problems:
-        print("[Autonomous] No valid problems were generated. Aborting.")
+        print("[Autonomous] No valid problems were available. Aborting.")
         return
 
     actual_runs = len(problems)
@@ -424,6 +439,12 @@ if __name__ == "__main__":
         action="store_true",
         help="Skip the Phase 17 meta-evolution upgrade check after the pipeline."
     )
+    parser.add_argument(
+        "--dataset",
+        type=str,
+        default=None,
+        help="Path to a JSON file containing an array of pre-defined problems to run, bypassing autonomous generation."
+    )
 
     args = parser.parse_args()
 
@@ -431,6 +452,7 @@ if __name__ == "__main__":
         n_runs=args.runs,
         n_gens=args.gens,
         memory_only=args.memory_only,
+        dataset_path=args.dataset,
         enable_evolution=not args.disable_evolution,
         enable_collaboration=not args.disable_collaboration,
         enable_memory=not args.disable_memory,
