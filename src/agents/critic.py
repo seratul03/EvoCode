@@ -1,6 +1,5 @@
 from src.genome import CriticGenome
 
-# Error message substrings that indicate the LLM raised instead of returning None
 _RAISE_INSTEAD_OF_NONE_PATTERNS = [
     "no two sum solution",
     "no solution found",
@@ -35,14 +34,12 @@ class CriticAgent:
         crash_count = len(test_results.get("crash_tests", []))
         crash_rate = crash_count / total
 
-        # 1. Check Sandbox Failures
         if crash_count > 0:
             diagnosis["failure_type"] = "crash"
             diagnosis["severity"] = min(1.0, 0.8 * genome.strictness_threshold * 2)
             diagnosis["recommended_mutations"].append("add_error_handling")
             diagnosis["priority"] = "high"
 
-            # Detect raise-instead-of-None pattern from error messages
             errors = [
                 out.get("error", "").lower()
                 for out in test_results.get("test_outputs", [])
@@ -58,7 +55,6 @@ class CriticAgent:
                     "Return None for unsolvable inputs."
                 )
 
-            # High crash rate (>50%): systemic issue — also force a prompt style change
             if crash_rate > 0.5:
                 if "change_prompt_style" not in diagnosis["recommended_mutations"]:
                     diagnosis["recommended_mutations"].append("change_prompt_style")
@@ -81,9 +77,6 @@ class CriticAgent:
             diagnosis["recommended_mutations"].append("fix_edge_cases")
             diagnosis["priority"] = "medium"
 
-        # 2. Check Validator Overrides
-        # Only trust the validator if the sandbox crash rate is LOW (<20%).
-        # At high crash rates the validator signal is unreliable (it hallucinates correctness).
         if crash_rate < 0.2 and not validation_result.get("is_correct", True):
             if diagnosis["failure_type"] == "none":
                 diagnosis["failure_type"] = "algorithmic_error"
@@ -95,7 +88,6 @@ class CriticAgent:
                 if "fix_edge_cases" not in diagnosis["recommended_mutations"]:
                     diagnosis["recommended_mutations"].append("fix_edge_cases")
 
-        # Fallback
         if diagnosis["failure_type"] == "none":
             diagnosis["severity"] = 0.0
 

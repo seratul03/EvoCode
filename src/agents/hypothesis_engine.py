@@ -48,7 +48,6 @@ class HypothesisEngine:
             )
             content = response["choices"][0]["message"]["content"].strip()
             
-            # Clean up potential markdown JSON wrapping
             if content.startswith("```json"):
                 content = content[7:]
             if content.startswith("```"):
@@ -58,7 +57,6 @@ class HypothesisEngine:
                 
             parsed = json.loads(content.strip())
             
-            # Validate keys
             if "hypothesis" in parsed and "expected_improvement" in parsed and "target_component" in parsed:
                 return parsed
             else:

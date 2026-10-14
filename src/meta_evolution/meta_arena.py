@@ -72,11 +72,10 @@ class MetaArena:
         print(f"[MetaArena] Original:   {original_path}")
         print(f"[MetaArena] Challenger: {challenger_path}")
 
-        # Run original and challenger runs sequentially to prevent file swap race conditions
         with tempfile.TemporaryDirectory() as tmpdir_a:
             original_fitness = await self._run_subprocess(
                 label="ORIGINAL",
-                agent_patch=None,  # no patch — use real file
+                agent_patch=None,
                 original_path=original_path,
                 report_dir=tmpdir_a,
             )
@@ -84,7 +83,7 @@ class MetaArena:
         with tempfile.TemporaryDirectory() as tmpdir_b:
             challenger_fitness = await self._run_subprocess(
                 label="CHALLENGER",
-                agent_patch=challenger_path,  # patch with challenger
+                agent_patch=challenger_path,
                 original_path=original_path,
                 report_dir=tmpdir_b,
             )
@@ -114,11 +113,9 @@ class MetaArena:
         If agent_patch is set, the challenger file temporarily replaces
         the original before the subprocess starts.
         """
-        # Build environment for the subprocess
         env = os.environ.copy()
-        env["EVOCODE_REPORT_DIR"] = report_dir  # Override report output directory
+        env["EVOCODE_REPORT_DIR"] = report_dir
 
-        # Build the command
         python_exe = sys.executable
         cmd = [
             python_exe, "run_autonomous.py",
@@ -128,9 +125,6 @@ class MetaArena:
         ]
 
         if agent_patch:
-            # Strategy: copy the challenger into a temp location,
-            # then pass its path via env var so we can monkey-patch at import time.
-            # For simplicity in Phase 17.0, we do a safe file swap + restore.
             backup_path = original_path + ".meta_backup"
             shutil.copy2(original_path, backup_path)
             shutil.copy2(agent_patch, original_path)
@@ -147,7 +141,7 @@ class MetaArena:
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=600)  # 10 min max
+            stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=600)
 
             if proc.returncode != 0:
                 print(f"[MetaArena] [{label}] Subprocess failed (exit {proc.returncode}).")
@@ -162,7 +156,6 @@ class MetaArena:
             print(f"[MetaArena] [{label}] Subprocess timed out after 600s. Scoring as 0.")
             fitness = 0.0
         finally:
-            # Always restore original file if we swapped it
             if backup_path and os.path.exists(backup_path):
                 shutil.copy2(backup_path, original_path)
                 os.remove(backup_path)

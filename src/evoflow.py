@@ -7,12 +7,13 @@ from src.client import EvoClient
 from src.event_logger import EventLogger
 from src.sandbox import Sandbox
 from src.fitness_scorer import FitnessScorer
-from src.property_tester import PropertyTester   # Layer 2
+from src.property_tester import PropertyTester
 
 from src.agents.generator import GeneratorAgent
 from src.agents.code_validator import CodeValidatorAgent
 from src.agents.critic import CriticAgent
 from src.agents.mutator import MutatorAgent
+from src.agents.bugfixer import EvoFixerAgent
 from src.agents.template import TemplateAgent
 from src.agents.hypothesis_engine import HypothesisEngine
 from src.canary import CanaryPipeline
@@ -42,7 +43,7 @@ class EvoFlowOrchestrator:
         self.logger = EventLogger()
         self.sandbox = Sandbox(timeout_seconds=60)
         self.fitness_scorer = FitnessScorer()
-        self.property_tester = PropertyTester()   # Layer 2
+        self.property_tester = PropertyTester()
         self.trigger_monitor = TriggerMonitor()
 
         self.enable_evolution = enable_evolution
@@ -53,7 +54,6 @@ class EvoFlowOrchestrator:
         self.disable_property_testing = disable_property_testing
         self.disable_mutation = disable_mutation
 
-        # 3 distinct base agents for generation
         if self.single_agent_mode:
             self.agent_names = ["Evo_py"]
             self.generators = [
@@ -67,61 +67,48 @@ class EvoFlowOrchestrator:
                 GeneratorAgent(self.client, language="C++", enable_memory=self.enable_memory)
             ]
         
-        # Testing Agent
         from src.agents.tester import TesterAgent
         self.tester = TesterAgent(self.client)
 
-        # Template Agent — isolated call before any generator runs
         self.template_agent = TemplateAgent(self.client)
         
-        # Hypothesis Engine
         self.hypothesis_engine = HypothesisEngine(self.client)
         
-        # Candidate Verifier (Phase 7)
         self.candidate_verifier = CandidateVerifier()
         
-        # Evolution Arena Referee (Phase 8)
         self.arena_referee = ArenaReferee()
         
-        # Guarded Selection (Phase 9)
         self.guarded_selector = GuardedSelector()
         
-        # Population Manager (Phase 11)
         self.population = PopulationManager()
         
-        # Environment Manager (Phase 12)
         self.environment = EnvironmentManager()
         
-        # System Guard (Phase 13)
         self.system_guard = SystemGuard(self.population)
 
-        # Collaboration Manager (Phase 15)
         self.collaboration_manager = CollaborationManager(self.client)
 
         self.validator = CodeValidatorAgent(self.client)
         self.critic = CriticAgent()
         self.mutator = MutatorAgent(self.client)
+        self.evo_fixer = EvoFixerAgent(self.client)
         self.canary_pipeline = CanaryPipeline(self.client)
 
         self.pop_size = pop_size 
 
-        # Populations
         self.pop_generator = [AgentGenome() for _ in range(self.pop_size)]
         self.pop_critic = [CriticGenome() for _ in range(self.pop_size)]
         self.pop_mutator = [MutatorGenome() for _ in range(self.pop_size)]
         self.pop_evaluator = [EvaluatorGenome() for _ in range(self.pop_size)]
         
-        # Layer 4: validator used only for evolve mode (set in run_generations)
         self.use_validator = True
 
-        # State tracking for the structured JSON report
         self.run_report = {
             "start_time": datetime.utcnow().isoformat(),
             "pop_size": self.pop_size,
             "problems_evaluated": []
         }
 
-        # Sub-modules
         self.evaluator_module = EvoEvaluator(self)
         self.breeder_module = EvoBreeder(self)
         self.meta_evolution_module = MetaEvolutionRunner(self)
@@ -138,12 +125,9 @@ class EvoFlowOrchestrator:
     def _save_structured_report(self):
         self.run_report["end_time"] = datetime.utcnow().isoformat()
 
-        # Support MetaArena subprocess isolation — override report output dir via env var
         report_dir = os.environ.get("EVOCODE_REPORT_DIR", "structured_reports")
         os.makedirs(report_dir, exist_ok=True)
 
-        # Windows doesn't allow colons in filenames. Using dashes.
-        # Format: ddmmyyyy_hh-mm-ss
         now = datetime.now()
         filename = now.strftime("%d%m%Y_%H-%M-%S.json")
         filepath = os.path.join(report_dir, filename)
@@ -164,7 +148,7 @@ class EvoFlowOrchestrator:
         """
         genome = AgentGenome(**genome_config)
         self.pop_generator = [genome] * self.pop_size
-        self.use_validator = False   # eval-only: no LLM validator overhead
+        self.use_validator = False
 
         eval_report: dict = {
             "condition": condition_name,
@@ -193,7 +177,6 @@ class EvoFlowOrchestrator:
 
     async def run_generations(self, num_generations: int, problems: list[dict], mode: str = "evolve", disable_circuit_breaker: bool = False):
         print(f"--- Starting EvoFlow ({mode.upper()}) with {num_generations} generations on {len(problems)} problems ---")
-        # Layer 4: Enable LLM validator only for the full evolutionary run
         self.use_validator = (mode == "evolve")
         self.run_report["mode"] = mode
         
@@ -203,7 +186,6 @@ class EvoFlowOrchestrator:
             print(f"Evaluating Problem {problem_id}")
             print(f"==============================")
             
-            # Reinitialize population for a fresh start on each problem
             self.pop_generator = [AgentGenome() for _ in range(self.pop_size)]
             
             problem_report = {
@@ -216,7 +198,6 @@ class EvoFlowOrchestrator:
                 
                 results, gen_report = await self.evaluate_population(gen, problem, problem_report, mode=mode)
                 
-                # Calculate population diversity metrics
                 import statistics
                 fitness_values = [r.get("fitness", 0.0) for r in results]
                 if fitness_values:
@@ -225,7 +206,6 @@ class EvoFlowOrchestrator:
                     mean_fit = statistics.mean(fitness_values)
                     var_fit = statistics.variance(fitness_values) if len(fitness_values) > 1 else 0.0
                     
-                    # Add to report
                     gen_report["population_stats"] = {
                         "min_fitness": min_fit,
                         "max_fitness": max_fit,
@@ -233,10 +213,8 @@ class EvoFlowOrchestrator:
                         "variance": var_fit
                     }
                     
-                    # Log to DB
                     self.logger.log_population_stats(problem_id, gen+1, min_fit, max_fit, mean_fit, var_fit)
                 
-                # Check circuit breaker: If any genome achieves 100% correctness, we found a perfect solution!
                 best_fitness = max(r["fitness"] for r in results)
                 print(f"  -> Best fitness in Generation {gen+1}: {best_fitness:.2f}")
                 
@@ -245,17 +223,14 @@ class EvoFlowOrchestrator:
                     gen_report["circuit_breaker_triggered"] = True
                     break
                     
-                # Otherwise, select and breed
                 if gen < num_generations - 1:
                     await self.select_and_breed(gen, results, problem_id, gen_report, mode)
                     
-            # After finishing the problem (all generations), feed the best final result to TriggerMonitor
             if results:
                 best_final_result = max(results, key=lambda r: r["fitness"])
                 agent_id = f"EVO_{best_final_result['language'].upper()}"
                 category = problem.get("category", "general")
                 
-                # --- FINAL EVALUATION ON HIDDEN TEST SET ---
                 if mode == "evolve":
                     print(f"\n  --- Final Evaluation on Hidden Test Set ---")
                     code = best_final_result["generated_code"]
@@ -280,7 +255,6 @@ class EvoFlowOrchestrator:
                             "peak_memory_kb": final_test_results["peak_memory_kb"]
                         }
                         
-                        # Update trigger monitor using the FINAL true fitness/passing state
                         is_passed = final_passed == final_total and final_total > 0
                         true_fitness = best_final_result["fitness"] * (final_passed / max(final_total, 1))
                     except Exception as e:
@@ -302,7 +276,6 @@ class EvoFlowOrchestrator:
                         if advice:
                             reason["crossover_advice"] = advice
                     
-                    # Phase 14 / Phase 13 integration: Wrap the entire candidate lifecycle in SystemGuard
                     current_genome = best_final_result["gen_genome"]
                     await self.system_guard.execute_with_guards(self, agent_id, reason, current_genome)
 
@@ -310,7 +283,6 @@ class EvoFlowOrchestrator:
             
             self.run_report["problems_evaluated"].append(problem_report)
             
-        # Write the final JSON report at the end of the run
         self._save_structured_report()
 
     async def trigger_evolution(self, agent_id: str, reason: dict, current_genome):

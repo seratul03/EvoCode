@@ -69,7 +69,6 @@ class ArenaReferee:
         Samples problems into the 6 spec groups.
         """
         if not self.problems:
-            # Fallback if no real test problems available (e.g. during testing)
             return {
                 "known_solved": [{"id": "fb1", "category": "general"}],
                 "triggering": [{"id": "fb2", "category": triggering_category}],
@@ -88,7 +87,6 @@ class ArenaReferee:
             "regression": [],
         }
 
-        # For this offline mock, just distribute roughly
         for p in self.problems:
             cat = p.get("category", "general")
             if cat == triggering_category:
@@ -101,7 +99,6 @@ class ArenaReferee:
             else:
                 groups["unrelated"].append(p)
 
-        # Fill known_solved and regression randomly from all
         all_probs = self.problems.copy()
         random.shuffle(all_probs)
         groups["known_solved"] = all_probs[:max(1, len(all_probs) // 10)]
@@ -123,7 +120,6 @@ class ArenaReferee:
         
         overall_score = eval_report["summary"]["solve_rate"]
         
-        # Assign the overall score to group scores
         group_scores = {
             "known_solved": overall_score,
             "triggering": overall_score,
@@ -145,7 +141,6 @@ class ArenaReferee:
         if env_profile is None:
             env_profile = EnvironmentProfile()
             
-        # 1. Real evaluations
         p_results = await self._evaluate_genome_real(parent_genome_data)
         c_results = await self._evaluate_genome_real(candidate_genome_data)
         
@@ -180,7 +175,6 @@ class ArenaReferee:
             result_hash=""
         )
         
-        # Calculate secure hash of result
         raw = json.dumps(result.to_dict(), sort_keys=True).encode("utf-8")
         result.result_hash = hashlib.sha256(raw).hexdigest()
         

@@ -40,7 +40,6 @@ class SystemGuard:
         timestamp = time.strftime("%Y%m%d_%H%M%S")
         snapshot_path = os.path.join(self.SNAPSHOT_DIR, f"{agent_id}_{timestamp}")
         
-        # Copy the whole workspace
         shutil.copytree(src, snapshot_path)
         return snapshot_path
 
@@ -50,11 +49,9 @@ class SystemGuard:
         """
         target = self._get_agent_workspace(agent_id)
         
-        # Remove corrupted workspace completely
         if os.path.exists(target):
             shutil.rmtree(target)
             
-        # Restore from snapshot
         shutil.copytree(snapshot_path, target)
 
     def _record_crash(self, agent_id: str, exception: Exception):
@@ -89,10 +86,8 @@ class SystemGuard:
             snapshot_path = self.create_snapshot(agent_id)
             print(f"[SystemGuard] Snapshot created at {snapshot_path}")
             
-            # Execute the potentially dangerous evolution cycle
             await evoflow.trigger_evolution(agent_id, *args, **kwargs)
             
-            # If successful, we can optionally clean up the snapshot to save space
             if os.path.exists(snapshot_path):
                 shutil.rmtree(snapshot_path)
                 

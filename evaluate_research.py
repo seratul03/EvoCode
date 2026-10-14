@@ -4,7 +4,6 @@ import json
 import glob
 from statistics import mean
 
-# Define the research conditions
 CONDITIONS = [
     {
         "name": "1_single_agent_no_evolution",
@@ -34,7 +33,6 @@ def run_condition(condition, runs=1, gens=2):
     print(f"Flags: {' '.join(condition['flags'])}")
     print(f"{'='*60}")
     
-    # Run the autonomous pipeline with the specific flags
     cmd = ["python", "run_autonomous.py", "--runs", str(runs), "--gens", str(gens)] + condition["flags"]
     subprocess.run(cmd, check=True)
 
@@ -55,11 +53,6 @@ def aggregate_reports():
     return all_reports
 
 def compute_metrics(reports):
-    """
-    Computes simple placeholder metrics from the raw reports.
-    In a real research scenario, we would tag reports with the condition name.
-    For this script, we just aggregate whatever is in the structured_reports folder.
-    """
     total_problems = 0
     solved_problems = 0
     total_evolutions = 0
@@ -71,7 +64,6 @@ def compute_metrics(reports):
             if p.get("evolution_trigger"):
                 total_evolutions += 1
                 
-            # Check if solved
             is_solved = False
             for gen in p.get("generations", []):
                 total_generations += 1
@@ -101,7 +93,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     if not args.aggregate_only:
-        # Clear old reports before running
+
         import shutil
         if os.path.exists("structured_reports"):
             shutil.rmtree("structured_reports")
@@ -116,6 +108,6 @@ if __name__ == "__main__":
             except subprocess.CalledProcessError as e:
                 print(f"Error running condition {condition['name']}: {e}")
                 
-    # Parse the outputs
+
     reports = aggregate_reports()
     compute_metrics(reports)

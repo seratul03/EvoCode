@@ -2,13 +2,11 @@ import asyncio
 import os
 import sys
 
-# Ensure src is in the python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from src.evoflow import EvoFlowOrchestrator
 
 async def run_test():
-    # A simple dummy problem to test with
     problem = {
         "id": 999,
         "description": "Write a function that takes two integers a and b and returns their sum.",

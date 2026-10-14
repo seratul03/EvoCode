@@ -16,18 +16,14 @@ class EnvironmentProfile:
     
     @property
     def efficiency_weight(self) -> float:
-        # e.g., Level 1 -> 0.1, Level 5 -> 0.5
         return 0.1 * self.level
         
     @property
     def robustness_weight(self) -> float:
-        # e.g., Level 1 -> 0.1, Level 5 -> 0.5
         return 0.1 * self.level
         
     @property
     def base_correctness_threshold(self) -> float:
-        # Agents must score at least this on base tests to get ANY efficiency/robustness points.
-        # Starts at 0.5 for Level 1, maxes at 0.9.
         return min(0.9, 0.4 + (0.1 * self.level))
 
 
@@ -68,11 +64,9 @@ class EnvironmentManager:
         
         changed = False
         if avg_fitness > 0.85:
-            # Population is thriving, increase pressure
             self.profile.level += 1
             changed = True
         elif avg_fitness < 0.40 and self.profile.level > 1:
-            # Population is struggling massively, reduce pressure
             self.profile.level -= 1
             changed = True
             

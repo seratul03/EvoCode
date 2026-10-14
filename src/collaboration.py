@@ -16,21 +16,17 @@ class CollaborationManager:
         """
         category = trigger_reason.get("category", "general")
         
-        # 1. Fetch successful events from OTHER agents in the same category
         successes = MemoryManager.get_successful_events(category_filter=category, exclude_agent=target_agent_id)
         
         if not successes:
             print(f"      [Collaboration] No relevant crossover knowledge found for category '{category}'.")
             return None
             
-        # 2. Pick the most relevant/recent success (for simplicity, we take the most recent one)
-        # Assuming timestamps are sortable ISO strings
         best_event = sorted(successes, key=lambda x: x.get("timestamp", ""), reverse=True)[0]
         donor_agent = best_event.get("agent_id", "UNKNOWN")
         
         print(f"      [Collaboration] Found successful strategy from {donor_agent}. Synthesizing crossover...")
         
-        # 3. Synthesize the strategy
         sys_prompt = (
             "You are the Collaboration Strategy Synthesizer.\n"
             "An agent has successfully evolved to solve a problem category.\n"

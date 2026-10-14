@@ -62,7 +62,6 @@ class GeneratorAgent:
                 f"{invalid_rule}"
             )
         else:
-            # standard
             core = (
                 "You are a code generation assistant. Output code for the given problem. "
                 f"{invalid_rule}"
@@ -70,9 +69,6 @@ class GeneratorAgent:
 
         prompt = base_prompt + core
 
-        # Load the most recent memory entries dynamically each call so that
-        # newly synthesized lessons (written mid-run) are always included.
-        # max_entries=5 caps injection at ~5 passages to keep token usage sane.
         if self.enable_memory:
             recent_memory = MemoryHistorianAgent.load_memory(max_entries=5)
             if recent_memory:
@@ -90,8 +86,6 @@ class GeneratorAgent:
 
         invalid_rule = self._get_invalid_input_instruction()
         if template:
-            # ── Template Mode ──────────────────────────────────────────────────
-            # The generator only sees the skeleton — it fills in the body.
             prompt += (
                 "A function scaffold has been prepared for you. "
                 "Your job is to implement ONLY the body of the function below.\n"
@@ -106,7 +100,6 @@ class GeneratorAgent:
                 f"```{self.language.lower()}\n{template}\n```\n\n"
             )
         else:
-            # ── Fallback: No Template ──────────────────────────────────────────
             prompt += (
                 "CRITICAL RULES:\n"
                 "1. Write ONLY the solution function/class. Do NOT write a main() function.\n"
@@ -117,7 +110,6 @@ class GeneratorAgent:
                 "function MUST be named exactly `solve`.\n\n"
             )
 
-        # Critic feedback from previous generation
         in_cache_loop = genome.critic_feedback and "break_cache_loop" in genome.critic_feedback
 
         if genome.past_code and genome.critic_feedback:
@@ -148,7 +140,6 @@ class GeneratorAgent:
             parts = raw_response.split(lang_tag)
             if len(parts) > 1:
                 return parts[1].split("```")[0].strip()
-        # Fallbacks
         for tag in ("```python", "```java", "```cpp", "```c++", "```"):
             if tag in raw_response:
                 return raw_response.split(tag)[1].split("```")[0].strip()

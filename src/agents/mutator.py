@@ -26,7 +26,6 @@ class MutatorAgent:
         new_genome = copy.deepcopy(current_genome)
         recommendations = diagnosis.get("recommended_mutations", [])
         
-        # 0. Crossover (Knowledge Sharing)
         if winner_code and winner_language and target_language:
             new_genome.crossover_instruction = (
                 f"Another agent wrote a highly successful solution in {winner_language}. "
@@ -46,7 +45,6 @@ class MutatorAgent:
         if not recommendations:
             return new_genome
 
-        # If LLM client is provided, try LLM-based mutation
         if self.client and "break_cache_loop" not in recommendations and "fix_crash" not in recommendations:
             try:
                 llm_genome = await self._llm_mutate(diagnosis, current_genome)
@@ -56,27 +54,17 @@ class MutatorAgent:
             except Exception as e:
                 print(f"      [Mutator] LLM mutation failed: {e}. Falling back to rule-based.")
 
-        # Fallback: Rule-based Targeted mutations
-        # Break cache loop — HIGHEST priority: force structural genome change
         if "break_cache_loop" in recommendations:
-            # Rotate to a different prompt style
             other_styles = [s for s in _PROMPT_STYLES if s != current_genome.reasoning.planning_strategy]
             new_genome.reasoning.planning_strategy = random.choice(other_styles)
-            # Boost temperature to escape the degenerate attractor
             new_genome.temperature = min(1.0, current_genome.temperature + 0.3)
-            # Switch system instruction to pedantic so the LLM gets stricter guidance
             new_genome.system_instruction_variant = "pedantic_reviewer"
-            # Inject past_code and critic_feedback so the generator knows what NOT to repeat.
-            # The critic_feedback string is enriched with the break_cache_loop signal so the
-            # generator prompt can detect it and issue the "try a different approach" warning.
             existing_feedback = current_genome.critic_feedback or ""
             if "break_cache_loop" not in existing_feedback:
                 new_genome.critic_feedback = f"break_cache_loop\n{existing_feedback}".strip()
-            # Bump reasoning steps so the LLM thinks harder before writing
             new_genome.reasoning.reasoning_depth = max(current_genome.reasoning.reasoning_depth, 4)
             return new_genome
 
-        # 3. Fix crash (100% crash rate fast-path from evoflow)
         if "fix_crash" in recommendations:
             new_genome.system_instruction_variant = "pedantic_reviewer"
             new_genome.reasoning.reasoning_depth = max(current_genome.reasoning.reasoning_depth + 2, 4)
@@ -84,9 +72,7 @@ class MutatorAgent:
             new_genome.reasoning.planning_strategy = "test_first"
             return new_genome
 
-        # 4. Targeted mutations based on remaining recommendations
         if "return_none_on_no_solution" in recommendations:
-            # Specific fix: the LLM is raising instead of returning None
             new_genome.system_instruction_variant = "pedantic_reviewer"
             new_genome.reasoning.planning_strategy = "test_first"
             new_genome.reasoning.reasoning_depth = max(current_genome.reasoning.reasoning_depth + 1, 3)
@@ -97,7 +83,6 @@ class MutatorAgent:
                 new_genome.reasoning.reasoning_depth = max(current_genome.reasoning.reasoning_depth + 2, 4)
             else:
                 new_genome.reasoning.reasoning_depth = max(current_genome.reasoning.reasoning_depth + 1, 3)
-            # Prefer test_first or chain_of_thought for edge-case heavy failures
             if current_genome.reasoning.planning_strategy == "direct":
                 new_genome.reasoning.planning_strategy = random.choice(["test_first", "chain_of_thought"])
 
@@ -112,7 +97,6 @@ class MutatorAgent:
         if "change_prompt_style" in recommendations:
             other_styles = [s for s in _PROMPT_STYLES if s != current_genome.reasoning.planning_strategy]
             new_genome.reasoning.planning_strategy = random.choice(other_styles)
-            # Also rotate system variant for more diversity
             other_variants = [v for v in _SYSTEM_VARIANTS if v != current_genome.system_instruction_variant]
             new_genome.system_instruction_variant = random.choice(other_variants)
 
@@ -123,9 +107,6 @@ class MutatorAgent:
         Uses the LLM to dynamically propose a mutated AgentGenome based on the diagnosis.
         Injects global agent memory so the mutator can draw on historical lessons.
         """
-        # Load the most recent 5 memory entries dynamically per call.
-        # This ensures newly synthesized lessons are always visible to the
-        # mutator, and caps token injection to stay within rate limits.
         memory_section = ""
         recent_memory = MemoryHistorianAgent.load_memory(max_entries=5)
         if recent_memory:
@@ -165,7 +146,6 @@ Respond ONLY with a valid JSON object matching the current genome structure. Do 
                 
             data = json.loads(content)
             
-            # Merge with current
             new_genome_data = current_genome.model_dump()
             for k in ["temperature", "planning_strategy", "system_instruction_variant", "reasoning_depth"]:
                 if k in data:

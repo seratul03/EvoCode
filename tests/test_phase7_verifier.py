@@ -34,18 +34,15 @@ def _make_clone(agent_id: str, parent: AgentGenome, hypothesis: dict) -> Candida
     return CloneManager.create_candidate(agent_id, parent, hypothesis)
 
 
-# ── Stage 1: Static Validation ────────────────────────────────────────────────
 
 class TestStage1Static:
 
     def test_invalid_planning_strategy_rejected(self):
         agent_id = "V7_S1_BAD_STRATEGY"
         parent = AgentGenome()
-        # Force a bad value directly into the candidate snapshot post-creation
         hypothesis = {"hypothesis": "test", "expected_improvement": "x", "target_component": "temperature"}
         try:
             clone = _make_clone(agent_id, parent, hypothesis)
-            # Manually corrupt the candidate genome (simulating a bad mutation)
             clone.candidate_genome["reasoning"]["planning_strategy"] = "INVALID_VALUE"
             result = _VERIFIER.verify(clone)
             assert not result.passed
@@ -60,7 +57,7 @@ class TestStage1Static:
         hypothesis = {"hypothesis": "test", "expected_improvement": "x", "target_component": "temperature"}
         try:
             clone = _make_clone(agent_id, parent, hypothesis)
-            clone.candidate_genome["temperature"] = 0.0   # below _MIN_TEMPERATURE
+            clone.candidate_genome["temperature"] = 0.0
             result = _VERIFIER.verify(clone)
             assert not result.passed
             assert result.failed_stage == 1
@@ -82,7 +79,6 @@ class TestStage1Static:
             _cleanup(agent_id)
 
 
-# ── Stage 2: Startup Validation ───────────────────────────────────────────────
 
 class TestStage2Startup:
 
@@ -92,18 +88,14 @@ class TestStage2Startup:
         hypothesis = {"hypothesis": "test", "expected_improvement": "x", "target_component": "temperature"}
         try:
             clone = _make_clone(agent_id, parent, hypothesis)
-            # Corrupt to a type that will pass Stage 1 range checks but fail Pydantic instantiation
             clone.candidate_genome["reasoning"] = "not_a_dict_at_all"
             result = _VERIFIER.verify(clone)
-            # Stage 1 may or may not catch this depending on dict traversal;
-            # Stage 2 definitely will — check it fails at stage <= 2
             assert not result.passed
             assert result.failed_stage <= 2
         finally:
             _cleanup(agent_id)
 
 
-# ── Stage 3: Regression Check ─────────────────────────────────────────────────
 
 class TestStage3Regression:
 
@@ -113,9 +105,8 @@ class TestStage3Regression:
         hypothesis = {"hypothesis": "test", "expected_improvement": "x", "target_component": "temperature"}
         try:
             clone = _make_clone(agent_id, parent, hypothesis)
-            # Simulate regression: parent was 0.6 but candidate drops below min
             clone.parent_genome["temperature"] = 0.6
-            clone.candidate_genome["temperature"] = 0.06   # passes Stage 1 (>= 0.05) but regresses from parent 0.6
+            clone.candidate_genome["temperature"] = 0.06
             result = _VERIFIER.verify(clone)
             assert not result.passed
             assert result.failed_stage == 3
@@ -124,7 +115,6 @@ class TestStage3Regression:
             _cleanup(agent_id)
 
 
-# ── Stage 4: Trigger-Specific ────────────────────────────────────────────────
 
 class TestStage4TriggerSpecific:
 
@@ -138,7 +128,6 @@ class TestStage4TriggerSpecific:
         }
         try:
             clone = _make_clone(agent_id, parent, hypothesis)
-            # Wipe the diff to simulate no change being applied
             clone.diff = {}
             result = _VERIFIER.verify(clone)
             assert not result.passed
@@ -148,7 +137,6 @@ class TestStage4TriggerSpecific:
             _cleanup(agent_id)
 
 
-# ── Full Pass ─────────────────────────────────────────────────────────────────
 
 class TestFullVerification:
 
@@ -196,7 +184,6 @@ class TestFullVerification:
         }
         try:
             clone = _make_clone(agent_id, parent, hypothesis)
-            # Inject a failure: wipe diff so Stage 4 fails
             clone.diff = {}
             promoted = CloneManager.commit_candidate(clone, verifier=_VERIFIER)
             assert promoted is None

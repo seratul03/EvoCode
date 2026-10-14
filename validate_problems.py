@@ -23,7 +23,6 @@ def run_validation(path):
                 ns = {}
                 exec(ref_code, ns)
                 
-                # If multi-statement (contains ';'), exec all but last, eval last
                 if ";" in test_input:
                     parts = test_input.rsplit(";", 1)
                     exec(parts[0].strip(), ns)
@@ -31,15 +30,12 @@ def run_validation(path):
                 else:
                     result = eval(test_input, ns)
                 
-                # Try to match: first by value (eval expected), then by str
                 try:
                     expected_val = eval(expected_raw)
                     match = (result == expected_val) or (str(result) == str(expected_val)) or (str(result) == expected_raw)
                 except:
-                    # Fallback: compare string representations
                     match = (str(result).strip() == expected_raw.strip())
                     if not match:
-                        # Also try stripping repr quotes (e.g. 'hello' vs hello)
                         match = (repr(result).strip("'\"") == expected_raw.strip("'\""))
                 
                 if not match:

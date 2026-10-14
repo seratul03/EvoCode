@@ -24,7 +24,6 @@ class PopulationManager:
     def _load_population(self) -> dict[str, str]:
         """Returns mapping of agent_id -> genome_hash"""
         if not os.path.exists(self.POPULATION_FILE):
-            # Seed the initial population with the default agent if it exists
             default_agent = "EVO_PY"
             default_genome = os.path.join(self.WORKSPACE_ROOT, default_agent, "genome.json")
             if os.path.exists(default_genome):
@@ -56,7 +55,6 @@ class PopulationManager:
             del self.active_agents[agent_id]
             self._save_population()
             
-            # Move to archive to preserve memory/history
             src_dir = os.path.join(self.WORKSPACE_ROOT, agent_id)
             archive_dir = os.path.join(self.WORKSPACE_ROOT, "_archive", agent_id)
             if os.path.exists(src_dir):
@@ -73,12 +71,11 @@ class PopulationManager:
         fitness_scores: mapping of agent_id -> rolling_average_score
         """
         while len(self.active_agents) > self.max_population:
-            # Find the weakest agent that is currently in the active population
             weakest_agent = None
             lowest_score = float('inf')
             
             for agent_id in self.active_agents:
-                score = fitness_scores.get(agent_id, 0.0) # Assume 0.0 if not scored yet
+                score = fitness_scores.get(agent_id, 0.0)
                 if score < lowest_score:
                     lowest_score = score
                     weakest_agent = agent_id
@@ -86,5 +83,4 @@ class PopulationManager:
             if weakest_agent:
                 self.remove_agent(weakest_agent)
             else:
-                # Fallback if somehow no agents were found
                 break

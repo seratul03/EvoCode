@@ -19,7 +19,6 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 
-# ── Locked files that meta-evolution can NEVER touch ─────────────────────────
 LOCKED_FILES = {
     "system_guard.py",
     "sandbox.py",
@@ -27,7 +26,6 @@ LOCKED_FILES = {
     "arena.py",
 }
 
-# ── Agents eligible for meta-evolution upgrades ───────────────────────────────
 UPGRADEABLE_AGENTS = [
     "generator.py",
 ]
@@ -36,11 +34,11 @@ UPGRADEABLE_AGENTS = [
 @dataclass
 class UpgradeTrigger:
     """Emitted by the Watcher when an agent must upgrade itself."""
-    agent_file: str                    # e.g. "src/agents/generator.py"
-    agent_name: str                    # e.g. "generator"
-    rolling_success_rate: float        # e.g. 0.30
-    window_size: int                   # how many problems were analysed
-    consecutive_upgrade_failures: int  # how many times the upgrade has already failed
+    agent_file: str
+    agent_name: str
+    rolling_success_rate: float
+    window_size: int
+    consecutive_upgrade_failures: int
 
 
 class Watcher:
@@ -73,8 +71,8 @@ class Watcher:
     def _load_recent_reports(self) -> list[dict]:
         """Load and sort the most recent N reports chronologically."""
         pattern = os.path.join(self.reports_dir, "*.json")
-        files = sorted(glob.glob(pattern))  # alphabetical ≈ chronological by filename
-        files = files[-self.window:]        # take only the last N
+        files = sorted(glob.glob(pattern))
+        files = files[-self.window:]
 
         reports = []
         for path in files:
@@ -103,13 +101,13 @@ class Watcher:
                         total_tests = tr.get("total_tests", 0)
                         if total_tests > 0 and passed == total_tests:
                             solved += 1
-                            break  # Problem is solved — move to next problem
+                            break
                     else:
                         continue
                     break
 
         if total == 0:
-            return 1.0  # No data → assume healthy, don't trigger
+            return 1.0
         return solved / total
 
     def check(self) -> Optional[UpgradeTrigger]:
@@ -122,7 +120,7 @@ class Watcher:
         """
         reports = self._load_recent_reports()
         if not reports:
-            return None  # No data yet
+            return None
 
         rate = self._compute_success_rate(reports)
         print(f"[Watcher] Rolling success rate (last {len(reports)} reports): {rate:.1%}")
@@ -153,7 +151,7 @@ class Watcher:
                     consecutive_upgrade_failures=failures,
                 )
 
-        return None  # All agents healthy
+        return None
 
     def record_upgrade_result(self, agent_file: str, succeeded: bool) -> None:
         """

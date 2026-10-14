@@ -2,16 +2,13 @@ import collections
 
 class TriggerMonitor:
     def __init__(self, stagnation_window=5, weakness_window=3, threshold=0.45):
-        # agent_id -> list of overall scores (fitness or task pass rate)
         self.history = collections.defaultdict(list)
-        # agent_id -> category -> list of booleans (passed=True, failed=False)
         self.category_history = collections.defaultdict(lambda: collections.defaultdict(list))
         
         self.stagnation_window = stagnation_window
         self.weakness_window = weakness_window
         self.threshold = threshold
         
-        # Weights
         self.w_stagnation = 0.5
         self.w_weakness = 0.5
         self.w_competitive = 0.0
@@ -27,7 +24,6 @@ class TriggerMonitor:
         stagnation = 0.0
         weakness = 0.0
         
-        # Calculate Stagnation
         h = self.history[agent_id]
         if len(h) >= self.stagnation_window:
             recent = h[-self.stagnation_window:]
@@ -36,18 +32,14 @@ class TriggerMonitor:
             if previous:
                 prev_max = max(previous)
                 recent_max = max(recent)
-                # If we haven't beaten the previous max, and we aren't at perfect 1.0 score
                 if recent_max <= prev_max and recent_max < 1.0:
                     stagnation = 1.0
                 elif recent_max < 1.0:
-                    stagnation = 0.2 # Some progress, but still not perfect
+                    stagnation = 0.2
             else:
-                # If we have exactly 'stagnation_window' items, and no previous baseline
-                # Check if the recent window is completely flat and sub-optimal
                 if max(recent) == min(recent) and max(recent) < 1.0:
                     stagnation = 1.0
         
-        # Calculate Weakness
         worst_category = None
         highest_weakness_score = 0.0
         

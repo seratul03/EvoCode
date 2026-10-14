@@ -64,7 +64,6 @@ class ProblemParserAgent:
         print(f"[ProblemParser] Received response from LLM client.")
         content = response["content"]
         
-        # Clean up in case the LLM wrapped it in markdown code blocks despite instructions
         if "```json" in content:
             content = content.split("```json")[1].split("```")[0].strip()
         elif "```" in content:
@@ -77,9 +76,6 @@ class ProblemParserAgent:
             if "tests" not in problem_dict:
                 problem_dict["tests"] = []
 
-            # --- Arity Guard ---
-            # Determine the expected number of arguments from the function_signature.
-            # This prevents the LLM from generating test inputs with the wrong arity.
             sig = problem_dict.get("function_signature", "")
             expected_arity = self._parse_arity(sig)
             print(f"[ProblemParser] Detected function arity: {expected_arity} arg(s) from signature: '{sig}'")
@@ -91,11 +87,10 @@ class ProblemParserAgent:
                     node = __import__('ast').parse(inp, mode='eval')
                     actual_arity = len(node.body.args)
                     if actual_arity != expected_arity:
-                        # Trim excess args or this test is malformed — skip it
                         print(f"[ProblemParser] WARNING: Test id={tc.get('id')} has {actual_arity} arg(s), expected {expected_arity}. Discarding.")
                         continue
                 except Exception:
-                    pass  # If we can't parse the input, pass it through as-is
+                    pass
                 fixed_tests.append(tc)
 
             if not fixed_tests:
@@ -114,22 +109,18 @@ class ProblemParserAgent:
         """Extracts the number of parameters from a Python function signature string."""
         try:
             import ast
-            # Handle both 'def foo(a, b):' and 'foo(a, b) -> int' formats
             sig = function_signature.strip()
             if not sig.startswith("def "):
                 sig = "def " + sig
             if not sig.endswith(":"):
-                # Strip return type annotation if present
                 sig = sig.split("->")[0].strip() + ":"
             
-            # ast.parse requires a complete function definition, including a body
             sig += "\n    pass"
             
             tree = ast.parse(sig)
             func_def = tree.body[0]
-            # Count only positional args (args), not *args, **kwargs, or self
             params = [a for a in func_def.args.args if a.arg != 'self']
             return len(params)
         except Exception:
-            return -1  # -1 means "unknown, don't enforce"
+            return -1
 

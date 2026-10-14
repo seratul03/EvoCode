@@ -5,7 +5,6 @@ import logging
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
-# Ensure the src module can be imported
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from src.client import EvoClient
@@ -19,7 +18,6 @@ async def run_chat():
     print("           EvoCode Terminal Chat System           ")
     print("==================================================")
     
-    # 1. Check if Docker is running
     print("[System]: Checking Docker status...")
     try:
         subprocess.run(["docker", "info"], capture_output=True, text=True, check=True)
@@ -36,9 +34,6 @@ async def run_chat():
 
     client = EvoClient()
     
-    # Allow cloud APIs (Groq and OpenRouter)
-    # client.groq_clients = []
-    # client.openrouter_client = None
     
     parser = ProblemParserAgent(client)
 
@@ -63,12 +58,8 @@ async def run_chat():
             print(f"[System]: Created Problem '{problem.get('title')}' with {len(problem.get('tests', []))} test cases.")
             print(f"[System]: Starting EvoFlow Pipeline (3 rounds, Population: 3)...\n")
             
-            # Initialize orchestrator
-            # Pop Size 3 to align with Python, Java, C++
             orchestrator = EvoFlowOrchestrator(pop_size=3)
             
-            # Run the generations. 
-            # Note: The logging in evoflow.py will print directly to the terminal, acting as our "live stream"
             await orchestrator.run_generations(num_generations=3, problems=[problem], mode="evolve", disable_circuit_breaker=True)
             
             print("\n==================================================")

@@ -22,7 +22,6 @@ class FitnessScorer:
     for failing every test. This is the LeetCode rule: wrong answer = 0 points.
     """
 
-    # Quality sub-weights (sum to 1.0)
     QUALITY_WEIGHTS = {
         "runtime":    0.30,
         "memory":     0.20,
@@ -65,8 +64,6 @@ class FitnessScorer:
             for k in self.QUALITY_WEIGHTS
         )
 
-        # --- THE GATE ---
-        # Zero correctness collapses the entire fitness to 0.
         fitness_value = correctness_rate * quality_score
 
         return {

@@ -13,7 +13,6 @@ async def main():
     
     orchestrator = EvoFlowOrchestrator(pop_size=5)
     
-    # Run for 2 generations
     await orchestrator.run_generations(num_generations=2, problems=test_subset)
     
     print("Run completed successfully.")

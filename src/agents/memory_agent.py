@@ -63,7 +63,6 @@ class MemoryHistorianAgent:
             print("[MemoryHistorian] No structured reports found. Nothing to synthesize.")
             return ""
 
-        # Only process files that haven't been synthesized yet
         already_logged = self._get_already_logged_files()
         new_files = [f for f in report_files if os.path.basename(f) not in already_logged]
 
@@ -99,8 +98,6 @@ class MemoryHistorianAgent:
         with open(filepath, "r", encoding="utf-8") as f:
             report = json.load(f)
 
-        # Build a compact summary of the report to send to the LLM.
-        # We deliberately do NOT send the full JSON (it can be 500KB+).
         summary = self._build_report_summary(report, filepath)
 
         user_prompt = (
@@ -168,7 +165,6 @@ class MemoryHistorianAgent:
                         f"Mutations: {diag.get('recommended_mutations', [])}"
                     )
 
-                # Selection & breeding summary
                 sb = gen.get("selection_and_breeding", {})
                 if sb:
                     lines.append(
@@ -185,7 +181,6 @@ class MemoryHistorianAgent:
                         )
 
             result_str = "SOLVED" if circuit_broken or best_fitness_overall >= 1.0 else "UNSOLVED"
-            # Insert result line directly after the problem header
             idx = next(
                 (i for i, l in enumerate(lines) if l == f"=== Problem ID: {prob_id} ==="),
                 len(lines) - 1
@@ -239,7 +234,6 @@ class MemoryHistorianAgent:
             return ""
 
         with open(MEMORY_FILE, "r", encoding="utf-8") as f:
-            # Strip hidden sentinel lines used for deduplication tracking
             lines = [line for line in f.readlines() if not line.startswith("# SOURCE_REPORT:")]
 
         full_text = "".join(lines).strip()
@@ -247,15 +241,9 @@ class MemoryHistorianAgent:
         if not full_text or max_entries == 0:
             return full_text
 
-        # Split into individual entries using the '---' delimiter that the
-        # MemoryHistorianAgent writes between passages.
-        # Each entry looks like:  --- \n [MEMORY ENTRY ...] \n --- \n
-        # After splitting we filter out blank/whitespace-only segments.
         raw_segments = full_text.split("---")
         entries = [seg.strip() for seg in raw_segments if seg.strip()]
 
-        # Take the last N (most recent) entries
         recent = entries[-max_entries:]
 
-        # Re-join with the delimiter so the format matches what the LLM expects
         return "\n---\n".join(recent)

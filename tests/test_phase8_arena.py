@@ -21,7 +21,6 @@ class TestArenaReferee:
 
     def test_identical_agents_draw(self):
         parent = AgentGenome(temperature=0.5)
-        # Deep copy to ensure they are identical
         candidate = AgentGenome(**parent.model_dump())
         
         result = self.referee.compare(parent.model_dump(), candidate.model_dump(), self.env_profile)
@@ -34,7 +33,6 @@ class TestArenaReferee:
         parent = AgentGenome(temperature=0.5)
         parent.reasoning.reasoning_depth = 2
         
-        # Candidate has better reasoning depth, should score higher in the simulation
         candidate = AgentGenome(temperature=0.5)
         candidate.reasoning.reasoning_depth = 4
         
@@ -48,7 +46,6 @@ class TestArenaReferee:
         parent = AgentGenome(temperature=0.5)
         parent.reasoning.reasoning_depth = 4
         
-        # Candidate has worse reasoning depth
         candidate = AgentGenome(temperature=0.5)
         candidate.reasoning.reasoning_depth = 1
         
@@ -63,7 +60,6 @@ class TestArenaReferee:
         
         result = self.referee.compare(parent.model_dump(), candidate.model_dump(), self.env_profile)
         
-        # In the fallback mock scenario, all groups should have scores
         expected_groups = [
             "known_solved", 
             "unrelated", 

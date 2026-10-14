@@ -19,7 +19,6 @@ class CodeValidatorAgent:
         crash_rate = crash_count / total
         pass_rate = passed / total
 
-        # Collect the distinct crash error messages to surface in the prompt
         crash_errors = list({
             out.get("error", "")
             for out in test_results.get("test_outputs", [])
@@ -58,7 +57,6 @@ class CodeValidatorAgent:
             "'is_correct' (boolean), 'confidence' (0.0 to 1.0), and 'issues' (list of strings)."
         )
 
-        # Fixed behavior: low temperature for deterministic verdicts
         response = await self.client.create_completion(
             messages=[
                 {"role": "system", "content": system_prompt},
@@ -69,7 +67,6 @@ class CodeValidatorAgent:
 
         result = self._parse_json_response(response["content"])
 
-        # Hard override: if crash rate > 20%, never allow is_correct=True regardless of LLM verdict
         if crash_rate > 0.2 and result.get("is_correct"):
             result["is_correct"] = False
             result["confidence"] = min(result.get("confidence", 0.5), pass_rate)
@@ -83,7 +80,6 @@ class CodeValidatorAgent:
         import json
         import re
 
-        # Try to find JSON block
         match = re.search(r'\{.*\}', raw, re.DOTALL)
         if match:
             try:

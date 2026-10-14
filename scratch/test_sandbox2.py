@@ -4,7 +4,6 @@ from src.sandbox import Sandbox
 
 sb = Sandbox(timeout_seconds=10)
 
-# Test MinStack (class-based, script mode)
 minstack_code = """
 class MinStack:
     def __init__(self):
@@ -34,7 +33,6 @@ print(f"Passed: {res['passed_tests']}/{res['total_tests']}")
 for o in res['test_outputs']:
     print(f"  Test {o['id']}: {o['status']}", o.get('error', o.get('actual', '')))
 
-# Test LRU Cache (class-based, script mode)
 lru_code = """
 from collections import OrderedDict
 class LRUCache:
@@ -64,7 +62,6 @@ print(f"Passed: {res2['passed_tests']}/{res2['total_tests']}")
 for o in res2['test_outputs']:
     print(f"  Test {o['id']}: {o['status']}", o.get('error', o.get('actual', '')))
 
-# Test Two-Sum (function mode, still works)
 twosum_code = """
 from typing import List
 def solve(nums: List[int], target: int) -> List[int]:

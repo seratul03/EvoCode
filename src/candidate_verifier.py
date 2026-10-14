@@ -27,7 +27,6 @@ if TYPE_CHECKING:
     from src.clone_manager import CandidateClone
 
 
-# ── Result types ──────────────────────────────────────────────────────────────
 
 @dataclass
 class StageReport:
@@ -40,8 +39,8 @@ class StageReport:
 @dataclass
 class VerificationResult:
     passed: bool
-    stage_reached: int          # highest stage attempted (1-5)
-    failed_stage: int | None    # None when all stages pass
+    stage_reached: int
+    failed_stage: int | None
     reason: str
     stage_reports: list[StageReport] = field(default_factory=list)
 
@@ -58,7 +57,6 @@ class VerificationResult:
         }
 
 
-# ── Known operational bounds ──────────────────────────────────────────────────
 
 _VALID_PLANNING_STRATEGIES = {"direct", "chain_of_thought", "test_first", "step_by_step"}
 _VALID_SYSTEM_VARIANTS = {"standard", "expert_coder", "pedantic_reviewer"}
@@ -71,7 +69,6 @@ _VALID_MEMORY_STRATEGIES = {"recent_only", "similarity_search"}
 _VALID_EXPERIENCE_PRIO = {"successes", "failures", "balanced"}
 _VALID_MOD_SCOPES = {"parameters_only", "logic_rewrite"}
 
-# Minimum operational temperature — prevents pathologically cold sampling
 _MIN_TEMPERATURE = 0.05
 _MAX_TEMPERATURE = 1.0
 _MAX_REASONING_DEPTH = 10
@@ -115,14 +112,12 @@ class CandidateVerifier:
             stage_reports=reports,
         )
 
-    # ── Stage 1: Static Validation ────────────────────────────────────────────
 
     def _stage1_static(self, clone: "CandidateClone") -> StageReport:
         """Check field types, enum membership, and numeric ranges."""
         g = clone.candidate_genome
         errors = []
 
-        # Temperature
         temp = g.get("temperature", 0.5)
         if not isinstance(temp, (int, float)):
             errors.append(f"temperature must be numeric, got {type(temp).__name__}")
@@ -131,7 +126,6 @@ class CandidateVerifier:
                 f"temperature {temp} out of operational range [{_MIN_TEMPERATURE}, {_MAX_TEMPERATURE}]"
             )
 
-        # Reasoning sub-genes
         reasoning = g.get("reasoning", {})
         if not isinstance(reasoning, dict):
             errors.append(f"reasoning must be a dict, got {type(reasoning).__name__}")
@@ -146,7 +140,6 @@ class CandidateVerifier:
             if srp not in _VALID_REFLECTION_POLICIES:
                 errors.append(f"Invalid self_reflection_policy: '{srp}'")
 
-        # Coding sub-genes
         coding = g.get("coding", {})
         if not isinstance(coding, dict):
             errors.append(f"coding must be a dict, got {type(coding).__name__}")
@@ -158,7 +151,6 @@ class CandidateVerifier:
             if coding.get("language_specific_policy") not in _VALID_LANG_POLICIES:
                 errors.append(f"Invalid language_specific_policy: '{coding.get('language_specific_policy')}'")
 
-        # Verification sub-genes
         verification = g.get("verification", {})
         if not isinstance(verification, dict):
             errors.append(f"verification must be a dict, got {type(verification).__name__}")
@@ -169,7 +161,6 @@ class CandidateVerifier:
             if not isinstance(vd, int) or not (0 <= vd <= _MAX_VERIFICATION_DEPTH):
                 errors.append(f"verification_depth {vd} out of range [0, {_MAX_VERIFICATION_DEPTH}]")
 
-        # System variant
         sv = g.get("system_instruction_variant", "standard")
         if sv not in _VALID_SYSTEM_VARIANTS:
             errors.append(f"Invalid system_instruction_variant: '{sv}'")
@@ -178,18 +169,15 @@ class CandidateVerifier:
             return StageReport(1, "Static Validation", False, "; ".join(errors))
         return StageReport(1, "Static Validation", True, "All fields valid.")
 
-    # ── Stage 2: Startup Validation ───────────────────────────────────────────
 
     def _stage2_startup(self, clone: "CandidateClone") -> StageReport:
         """Verify the candidate genome can be instantiated and core modules import."""
-        # Re-instantiate through Pydantic to confirm operational readiness
         try:
             genome = AgentGenome(**clone.candidate_genome)
         except Exception as e:
             return StageReport(2, "Startup Validation", False,
                                f"AgentGenome instantiation failed: {e}")
 
-        # Verify required modules are importable (control-plane health check)
         missing = []
         for module in ("src.client", "src.sandbox", "src.fitness_scorer"):
             try:
@@ -200,7 +188,6 @@ class CandidateVerifier:
             return StageReport(2, "Startup Validation", False,
                                f"Required modules not importable: {missing}")
 
-        # Memory file check — agent must be able to load its own memory
         memory_path = os.path.join("memory", "agent_memory.txt")
         if not os.path.exists(memory_path):
             return StageReport(2, "Startup Validation", False,
@@ -209,7 +196,6 @@ class CandidateVerifier:
         return StageReport(2, "Startup Validation", True,
                            f"Genome instantiated OK. Agent ID: {genome.agent_id or 'none'}")
 
-    # ── Stage 3: Regression Check ─────────────────────────────────────────────
 
     def _stage3_regression(self, clone: "CandidateClone") -> StageReport:
         """
@@ -257,7 +243,6 @@ class CandidateVerifier:
         return StageReport(3, "Regression Check", True,
                            "No regressions detected vs parent genome.")
 
-    # ── Stage 4: Trigger-Specific Test ───────────────────────────────────────
 
     def _stage4_trigger_specific(self, clone: "CandidateClone") -> StageReport:
         """
@@ -270,17 +255,14 @@ class CandidateVerifier:
         diff = clone.diff
 
         if not target:
-            # No target — pass with a note (fallback hypothesis case)
             return StageReport(4, "Trigger-Specific Test", True,
                                "No target_component specified in hypothesis; fallback change accepted.")
 
-        # Check that some diff was produced
         if not diff:
             return StageReport(4, "Trigger-Specific Test", False,
                                f"No diff was recorded — candidate genome is identical to parent. "
                                f"Expected change to '{target}'.")
 
-        # Check the top-level key of the target path exists in the diff
         top_key = target.split(".")[0]
         if top_key not in diff:
             return StageReport(4, "Trigger-Specific Test", False,
@@ -290,7 +272,6 @@ class CandidateVerifier:
         return StageReport(4, "Trigger-Specific Test", True,
                            f"Target component '{target}' was successfully modified.")
 
-    # ── Stage 5: General Sanity ───────────────────────────────────────────────
 
     def _stage5_general_sanity(self, clone: "CandidateClone") -> StageReport:
         """
@@ -313,8 +294,6 @@ class CandidateVerifier:
         if ms not in _VALID_MOD_SCOPES:
             issues.append(f"Invalid modification_scope_preference: '{ms}'")
 
-        # Cross-check: if test_generation_policy is 'none' but verification_depth > 0,
-        # that's a coherence inconsistency worth flagging
         veri = g.get("verification", {})
         if veri.get("test_generation_policy") == "none" and veri.get("verification_depth", 0) > 5:
             issues.append(

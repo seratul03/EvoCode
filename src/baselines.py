@@ -41,8 +41,7 @@ class BaselineRunner:
         print("Running Baseline C (Random Mutation)...")
         import random
         for problem in problems:
-            for iteration in range(10): # matched attempts
-                # Random genome
+            for iteration in range(10):
                 genome = AgentGenome(
                     temperature=random.random(),
                     prompt_style=random.choice(["direct", "chain_of_thought", "test_first", "step_by_step"])

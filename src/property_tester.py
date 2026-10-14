@@ -47,10 +47,9 @@ class PropertyTester:
         if not func_name or not ref_solution or not params:
             return []
 
-        # Execute reference solution safely
         ns: dict = {}
         try:
-            exec(ref_solution, ns)  # noqa: S102
+            exec(ref_solution, ns)
         except Exception:
             return []
 
@@ -58,10 +57,8 @@ class PropertyTester:
         if not callable(ref_func):
             return []
 
-        # Use time + problem ID as seed so each generation call is unique
         rng = random.Random(int(time.time() * 1000) ^ (problem.get("id", 0) * 997))
 
-        # Figure out a safe starting ID that won't clash with existing tests
         existing_tests = problem.get("tests", [])
         next_id = (max(t["id"] for t in existing_tests) + 1) if existing_tests else 1000
 
@@ -87,7 +84,7 @@ class PropertyTester:
                     "id": next_id,
                     "input": input_str,
                     "expected": repr(expected),
-                    "_ephemeral": True,   # Tag so logs can distinguish layer sources
+                    "_ephemeral": True,
                 })
                 existing_inputs.add(input_str)
                 next_id += 1
@@ -107,9 +104,6 @@ class PropertyTester:
             ex.shutdown(wait=False, cancel_futures=True)
             return _TIMEOUT_SENTINEL
 
-    # -------------------------------------------------------------------------
-    # Signature Parsing (mirrors TestAugmentor — intentionally standalone)
-    # -------------------------------------------------------------------------
 
     def _extract_func_name(self, sig: str) -> str:
         m = re.match(r"def\s+(\w+)\s*\(", sig)
@@ -141,7 +135,6 @@ class PropertyTester:
             if rng.random() < 0.3:
                 import sys
                 return rng.choice([0, 1, -1, 10**9, -10**9, sys.maxsize, -sys.maxsize - 1])
-            # Mix of small, large, and boundary values, capped at 20 to prevent DP/recursion hangs
             return rng.choice([
                 rng.randint(-20, 20),
                 rng.choice([0, 1, -1, 2, -2, 20, -20]),
@@ -178,7 +171,6 @@ class PropertyTester:
             size = rng.randint(0, 20)
             lo, hi = rng.choice([(-10, 10), (-10**6, 10**6), (0, 100)])
             vals = [rng.randint(lo, hi) for _ in range(size)]
-            # Randomly include all-same, sorted, or reversed variants
             variant = rng.randint(0, 3)
             if variant == 1 and vals:
                 vals = sorted(vals)
@@ -221,5 +213,4 @@ class PropertyTester:
         if "tuple" in th:
             return tuple(rng.randint(-10, 10) for _ in range(2))
 
-        # Fallback
         return rng.randint(0, 50)

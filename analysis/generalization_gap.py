@@ -16,7 +16,6 @@ import matplotlib
 
 matplotlib.use("Agg")
 
-# ─── Configuration ────────────────────────────────────────────────────
 REPORT_DIR = os.path.join(os.path.dirname(__file__), "..", "structured_reports")
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "results", "plots")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -29,8 +28,8 @@ FILES = {
 }
 
 COLORS = ["#6c757d", "#dc3545", "#fd7e14", "#0d6efd"]
-FIXED_TESTS = 20   # Number of fixed tests per problem
-EPHEMERAL_TESTS = 5  # Number of property-based ephemeral tests
+FIXED_TESTS = 20
+EPHEMERAL_TESTS = 5
 
 
 def analyze_generalization(data):
@@ -65,14 +64,12 @@ def analyze_generalization(data):
         passed = tr.get("passed_tests", 0)
         total = tr.get("total_tests", 1)
 
-        # If we have detailed test outputs, split by fixed/ephemeral
         if len(outputs) >= FIXED_TESTS + EPHEMERAL_TESTS:
             fixed_passed = sum(1 for o in outputs[:FIXED_TESTS] if o.get("status") == "pass")
             eph_passed = sum(1 for o in outputs[FIXED_TESTS:] if o.get("status") == "pass")
             fixed_rates.append(fixed_passed / FIXED_TESTS)
             ephemeral_rates.append(eph_passed / EPHEMERAL_TESTS)
         else:
-            # Fallback: use overall pass rate for both
             rate = passed / max(total, 1)
             fixed_rates.append(rate)
             ephemeral_rates.append(rate)
@@ -86,7 +83,6 @@ def analyze_generalization(data):
     )
 
 
-# ─── Compute ──────────────────────────────────────────────────────────
 labels = []
 fixed_avgs = []
 ephemeral_avgs = []
@@ -105,7 +101,6 @@ for label, path in FILES.items():
     all_solved_maps.append(solved_map)
 
 
-# ─── Chart 1: Generalization Gap (Grouped Bar) ───────────────────────
 fig, ax = plt.subplots(figsize=(10, 6))
 fig.patch.set_facecolor("#0d1117")
 ax.set_facecolor("#161b22")
@@ -118,7 +113,6 @@ bars1 = ax.bar(x - width / 2, fixed_avgs, width, label="Fixed Tests",
 bars2 = ax.bar(x + width / 2, ephemeral_avgs, width, label="Ephemeral Tests",
                color="#f0883e", edgecolor="#30363d", linewidth=1.2, zorder=3)
 
-# Value labels
 for bar in bars1:
     ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.01,
             f"{bar.get_height():.0%}", ha="center", va="bottom",
@@ -151,16 +145,14 @@ plt.close()
 print(f"✅ Saved: {output_path}")
 
 
-# ─── Chart 2: Per-Problem Heatmap ────────────────────────────────────
 if all_solved_maps:
     num_problems = len(all_solved_maps[0])
-    heatmap_data = np.array(all_solved_maps)  # shape: (conditions, problems)
+    heatmap_data = np.array(all_solved_maps)
 
     fig, ax = plt.subplots(figsize=(14, 4))
     fig.patch.set_facecolor("#0d1117")
     ax.set_facecolor("#161b22")
 
-    # Custom colormap: dark grey for unsolved, green for solved
     from matplotlib.colors import ListedColormap
     cmap = ListedColormap(["#21262d", "#2ea043"])
 
@@ -175,7 +167,6 @@ if all_solved_maps:
                  fontsize=14, fontweight="bold", color="white", pad=15)
     ax.tick_params(colors="white")
 
-    # Add grid lines between cells
     for i in range(num_problems + 1):
         ax.axvline(i - 0.5, color="#30363d", linewidth=0.5)
     for i in range(len(labels) + 1):

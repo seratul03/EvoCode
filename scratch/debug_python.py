@@ -19,7 +19,6 @@ def _run_tests():
     test_cases = _json.loads(tests_json)
     results = []
     
-    # Find the first callable in the module that isn't a builtin
     fn = None
     for name, obj in list(globals().items()):
         if callable(obj) and getattr(obj, "__module__", None) == "__main__" and not name.startswith("_") and name not in ("main", "ast"):

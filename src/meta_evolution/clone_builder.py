@@ -17,7 +17,6 @@ from src.meta_evolution.watcher import UpgradeTrigger
 
 STAGING_DIR = os.path.join("src", "meta_evolution", "staging")
 
-# The specific method to target for improvement in generator.py
 TARGET_METHOD = "_build_system_prompt"
 
 ARCHITECT_SYSTEM_PROMPT = """You are an expert AI systems engineer specialising in LLM prompt engineering.
@@ -63,7 +62,6 @@ class CloneBuilder:
         with open(trigger.agent_file, "r", encoding="utf-8") as f:
             original_source = f.read()
 
-        # Extract just the target method to send to the LLM (much smaller prompt)
         target_method_source = self._extract_method(original_source, TARGET_METHOD)
         if not target_method_source:
             print(f"[CloneBuilder] WARNING: Could not extract '{TARGET_METHOD}'. Using full file approach.")
@@ -74,17 +72,14 @@ class CloneBuilder:
         print(f"[CloneBuilder] Spawning 2 Architect agents for '{trigger.agent_name}.{TARGET_METHOD}'...")
         print(f"[CloneBuilder] Sending {len(target_method_source)} chars to each architect (~15-30s)...")
 
-        # Fire both LLM calls concurrently
         proposal_a_method, proposal_b_method = await asyncio.gather(
             self._call_architect(user_prompt, architect_id=1),
             self._call_architect(user_prompt, architect_id=2),
         )
 
-        # Apply each proposed method back into the full original file
         patched_a = self._apply_patch(original_source, TARGET_METHOD, proposal_a_method)
         patched_b = self._apply_patch(original_source, TARGET_METHOD, proposal_b_method)
 
-        # Save proposals to staging
         path_a = os.path.join(STAGING_DIR, f"{trigger.agent_name}_proposal_a.py")
         path_b = os.path.join(STAGING_DIR, f"{trigger.agent_name}_proposal_b.py")
 
@@ -107,7 +102,7 @@ class CloneBuilder:
                     ],
                     temperature=0.7,
                 ),
-                timeout=120,  # 2 min max — method-level output is small
+                timeout=120,
             )
         except asyncio.TimeoutError:
             print(f"[CloneBuilder] Architect {architect_id} timed out. Using original method.")
@@ -146,7 +141,7 @@ class CloneBuilder:
     def _apply_patch(self, original_source: str, method_name: str, new_method: str) -> str:
         """Replace the target method in the original source with the new method."""
         if not new_method or not new_method.strip():
-            return original_source  # Fallback: keep original
+            return original_source
 
         try:
             tree = ast.parse(original_source)
@@ -160,7 +155,7 @@ class CloneBuilder:
                         return "\n".join(new_lines)
         except Exception:
             pass
-        return original_source  # Fallback: keep original
+        return original_source
 
     def _clean_output(self, raw: str) -> str:
         """Strip markdown fences if present."""

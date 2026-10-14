@@ -14,7 +14,6 @@ class EventLogger:
     def _initialize_schema(self):
         cursor = self.conn.cursor()
         
-        # 1. LLM Calls (Generator & Code Validator only)
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS llm_calls (
                 call_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -30,7 +29,6 @@ class EventLogger:
             )
         ''')
         
-        # 2. Test Results (Sandbox execution)
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS test_results (
                 result_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -48,7 +46,6 @@ class EventLogger:
             )
         ''')
         
-        # 3. Fitness Scores
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS fitness_scores (
                 score_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -62,7 +59,6 @@ class EventLogger:
             )
         ''')
         
-        # 4. Mutations
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS mutations (
                 mutation_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -79,7 +75,6 @@ class EventLogger:
             )
         ''')
         
-        # 5. Agent Genomes (Snapshots)
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS agent_genomes (
                 snapshot_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -92,7 +87,6 @@ class EventLogger:
             )
         ''')
         
-        # 6. Critic Feedback
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS critic_feedback (
                 feedback_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -106,7 +100,6 @@ class EventLogger:
             )
         ''')
         
-        # 7. Validation Results (Code Validator LLM)
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS validation_results (
                 validation_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -120,7 +113,6 @@ class EventLogger:
             )
         ''')
         
-        # 8. Population Stats (Diversity and variance)
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS population_stats (
                 stat_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -134,7 +126,6 @@ class EventLogger:
             )
         ''')
         
-        # Create composite indices as recommended in evo.md
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_llm_calls_prob_gen ON llm_calls(problem_id, generation_id)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_test_results_prob_gen ON test_results(problem_id, generation_id)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_fitness_scores_prob_gen ON fitness_scores(problem_id, generation_id)')

@@ -1,7 +1,6 @@
 import json
 import sys
 
-# Force UTF-8 output stdout
 sys.stdout.reconfigure(encoding='utf-8')
 
 files = {

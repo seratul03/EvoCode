@@ -2,7 +2,6 @@ import hashlib
 import json
 from typing import Any
 
-# ── Modification Value Inference ──────────────────────────────────────────────
 _PLANNING_STRATEGIES = ["direct", "chain_of_thought", "test_first", "step_by_step"]
 _SYSTEM_VARIANTS = ["standard", "expert_coder", "pedantic_reviewer"]
 

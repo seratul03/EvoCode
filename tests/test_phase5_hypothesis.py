@@ -6,7 +6,6 @@ from src.genome import AgentGenome
 
 class MockSuccessClient:
     async def create_completion(self, **kwargs):
-        # Return a properly formatted JSON wrapped in markdown
         return {
             "choices": [{
                 "message": {
@@ -17,7 +16,6 @@ class MockSuccessClient:
 
 class MockFailClient:
     async def create_completion(self, **kwargs):
-        # Return invalid JSON
         return {
             "choices": [{
                 "message": {
@@ -28,7 +26,6 @@ class MockFailClient:
 
 class MockMissingKeysClient:
     async def create_completion(self, **kwargs):
-        # Return valid JSON but missing required keys
         return {
             "choices": [{
                 "message": {
@@ -59,7 +56,6 @@ async def test_hypothesis_engine_invalid_json_fallback():
     
     result = await engine.generate_hypothesis("EVO_PY", reason, genome)
     
-    # Should return fallback
     assert "Adjust temperature" in result["hypothesis"]
     assert result["target_component"] == "reasoning.planning_strategy"
 
@@ -72,6 +68,5 @@ async def test_hypothesis_engine_missing_keys_fallback():
     
     result = await engine.generate_hypothesis("EVO_PY", reason, genome)
     
-    # Should return fallback
     assert "Adjust temperature" in result["hypothesis"]
     assert result["target_component"] == "reasoning.planning_strategy"

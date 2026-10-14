@@ -56,14 +56,11 @@ for name, path in files.items():
             gen_scores = []
             gen_passed = 0
             for ev in evals:
-                # check fields in ev
                 ev_keys = list(ev.keys())
-                # find pass / score
                 score = ev.get("score")
                 passed = ev.get("passed")
                 test_results = ev.get("test_results") or ev.get("results")
                 
-                # Check snapshot details
                 snap = ev.get("gen_genome_snapshot", {})
                 p_style = snap.get("prompt_style")
                 temp = snap.get("temperature")

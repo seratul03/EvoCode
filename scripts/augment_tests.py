@@ -17,7 +17,6 @@ import shutil
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-# Ensure project root is on the path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from src.test_augmentor import TestAugmentor
@@ -37,7 +36,6 @@ def augment_file(path: str, augmentor: TestAugmentor, target: int) -> None:
     with open(path, "r", encoding="utf-8") as f:
         problems = json.load(f)
 
-    # Backup original
     backup_path = path + ".bak"
     shutil.copy2(path, backup_path)
     print(f"  Backup created: {backup_path}")

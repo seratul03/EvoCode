@@ -12,14 +12,12 @@ def fibonacci(n: int) -> int:
             a, b = b, a + b
         return b
 
-# === INJECTED TEST HARNESS ===
 import json as _json
 import traceback as _tb
 import time as _time
 import tracemalloc as _tm
 
 def _run_tests():
-    # Find the first callable in the module that isn't a builtin
     fn = None
     fns = []
     for name, obj in list(globals().items()):

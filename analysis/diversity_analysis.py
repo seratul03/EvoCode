@@ -14,7 +14,6 @@ import matplotlib
 
 matplotlib.use("Agg")
 
-# ─── Configuration ────────────────────────────────────────────────────
 REPORT_DIR = os.path.join(os.path.dirname(__file__), "..", "structured_reports")
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "results", "plots")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -49,7 +48,6 @@ def count_solved(data):
     return solved, total
 
 
-# ─── Compute ──────────────────────────────────────────────────────────
 labels = []
 solved_counts = []
 total_problems = 30
@@ -67,7 +65,6 @@ for label, path in FILES.items():
 
 unsolved_counts = [total_problems - s for s in solved_counts]
 
-# ─── Plot ─────────────────────────────────────────────────────────────
 fig, ax = plt.subplots(figsize=(10, 6))
 fig.patch.set_facecolor("#0d1117")
 ax.set_facecolor("#161b22")
@@ -76,13 +73,11 @@ x = range(len(labels))
 bars = ax.bar(x, solved_counts, color=BAR_COLORS, edgecolor="#30363d",
               linewidth=1.5, width=0.6, zorder=3)
 
-# Add value labels on top of bars
 for bar, count in zip(bars, solved_counts):
     ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.4,
             f"{count}/{total_problems}",
             ha="center", va="bottom", fontsize=14, fontweight="bold", color="white")
 
-# Add unsolved portion as a faded stacked bar
 ax.bar(x, unsolved_counts, bottom=solved_counts, color="#21262d",
        edgecolor="#30363d", linewidth=1.5, width=0.6, zorder=2)
 
@@ -99,7 +94,6 @@ ax.spines["right"].set_visible(False)
 ax.spines["left"].set_color("#30363d")
 ax.spines["bottom"].set_color("#30363d")
 
-# Add a horizontal line at the total
 ax.axhline(y=total_problems, color="#58a6ff", linestyle="--", alpha=0.4, linewidth=1)
 ax.text(len(labels) - 0.5, total_problems + 0.3, f"Total: {total_problems}",
         fontsize=9, color="#58a6ff", alpha=0.6)

@@ -51,7 +51,6 @@ class TestPhase10Memory:
         assert data["selection_decision"] == "PROMOTE"
         
     def test_lineage_tracks_history(self):
-        # 1. First event: Rejected
         ev1 = EvolutionEvent.create(
             agent_id=self.AGENT_ID,
             generation=1,
@@ -63,10 +62,9 @@ class TestPhase10Memory:
         
         lineage = MemoryManager.get_lineage(self.AGENT_ID)
         assert lineage["root_hash"] == "hash_v1"
-        assert lineage["current_hash"] == "hash_v1" # Did not advance
+        assert lineage["current_hash"] == "hash_v1"
         assert len(lineage["history"]) == 1
         
-        # 2. Second event: Promoted
         ev2 = EvolutionEvent.create(
             agent_id=self.AGENT_ID,
             generation=1,
@@ -77,7 +75,7 @@ class TestPhase10Memory:
         MemoryManager.record_event(ev2)
         
         lineage = MemoryManager.get_lineage(self.AGENT_ID)
-        assert lineage["current_hash"] == "hash_v2_good" # Advanced
+        assert lineage["current_hash"] == "hash_v2_good"
         assert len(lineage["history"]) == 2
         
         last_attempt = lineage["history"][-1]

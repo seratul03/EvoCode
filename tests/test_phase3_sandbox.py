@@ -1,6 +1,6 @@
 import os
 import shutil
-import pytest # pyright: ignore[reportMissingImports]
+import pytest
 from src.sandbox import Sandbox
 
 @pytest.fixture(autouse=True)
@@ -18,11 +18,9 @@ def test_sandbox_creates_persistent_workspace():
     code = "def solve(x):\n    return x * 2"
     tests = [{"id": 1, "input": "solve(2)", "expected": "4"}]
     
-    # Run sandbox targeting EVO_PY workspace
     res = sandbox.run(code, tests, language="Python", agent_id="EVO_PY")
     assert res["passed_tests"] == 1
     
-    # Verify workspaces/EVO_PY exists and contains solution.py
     workspace_dir = os.path.abspath(os.path.join("workspaces", "EVO_PY"))
     assert os.path.exists(workspace_dir)
     assert os.path.isdir(workspace_dir)
@@ -38,22 +36,18 @@ def test_sandbox_creates_persistent_workspace():
 def test_sandbox_cross_agent_isolation():
     sandbox = Sandbox(timeout_seconds=15)
     
-    # Run Python code in EVO_PY
     code1 = "def solve(x):\n    return x + 1"
     sandbox.run(code1, [{"id": 1, "input": "solve(1)", "expected": "2"}], language="Python", agent_id="EVO_PY")
     
-    # Run Python code in EVO_CPP
     code2 = "def solve(x):\n    return x + 2"
     sandbox.run(code2, [{"id": 1, "input": "solve(1)", "expected": "3"}], language="Python", agent_id="EVO_CPP")
     
-    # Verify both workspaces exist
     py_workspace = os.path.abspath(os.path.join("workspaces", "EVO_PY"))
     cpp_workspace = os.path.abspath(os.path.join("workspaces", "EVO_CPP"))
     
     assert os.path.exists(py_workspace)
     assert os.path.exists(cpp_workspace)
     
-    # Check isolation (files in py_workspace should have code1, files in cpp_workspace should have code2)
     with open(os.path.join(py_workspace, "solution.py"), 'r', encoding='utf-8') as f:
         assert "x + 1" in f.read()
         

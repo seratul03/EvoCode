@@ -67,6 +67,34 @@ class EvoEvaluator:
             total = test_results["total_tests"]
             print(f"      [Sandbox] Passed {passed}/{total} tests (+{len(extra_tests)} ephemeral). Crashes: {len(test_results['crash_tests'])}")
 
+            if test_results["crash_tests"]:
+                n_crashes = len(test_results["crash_tests"])
+                print(f"      [Evo_fixer] {n_crashes} crash(es) detected. Requesting patch from LLM...")
+                fixed_code = await self.orchestrator.evo_fixer.fix(
+                    code, test_results, problem, generator.language
+                )
+                if fixed_code:
+                    print(f"      [Evo_fixer] Patch received. Re-evaluating in sandbox...")
+                    fixer_agent_id = f"prob{problem_id}_gen{generation_id}_{agent_name}_evofixer"
+                    fixed_results = await asyncio.to_thread(
+                        self.orchestrator.sandbox.run,
+                        fixed_code, all_tests,
+                        language=generator.language,
+                        template=template,
+                        agent_id=fixer_agent_id
+                    )
+                    fixed_passed = fixed_results["passed_tests"]
+                    if fixed_passed > passed:
+                        print(f"      [Evo_fixer] \u2705 SUCCESS: {passed} \u2192 {fixed_passed}/{total} tests passed after patch.")
+                        code = fixed_code
+                        test_results = fixed_results
+                        passed = fixed_passed
+                        code_hash = hash((generator.language, _normalize_code(code), test_suite_repr))
+                    else:
+                        print(f"      [Evo_fixer] \u274c Patch did not improve results ({fixed_passed} vs {passed}). Keeping original.")
+                else:
+                    print(f"      [Evo_fixer] Could not produce a patch. Continuing with original.")
+
         passed = test_results["passed_tests"]
         total = test_results["total_tests"]
         self.orchestrator.logger.log_test_result(
@@ -234,7 +262,6 @@ class EvoEvaluator:
         
         gen_report["evaluations"] = evaluation_logs
 
-        # Calculate Population Diversity Metrics
         fitnesses = [r.get("fitness", 0.0) for r in generation_results]
         if fitnesses:
             mean_fitness = sum(fitnesses) / len(fitnesses)

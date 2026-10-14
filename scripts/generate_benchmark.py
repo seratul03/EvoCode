@@ -19,7 +19,6 @@ async def main():
     
     problems = []
     
-    # Load existing problems if they exist to avoid overwriting and append
     if os.path.exists(args.out):
         try:
             with open(args.out, "r", encoding="utf-8") as f:
@@ -33,7 +32,7 @@ async def main():
     target_count = args.count
     while len(problems) < target_count:
         needed = target_count - len(problems)
-        batch_size = min(needed, 5) # Generate in batches of 5 to avoid long hangs
+        batch_size = min(needed, 5)
         
         print(f"\nGenerating batch of {batch_size} problems ({len(problems)}/{target_count} done)...")
         try:
@@ -42,7 +41,6 @@ async def main():
                 problems.extend(batch)
                 start_id += len(batch)
                 
-                # Save progress incrementally
                 with open(args.out, "w", encoding="utf-8") as f:
                     json.dump(problems, f, indent=2)
                 print(f"Saved progress. Total problems: {len(problems)}")

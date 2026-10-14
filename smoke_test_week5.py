@@ -39,12 +39,10 @@ async def run_smoke_test():
         print(f"Problem {i+1}/5: {problem['title']}")
         print(f"==========================================")
         
-        # 1. Generate
         print("1. Generating code...")
         code = await generator.solve(problem, gen_genome)
         print(f"   Code length: {len(code)} characters")
         
-        # 2. Sandbox
         print("2. Running in sandbox...")
         tests = problem.get("tests", [])
         test_results = sandbox.run(code, tests)
@@ -52,23 +50,19 @@ async def run_smoke_test():
         if len(test_results['crash_tests']) > 0:
             print(f"   Crashes: {len(test_results['crash_tests'])}")
             
-        # 3. Validate
         print("3. Validating code...")
         validation = await validator.validate(code, problem, test_results)
         print(f"   Validator says correct? {validation.get('is_correct')}, confidence: {validation.get('confidence')}")
         
-        # 4. Evaluate & 5. Aggregate
         print("4. Calculating fitness...")
         fitness = fitness_scorer.calculate_fitness(code, test_results, eval_genome)
         print(f"   Fitness score: {fitness['fitness_value']:.2f}")
         
-        # 6. Critique
         print("5. Critiquing...")
         diagnosis = critic.critique(code, test_results, validation, crit_genome)
         print(f"   Failure type: {diagnosis['failure_type']}, Severity: {diagnosis['severity']:.2f}")
         print(f"   Recommended mutations: {diagnosis['recommended_mutations']}")
         
-        # 7. Mutate
         print("6. Mutating genome...")
         new_gen_genome = mutator.propose(diagnosis, gen_genome, mut_genome)
         

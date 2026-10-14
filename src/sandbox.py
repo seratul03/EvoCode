@@ -22,7 +22,6 @@ class Sandbox:
             inp_raw = tc.get("input", "")
             exp_raw = tc.get("expected", "")
             
-            # --- Parse Input Args ---
             args = []
             if isinstance(inp_raw, dict):
                 args = list(inp_raw.values())
@@ -41,7 +40,6 @@ class Sandbox:
                 except Exception:
                     args = [inp]
             
-            # --- Parse Expected Value ---
             if isinstance(exp_raw, (dict, list, int, float, bool)) or exp_raw is None:
                 exp_val = exp_raw
             else:
@@ -66,7 +64,6 @@ class Sandbox:
         """
         for tc in test_cases:
             inp = str(tc.get("input", ""))
-            # If any test has assignment or semicolons, it's a script-style problem
             if "=" in inp or ";" in inp:
                 return "script"
         return "function"
@@ -77,7 +74,6 @@ class Sandbox:
         Each test input is a semicolon-separated Python script; we exec() the body
         statements and eval() the final expression to get the result.
         """
-        # Serialize raw test inputs/expecteds as strings
         raw_tests = [{"id": tc["id"], "input": str(tc.get("input", "")), "expected": str(tc.get("expected", ""))} for tc in test_cases]
         tests_json = json.dumps(raw_tests)
 
@@ -227,7 +223,6 @@ if __name__ == '__main__':
                     tid = test.get("id")
                     results["crash_tests"].append(tid)
                     results["test_outputs"].append({"id": tid, "status": "crash", "error": err_msg})
-                # Use outer time as fallback
                 end_time = time.time()
                 results["execution_time_ms"] = (end_time - start_time) * 1000
 
@@ -245,7 +240,6 @@ if __name__ == '__main__':
             pass
         return results
 
-    # ─── Test Harness Builders ─────────────────────────────────────────────────
 
     def _build_python_harness(self, solution_code: str, parsed_tests: list[dict]) -> str:
         """Appends a deterministic Python test runner to the solution code with true telemetry."""
@@ -306,9 +300,7 @@ if __name__ == '__main__':
     def _build_java_harness(self, solution_code: str, parsed_tests: list[dict]) -> str:
         """Java harness using org.json for generic input deserialization and true telemetry."""
         
-        # Auto-wrap in class Solution if the LLM forgot (prevents unnamed class preview errors)
         if "class Solution" not in solution_code:
-            # Extract imports to the top
             lines = solution_code.split('\n')
             imports = [line for line in lines if line.strip().startswith("import ")]
             body = [line for line in lines if not line.strip().startswith("import ")]
@@ -449,7 +441,6 @@ class SandboxRunner {{
         """C++ harness using nlohmann::json and compile-time-correct arity dispatch."""
         import re
 
-        # ── Step 1: Determine the function name ──────────────────────────────
         fn_name = "solve"
         if template:
             m = re.search(r'\b(\w+)\s*\(', template)
@@ -458,7 +449,6 @@ class SandboxRunner {{
                 if candidate not in ("if", "while", "for", "switch", "return", "class", "struct"):
                     fn_name = candidate
 
-        # If the expected function isn't found, try to extract the real one from the code
         if fn_name not in solution_code:
             m = re.search(r'\b(\w+)\s*\([^)]*\)\s*\{', solution_code)
             if m:
@@ -466,12 +456,8 @@ class SandboxRunner {{
                 if candidate not in ("if", "while", "for", "switch", "return", "main", "catch"):
                     fn_name = candidate
 
-        # ── Step 2: Determine the ACTUAL arity of the C++ function ───────────
-        # We read the function signature directly from the solution code so the
-        # harness's call site is ALWAYS compile-time-correct, regardless of what
-        # the test cases claim.
         sig_pattern = re.compile(r'\b' + re.escape(fn_name) + r'\s*\(([^)]*)\)')
-        arity = 1  # safe default
+        arity = 1
         m = sig_pattern.search(solution_code)
         if m:
             params_str = m.group(1).strip()
@@ -480,7 +466,6 @@ class SandboxRunner {{
             else:
                 arity = len(params_str.split(','))
 
-        # ── Step 3: Build a compile-time-correct call ─────────────────────────
         args_call = ", ".join(f"args[{i}]" for i in range(arity))
         dispatch_call = f"result_json = {fn_name}({args_call});"
 

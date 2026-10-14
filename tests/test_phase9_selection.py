@@ -59,14 +59,12 @@ class TestGuardedSelection:
         assert decision == SelectionDecision.KEEP_PARENT
 
     def test_major_regression_blocks_promotion(self):
-        # Candidate wins overall...
         result = self._mock_result(
             winner="candidate", 
             margin=0.05,
-            # ...but bombs the regression set heavily (0.9 down to 0.7)
             groups={
-                "triggering": {"parent": 0.1, "candidate": 0.9}, # Massive gain here
-                "regression": {"parent": 0.9, "candidate": 0.7}  # But massive drop here
+                "triggering": {"parent": 0.1, "candidate": 0.9},
+                "regression": {"parent": 0.9, "candidate": 0.7}
             }
         )
         decision, reason = self.selector.evaluate(result)

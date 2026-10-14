@@ -17,8 +17,6 @@ class CallBudgetTracker:
         self.total_output_tokens = 0
         self.total_cost = 0.0
         
-        # Details grouped by provider and model
-        # Structure: { "provider/model": { "calls": int, "input_tokens": int, "output_tokens": int, "cost": float } }
         self.usage_by_model: Dict[str, Dict[str, Any]] = {}
         self.lock = threading.Lock()
 
@@ -35,7 +33,6 @@ class CallBudgetTracker:
         Record a successful LLM call, updating counts, token usage, and cost estimation.
         """
         with self.lock:
-            # Although we check_budget before starting the call, we also assert here.
             if self.total_calls >= self.max_calls:
                 raise BudgetExceededError(
                     f"Failed to record call. Budget already exceeded: {self.total_calls}/{self.max_calls}"
@@ -45,7 +42,6 @@ class CallBudgetTracker:
             self.total_input_tokens += input_tokens
             self.total_output_tokens += output_tokens
             
-            # Calculate cost based on provider/model rates
             cost = self._calculate_cost(provider, model, input_tokens, output_tokens)
             self.total_cost += cost
             
@@ -64,7 +60,6 @@ class CallBudgetTracker:
 
     def _calculate_cost(self, provider: str, model: str, input_tokens: int, output_tokens: int) -> float:
         """Calculates estimated cost per million tokens."""
-        # Simple pricing dictionary (input cost / 1M tokens, output cost / 1M tokens)
         prices = {
             "groq": {
                 "llama3-70b-8192": (0.59, 0.79),
@@ -75,14 +70,12 @@ class CallBudgetTracker:
                 "openai/gpt-oss-20b": (0.59, 0.79),
             },
             "openrouter": {
-                # OpenRouter free tier models are $0
                 "meta-llama/llama-3-70b-instruct:free": (0.0, 0.0),
                 "meta-llama/llama-3-8b-instruct:free": (0.0, 0.0),
             }
         }
         
         provider_prices = prices.get(provider.lower(), {})
-        # Find exact model or default to 0.0
         model_prices = provider_prices.get(model.lower(), (0.0, 0.0))
         input_price_per_1m, output_price_per_1m = model_prices
         

@@ -20,13 +20,11 @@ class MockPopulationManager:
 
 class MockEvoFlow_Success:
     async def trigger_evolution(self, agent_id):
-        # Mutate a file to prove it ran, but don't crash
         with open(os.path.join("workspaces", agent_id, "test.txt"), "w") as f:
             f.write("success")
 
 class MockEvoFlow_Crash:
     async def trigger_evolution(self, agent_id):
-        # Mutate a file, THEN crash
         with open(os.path.join("workspaces", agent_id, "test.txt"), "w") as f:
             f.write("corrupted")
         raise RuntimeError("Simulated catastrophic crash")
@@ -56,13 +54,11 @@ class TestPhase13Guards:
         
         await guard.execute_with_guards(MockEvoFlow_Success(), self.AGENT_ID)
         
-        # Verify changes stuck and no rollback happened
         with open(os.path.join(self.WORKSPACE_ROOT, self.AGENT_ID, "test.txt"), "r") as f:
             content = f.read()
             
         assert content == "success"
         
-        # Verify snapshot was cleaned up
         assert len(os.listdir(os.path.join(self.WORKSPACE_ROOT, "_snapshots"))) == 0
 
     @pytest.mark.asyncio
@@ -72,13 +68,11 @@ class TestPhase13Guards:
         
         await guard.execute_with_guards(MockEvoFlow_Crash(), self.AGENT_ID)
         
-        # Verify rollback restored the original state, discarding "corrupted"
         with open(os.path.join(self.WORKSPACE_ROOT, self.AGENT_ID, "test.txt"), "r") as f:
             content = f.read()
             
         assert content == "original"
         
-        # Verify crash was logged
         crashes = os.listdir(os.path.join(self.WORKSPACE_ROOT, "_crashes"))
         assert len(crashes) == 1
         
@@ -87,7 +81,6 @@ class TestPhase13Guards:
         pop = MockPopulationManager()
         guard = SystemGuard(pop)
         
-        # Crash it 3 times (the MAX_CRASHES threshold)
         for _ in range(3):
             await guard.execute_with_guards(MockEvoFlow_Crash(), self.AGENT_ID)
             

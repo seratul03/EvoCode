@@ -31,7 +31,6 @@ import shutil
 import time
 import warnings
 
-# Suppress harmless Windows asyncio pipe cleanup warning
 warnings.filterwarnings("ignore", category=ResourceWarning)
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
@@ -43,17 +42,13 @@ from src.meta_evolution.source_judge import SourceJudge
 from src.meta_evolution.referee import Referee
 from src.meta_evolution.meta_arena import MetaArena
 
-# -- Configuration -------------------------------------------------------------
 
 TARGET_AGENT = "src/agents/generator.py"
 BACKUP_PATH  = "src/agents/generator.py.test_backup"
 
-# Force-trigger: threshold=0.99 means 99% success rate required.
-# No real pipeline achieves this, so Watcher ALWAYS fires.
 FORCE_THRESHOLD = 0.99
 
 
-# -- Display Helpers -----------------------------------------------------------
 
 def banner(title: str):
     print(f"\n{'='*60}")
@@ -64,7 +59,6 @@ def step(n: int, label: str):
     print(f"\n[Stage {n}] -- {label} {'-'*(50 - len(label))}")
 
 
-# -- Main Test -----------------------------------------------------------------
 
 async def run_live_test():
     banner("META-EVOLUTION LIVE TEST")
@@ -74,14 +68,12 @@ async def run_live_test():
     print("\nA backup of generator.py will be kept. Press Ctrl+C at any time to abort.")
     time.sleep(2)
 
-    # Safety backup before we do anything
     shutil.copy2(TARGET_AGENT, BACKUP_PATH)
     print(f"\n[Safety] Backup saved -> {BACKUP_PATH}")
 
     client = EvoClient()
 
     try:
-        # -- Stage 1: Watcher --------------------------------------------------
         step(1, "Watcher — Checking rolling success rate")
         watcher = Watcher(
             reports_dir="structured_reports",
@@ -92,7 +84,6 @@ async def run_live_test():
         trigger: UpgradeTrigger | None = watcher.check()
 
         if trigger is None:
-            # If structured_reports is empty, manually create a trigger
             print("[Watcher] No reports found — creating a synthetic trigger.")
             trigger = UpgradeTrigger(
                 agent_file=TARGET_AGENT,
@@ -104,25 +95,21 @@ async def run_live_test():
         else:
             print(f"[Watcher] [PASS] Upgrade triggered! Rate={trigger.rolling_success_rate:.1%}")
 
-        # -- Stage 2: CloneBuilder ---------------------------------------------
         step(2, "CloneBuilder - Generating 2 upgrade proposals")
         builder = CloneBuilder(client)
         path_a, path_b = await builder.build(trigger)
         print(f"[CloneBuilder] [PASS] Proposal A: {path_a}")
         print(f"[CloneBuilder] [PASS] Proposal B: {path_b}")
 
-        # Show a preview of proposal A
         with open(path_a, "r", encoding="utf-8") as f:
             preview = f.read()[:300]
         print(f"\n[Preview - Proposal A (first 300 chars)]:\n{preview}...\n")
 
-        # -- Stage 3: SourceJudge ----------------------------------------------
         step(3, "SourceJudge - Two LLM judges voting on best proposal")
         judge = SourceJudge(client)
         winning_path = await judge.judge(TARGET_AGENT, path_a, path_b)
         print(f"[SourceJudge] [PASS] Winning proposal: {winning_path}")
 
-        # -- Stage 4: Referee --------------------------------------------------
         step(4, "Referee - Running safety checks on winning proposal")
         referee = Referee()
         with open(winning_path, "r", encoding="utf-8") as f:
@@ -140,7 +127,6 @@ async def run_live_test():
 
         print(f"[Referee] [PASS] Challenger passed all safety checks.")
 
-        # -- Stage 5: MetaArena ------------------------------------------------
         step(5, "MetaArena - Running the Fast Duel (this takes ~2 minutes)")
         print("[MetaArena] Spinning up Original vs. Challenger subprocesses...")
         print("[MetaArena] Both are given 1 problem, 1 generation each.")
@@ -150,7 +136,6 @@ async def run_live_test():
 
         watcher.record_upgrade_result(TARGET_AGENT, succeeded=result.challenger_won)
 
-        # -- Final Result ------------------------------------------------------
         banner("RESULT")
         print(f"  Original fitness:    {result.original_fitness:.4f}")
         print(f"  Challenger fitness:  {result.challenger_fitness:.4f}")

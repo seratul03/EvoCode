@@ -35,7 +35,6 @@ from src.meta_evolution import Watcher, CloneBuilder, SourceJudge, Referee, Meta
 from src.meta_evolution.watcher import UpgradeTrigger
 
 
-# ─── Problem Generation ───────────────────────────────────────────────────────
 
 PROBLEM_GENERATION_SYSTEM_PROMPT = """You are an expert competitive programming problem designer.
 Your job is to generate programming problems that are compatible with an automated evaluation sandbox.
@@ -199,14 +198,12 @@ async def generate_problems(client: EvoClient, n: int, start_id: int) -> list[di
             identical_problems.append(dup)
 
     if identical_problems:
-        # Space them out evenly across the final list
         spacing = max(1, len(final_list) // len(identical_problems))
         for i, p in enumerate(identical_problems):
             insert_idx = min(len(final_list), (i * spacing) + (spacing // 2))
             final_list.insert(insert_idx, p)
             print(f"  -> Injected Identical problem (Clone of '{p.get('title')}') at index {insert_idx}")
 
-    # Final ID assignment
     valid_problems = []
     attempt_id = start_id
     for p in final_list:
@@ -219,7 +216,6 @@ async def generate_problems(client: EvoClient, n: int, start_id: int) -> list[di
     return valid_problems
 
 
-# ─── Main Pipeline ────────────────────────────────────────────────────────────
 
 async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
                                   dataset_path: str = None,
@@ -237,7 +233,6 @@ async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
     print("       EvoCode Autonomous Self-Training Pipeline")
     print("=" * 60)
 
-    # 1. Docker health check
     if not memory_only:
         print("\n[System] Checking Docker status...")
         try:
@@ -251,22 +246,18 @@ async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
     client = EvoClient()
     memory_agent = MemoryHistorianAgent(client)
 
-    # ── Memory-Only Mode ──────────────────────────────────────────────────────
     if memory_only:
         print("\n[Autonomous] Running in --memory-only mode.")
         print("[Autonomous] Synthesizing memory from ALL un-processed structured reports...")
-        await memory_agent.synthesize_latest(n_reports=50)  # Process up to 50 unlogged reports
+        await memory_agent.synthesize_latest(n_reports=50)
         print("\n[Autonomous] Memory synthesis complete.")
         return
 
-    # ── Full Autonomous Pipeline ──────────────────────────────────────────────
-    # 2. Generate or Load problems
     if dataset_path:
         print(f"\n[Autonomous] Loading problems from dataset: {dataset_path}")
         try:
             with open(dataset_path, "r", encoding="utf-8") as f:
                 problems = json.load(f)
-            # Make sure it's a list
             if not isinstance(problems, list):
                 problems = [problems]
             problems = problems[:n_runs]
@@ -286,7 +277,6 @@ async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
     print(f"\n[Autonomous] Starting {actual_runs} autonomous run(s) with {n_gens} generation(s) each...")
     print("-" * 60)
 
-    # 3. Run EvoFlow on each problem
     import asyncio
 
     async def _process_run(run_idx, problem, skip_meta_evolution):
@@ -295,7 +285,6 @@ async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
         print(f"{'='*60}")
 
         try:
-            # Baseline overrides
             actual_pop_size = pop_size
             actual_n_gens = n_gens
             mode = "evolve"
@@ -352,15 +341,12 @@ async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
             
         return skip_meta_evolution
 
-    # Launch all problem runs concurrently
     tasks = [_process_run(run_idx, problem, skip_meta_evolution) for run_idx, problem in enumerate(problems)]
     results = await asyncio.gather(*tasks)
     
-    # If any run said to skip meta evolution, we skip it
     if any(results):
         skip_meta_evolution = True
 
-    # 4. Synthesize memory from ALL new reports generated during this session
     print(f"\n{'='*60}")
     print("  MEMORY SYNTHESIS PHASE")
     print(f"{'='*60}")
@@ -376,12 +362,10 @@ async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
     print(f"  Memory updated at: memory/agent_memory.txt")
     print("=" * 60)
 
-    # ── Meta-Evolution Phase ──────────────────────────────────────────────────
     if not skip_meta_evolution:
         await _run_meta_evolution_phase(client)
 
 
-# ─── Meta-Evolution Phase Function ───────────────────────────────────────────
 
 async def _run_meta_evolution_phase(client: EvoClient) -> None:
     """
@@ -409,15 +393,12 @@ async def _run_meta_evolution_phase(client: EvoClient) -> None:
     print(f"\n[Meta-Evolution] ⚠️  Upgrade triggered for: {trigger.agent_file}")
     print(f"[Meta-Evolution] Consecutive failures so far: {trigger.consecutive_upgrade_failures}")
 
-    # Step 1: Generate two proposals
     builder = CloneBuilder(client)
     path_a, path_b = await builder.build(trigger)
 
-    # Step 2: Judge votes
     judge = SourceJudge(client)
     winning_path = await judge.judge(trigger.agent_file, path_a, path_b)
 
-    # Step 3: Referee safety check
     referee = Referee()
     with open(winning_path, "r", encoding="utf-8") as f:
         winning_code = f.read()
@@ -430,7 +411,6 @@ async def _run_meta_evolution_phase(client: EvoClient) -> None:
         watcher.record_upgrade_result(trigger.agent_file, succeeded=False)
         return
 
-    # Step 4: Fast Duel
     arena = MetaArena()
     result = await arena.duel(trigger.agent_file, winning_path)
 
@@ -444,7 +424,6 @@ async def _run_meta_evolution_phase(client: EvoClient) -> None:
     print(f"{'='*60}")
 
 
-# ─── Entry Point ─────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

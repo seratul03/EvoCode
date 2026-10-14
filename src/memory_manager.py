@@ -76,7 +76,6 @@ class MemoryManager:
         """
         Record the evolution event in immutable storage and update lineage.
         """
-        # 1. Write immutable event JSON
         events_dir = cls._events_dir(event.agent_id)
         os.makedirs(events_dir, exist_ok=True)
         
@@ -84,7 +83,6 @@ class MemoryManager:
         with open(event_path, "w", encoding="utf-8") as f:
             json.dump(event.to_dict(), f, indent=2)
             
-        # 2. Update lineage graph
         cls._update_lineage(event)
 
     @classmethod
@@ -100,13 +98,11 @@ class MemoryManager:
             except json.JSONDecodeError:
                 pass
                 
-        # Ensure root hash exists if this is the first event
         if "root_hash" not in lineage:
             lineage["root_hash"] = event.parent_hash
             lineage["current_hash"] = event.parent_hash
             lineage["history"] = []
             
-        # Record the attempt
         attempt = {
             "event_id": event.event_id,
             "parent_hash": event.parent_hash,
@@ -116,7 +112,6 @@ class MemoryManager:
         }
         lineage["history"].append(attempt)
         
-        # If promoted, update current head
         if event.selection_decision.lower() == "promote":
             lineage["current_hash"] = event.candidate_hash
             
@@ -161,7 +156,6 @@ class MemoryManager:
                         event = json.load(f)
                         
                     if event.get("selection_decision") == "PROMOTE":
-                        # Check category if provided
                         trigger_data = event.get("trigger_data", {})
                         event_category = trigger_data.get("category", "general")
                         if category_filter and category_filter != event_category:

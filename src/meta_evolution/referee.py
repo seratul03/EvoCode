@@ -18,23 +18,16 @@ from pathlib import Path
 from typing import Optional
 
 
-# ── Approved import whitelist ─────────────────────────────────────────────────
-# These are the standard library + project packages currently in requirements.txt
-# and the project's own src/ package.
 ALLOWED_TOP_LEVEL_IMPORTS = {
-    # stdlib
     "os", "sys", "re", "json", "glob", "ast", "copy", "time", "math",
     "random", "pathlib", "typing", "dataclasses", "abc", "io", "logging",
     "hashlib", "asyncio", "functools", "itertools", "collections",
     "contextlib", "inspect", "importlib", "shutil", "subprocess",
     "textwrap", "traceback", "warnings", "weakref",
-    # project internals
     "src",
-    # approved third-party (from requirements.txt)
     "openai", "tenacity", "dotenv", "httpx", "pydantic",
 }
 
-# ── Safe path prefixes where file writes are permitted ────────────────────────
 SAFE_WRITE_PREFIXES = (
     "src/agents/",
     "src/meta_evolution/staging/",
@@ -69,24 +62,20 @@ class Referee:
         Runs all three checks in sequence.
         Returns the first failure found, or a passing verdict.
         """
-        # Rule 1: Syntax
         verdict = self._check_syntax(challenger_code)
         if not verdict.passed:
             return verdict
 
-        # Rule 2: Imports
         verdict = self._check_imports(challenger_code)
         if not verdict.passed:
             return verdict
 
-        # Rule 3: File paths
         verdict = self._check_paths(challenger_code)
         if not verdict.passed:
             return verdict
 
         return RefereeVerdict(passed=True, reason="All safety checks passed.")
 
-    # ── Rule 1: Syntax ────────────────────────────────────────────────────────
 
     def _check_syntax(self, code: str) -> RefereeVerdict:
         try:
@@ -98,7 +87,6 @@ class Referee:
                 reason=f"Syntax error at line {e.lineno}: {e.msg}"
             )
 
-    # ── Rule 2: Imports ───────────────────────────────────────────────────────
 
     def _check_imports(self, code: str) -> RefereeVerdict:
         try:
@@ -126,14 +114,12 @@ class Referee:
 
         return RefereeVerdict(passed=True, reason="Imports OK")
 
-    # ── Rule 3: Path checks ───────────────────────────────────────────────────
 
     def _check_paths(self, code: str) -> RefereeVerdict:
         """
         Uses regex to detect any open() call with a write mode ('w', 'a', 'x')
         that targets a path outside the safe zone.
         """
-        # Detect open() calls with write modes — captures the path string argument
         write_open_pattern = re.compile(
             r"""open\s*\(\s*(?:f?["']([^"']+)["']|([^,\)]+))\s*,\s*["'][wa]"""
         )
@@ -148,7 +134,6 @@ class Referee:
                         reason=f"Forbidden file write to path: '{literal_path}'. Writes are only allowed in src/agents/ and staging/."
                     )
 
-        # Also check for shutil.copy/move/rmtree targeting locked files
         locked_names_pattern = re.compile(
             r"(system_guard|sandbox|evoflow|arena)\.py"
         )

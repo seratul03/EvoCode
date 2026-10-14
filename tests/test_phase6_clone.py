@@ -5,7 +5,6 @@ import shutil
 from src.clone_manager import CloneManager, CandidateClone
 from src.genome import AgentGenome
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
 
 WORKSPACE_ROOT = "workspaces"
 
@@ -17,7 +16,6 @@ def _cleanup(*agent_ids):
             shutil.rmtree(path)
 
 
-# ── Tests ─────────────────────────────────────────────────────────────────────
 
 class TestCloneCreation:
 
@@ -31,12 +29,9 @@ class TestCloneCreation:
         }
         try:
             clone = CloneManager.create_candidate(agent_id, parent, hypothesis)
-            # Candidate must be a valid dataclass
             assert isinstance(clone, CandidateClone)
             assert clone.agent_id == agent_id
-            # The modification must be reflected
             assert clone.candidate_genome["reasoning"]["planning_strategy"] != clone.parent_genome["reasoning"]["planning_strategy"]
-            # Diff must capture the change
             assert "reasoning" in clone.diff or "planning_strategy" in str(clone.diff)
         finally:
             _cleanup(agent_id)
@@ -52,9 +47,7 @@ class TestCloneCreation:
         parent_snapshot_before = parent.model_dump()
         try:
             clone = CloneManager.create_candidate(agent_id, parent, hypothesis)
-            # The parent Python object must be unchanged
             assert parent.model_dump() == parent_snapshot_before
-            # The parent snapshot stored in the clone must equal the pre-mutation snapshot
             assert clone.parent_genome == parent_snapshot_before
         finally:
             _cleanup(agent_id)
@@ -70,7 +63,7 @@ class TestCloneCreation:
         try:
             clone = CloneManager.create_candidate(agent_id, parent, hypothesis)
             assert clone.parent_hash != clone.candidate_hash
-            assert len(clone.parent_hash) == 64   # sha256 hex
+            assert len(clone.parent_hash) == 64
         finally:
             _cleanup(agent_id)
 
@@ -84,7 +77,6 @@ class TestCloneCreation:
         }
         try:
             clone = CloneManager.create_candidate(agent_id, parent, hypothesis)
-            # Must be re-parseable as an AgentGenome without error
             reconstructed = AgentGenome(**clone.candidate_genome)
             assert reconstructed is not None
         finally:
@@ -105,7 +97,6 @@ class TestAccessPolicy:
         }
         try:
             clone = CloneManager.create_candidate(my_agent, parent, hypothesis)
-            # The candidate workspace must be inside my_agent's folder, not other_agent's
             assert my_agent in clone.workspace_path
             assert other_agent not in clone.workspace_path
         finally:
@@ -126,7 +117,6 @@ class TestAccessPolicy:
             meta_path = os.path.join(clone.workspace_path, "metadata.json")
             assert os.path.exists(genome_path)
             assert os.path.exists(meta_path)
-            # Verify the genome.json contains valid JSON matching the candidate
             with open(genome_path) as f:
                 on_disk = json.load(f)
             assert on_disk == clone.candidate_genome
@@ -181,14 +171,12 @@ class TestCandidateLifecycle:
             "target_component": "temperature"
         }
         try:
-            # First call — writes parent genome.json
             clone1 = CloneManager.create_candidate(agent_id, parent, hypothesis)
             parent_path = CloneManager._parent_genome_path(agent_id)
             with open(parent_path) as f:
                 first_write = json.load(f)
 
-            # Second call — parent genome.json must remain unchanged
-            parent2 = AgentGenome(temperature=0.9)   # different object
+            parent2 = AgentGenome(temperature=0.9)
             clone2 = CloneManager.create_candidate(agent_id, parent2, hypothesis)
             with open(parent_path) as f:
                 second_write = json.load(f)

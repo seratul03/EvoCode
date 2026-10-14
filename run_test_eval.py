@@ -49,7 +49,6 @@ def find_latest_report(condition_mode: str) -> dict | None:
     if not matching:
         return None
 
-    # Sort by end_time descending and pick the most recent
     matching.sort(key=lambda x: x[1].get("end_time", ""), reverse=True)
     return matching[0][1]
 
@@ -79,7 +78,6 @@ async def main():
     print("EvoCode -- Layer 4: Held-Out Test Evaluation")
     print("=" * 70)
 
-    # Load test problems
     if not os.path.exists(TEST_PROBLEMS_PATH):
         print(f"ERROR: {TEST_PROBLEMS_PATH} not found.")
         return
@@ -107,7 +105,6 @@ async def main():
 
         print(f"  Best genome found: {genome_config}")
 
-        # Determine pop_size from the report
         pop_size = report.get("pop_size", 1)
 
         orchestrator = EvoFlowOrchestrator(pop_size=pop_size)
@@ -124,7 +121,6 @@ async def main():
 
         all_results.append(eval_result)
 
-    # Save combined test eval report
     os.makedirs(REPORT_DIR, exist_ok=True)
     now = datetime.now()
     filename = now.strftime("test_eval_%d%m%Y_%H-%M-%S.json")

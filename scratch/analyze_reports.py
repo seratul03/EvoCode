@@ -144,6 +144,5 @@ for r in reports_summary:
             sel_str = f" | Selection: {g['sel']}" if g['sel'] else ""
             print(f"        Gen {g['gid']}: {g['evals']} cands, MaxFit={g['max_fit']:.4f}, AvgFit={g['avg_fit']:.4f}{sel_str}")
 
-# Save json analysis report for clean formatted display
 with open("scratch/analysis_summary.json", "w", encoding="utf-8") as f:
     json.dump(reports_summary, f, indent=2)

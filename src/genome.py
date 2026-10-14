@@ -37,15 +37,12 @@ class AgentGenome(BaseGenome):
     agent_id: str | None = Field(default=None, description="Unique identifier for the agent lineage (e.g., 'EVO_PY').")
     version: str = Field(default="v1.0", description="Version identifier of the agent.")
     
-    # The 5 Gene Groups
     reasoning: ReasoningGenes = Field(default_factory=ReasoningGenes)
     coding: CodingGenes = Field(default_factory=CodingGenes)
     verification: VerificationGenes = Field(default_factory=VerificationGenes)
     learning: LearningGenes = Field(default_factory=LearningGenes)
     evolution: EvolutionGenes = Field(default_factory=EvolutionGenes)
     
-    # Retained fields from legacy GeneratorGenome that are still needed for EvoFlow integration temporarily,
-    # or that can be migrated into memory properly later.
     system_instruction_variant: str = Field(default="standard", description="Variant of the system instruction: 'standard', 'expert_coder', 'pedantic_reviewer'.")
     temperature: float = Field(default=0.5, ge=0.0, le=1.0, description="LLM temperature setting.")
     past_code: str | None = Field(default=None, description="Previous code attempt (for reflection).")

@@ -79,7 +79,7 @@ class SourceJudge:
             if verdict in votes:
                 votes[verdict] += 1
             else:
-                votes["A"] += 1  # Malformed verdict → conservative default
+                votes["A"] += 1
 
         winner = "A" if votes["A"] >= votes["B"] else "B"
         winning_path = proposal_a_path if winner == "A" else proposal_b_path
@@ -97,7 +97,7 @@ class SourceJudge:
                 {"role": "system", "content": JUDGE_SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt},
             ],
-            temperature=0.0,  # deterministic — we want principled judgement, not creativity
+            temperature=0.0,
         )
         verdict = self._extract_verdict(response["content"])
         print(f"[SourceJudge] Judge {judge_id} voted: {verdict}")
@@ -118,4 +118,4 @@ class SourceJudge:
         match = re.search(r"VERDICT:\s*([AB])", response, re.IGNORECASE)
         if match:
             return match.group(1).upper()
-        return "A"  # Default to conservative choice if parsing fails
+        return "A"

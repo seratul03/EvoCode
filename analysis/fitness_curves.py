@@ -14,9 +14,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 
-matplotlib.use("Agg")  # Non-interactive backend for saving to file
+matplotlib.use("Agg")
 
-# ─── Configuration ────────────────────────────────────────────────────
 REPORT_DIR = os.path.join(os.path.dirname(__file__), "..", "structured_reports")
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "results", "plots")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -29,13 +28,13 @@ FILES = {
 }
 
 COLORS = {
-    "Baseline A\n(Zero-Shot)":        "#6c757d",   # Grey
-    "Baseline B\n(Static Reflection)": "#dc3545",   # Red
-    "Baseline C\n(Random Mutation)":   "#fd7e14",   # Orange
-    "EvoCode\n(Co-Evolution)":         "#0d6efd",   # Blue
+    "Baseline A\n(Zero-Shot)":        "#6c757d",
+    "Baseline B\n(Static Reflection)": "#dc3545",
+    "Baseline C\n(Random Mutation)":   "#fd7e14",
+    "EvoCode\n(Co-Evolution)":         "#0d6efd",
 }
 
-MAX_GENS = 10  # Maximum generations any run can have
+MAX_GENS = 10
 
 
 def extract_fitness_curves(data):
@@ -74,7 +73,6 @@ def pad_and_average(curves, max_gens):
     return arr.mean(axis=0), arr.std(axis=0)
 
 
-# ─── Plot ─────────────────────────────────────────────────────────────
 fig, ax = plt.subplots(figsize=(10, 6))
 fig.patch.set_facecolor("#0d1117")
 ax.set_facecolor("#161b22")

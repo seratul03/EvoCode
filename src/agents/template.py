@@ -66,8 +66,6 @@ class TemplateAgent:
         function_signature = problem.get("function_signature", "")
 
         if function_signature:
-            # Use the exact signature from the problem data — this ensures the
-            # generated code matches what the test harness expects to call.
             user_prompt = (
                 f"Problem: {title}\n\n"
                 f"{description}\n\n"
@@ -89,14 +87,13 @@ class TemplateAgent:
                 {"role": "system", "content": system_prompt},
                 {"role": "user",   "content": user_prompt},
             ],
-            temperature=0.0,   # We want deterministic, consistent signatures
+            temperature=0.0,
             max_tokens=512,
         )
 
         raw = response.get("content", "")
         return self._parse(raw)
 
-    # ─── Parsing ──────────────────────────────────────────────────────────────
 
     def _parse(self, raw: str) -> dict:
         """
@@ -122,9 +119,6 @@ class TemplateAgent:
             return match.group(1).strip()
         return ""
 
-    # ─── Safe Defaults ────────────────────────────────────────────────────────
-    # Used when the LLM fails to produce a parseable block.
-    # These are generic stubs that the GeneratorAgent can always fill.
 
     @staticmethod
     def _default_python() -> str:

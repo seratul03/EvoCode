@@ -18,7 +18,6 @@ import string
 from typing import Any
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 
-# Sentinel object returned by _safe_call when the reference solution times out.
 _TIMEOUT_SENTINEL = object()
 
 
@@ -28,9 +27,6 @@ class TestAugmentor:
     Produces a target of `target_count` total tests (default 20).
     """
 
-    # -------------------------------------------------------------------------
-    # Public API
-    # -------------------------------------------------------------------------
 
     def augment_problem(self, problem: dict, target_count: int = 20) -> dict:
         """
@@ -44,8 +40,6 @@ class TestAugmentor:
         func_sig: str = problem.get("function_signature", "")
         ref_solution: str = problem.get("reference_solution", "")
 
-        # Skip class-based problems (e.g. MinStack) -- we can't auto-generate
-        # method-call sequences from a single function signature.
         if func_sig.strip().startswith("class"):
             return problem
 
@@ -55,10 +49,9 @@ class TestAugmentor:
         if not func_name or not ref_solution or not params:
             return problem
 
-        # Execute the reference solution in a safe namespace
         ns: dict = {}
         try:
-            exec(ref_solution, ns)  # noqa: S102
+            exec(ref_solution, ns)
         except Exception:
             return problem
 
@@ -66,7 +59,6 @@ class TestAugmentor:
         if not callable(ref_func):
             return problem
 
-        # Seed RNG per problem ID for deterministic augmentation
         rng = random.Random(problem.get("id", 0) * 31337)
 
         existing_inputs: set[str] = {t["input"] for t in existing_tests}
@@ -77,7 +69,6 @@ class TestAugmentor:
         attempts: int = 0
         max_attempts: int = needed * 20
 
-        # Generate in four passes to ensure diversity
         generators = [
             lambda: self._generate_normal(params, rng),
             lambda: self._generate_edge(params, rng),
@@ -98,7 +89,7 @@ class TestAugmentor:
 
                 expected = self._safe_call(ref_func, args, timeout=1.0)
                 if expected is _TIMEOUT_SENTINEL:
-                    continue  # skip inputs that cause reference to hang
+                    continue
 
                 new_tests.append({
                     "id": next_id,
@@ -114,9 +105,6 @@ class TestAugmentor:
         augmented["tests"] = existing_tests + new_tests
         return augmented
 
-    # -------------------------------------------------------------------------
-    # Signature Parsing
-    # -------------------------------------------------------------------------
 
     def _safe_call(self, func, args: list, timeout: float = 1.0):
         """
@@ -154,39 +142,32 @@ class TestAugmentor:
             params.append({"name": name.strip(), "type": hint.lower()})
         return params
 
-    # -------------------------------------------------------------------------
-    # Value Generators
-    # -------------------------------------------------------------------------
 
     def _generate_value(self, type_hint: str, rng: random.Random,
                         mode: str = "normal") -> Any:
         """Dispatch to the correct generator based on type hint and mode."""
         th = type_hint.lower()
 
-        # Integers
         if th in ("int", "integer") or th.startswith("optional[int"):
             ranges = {
                 "normal":      (-50, 50),
-                "edge":        (0, 0),    # handled below with specific edge values
+                "edge":        (0, 0),
                 "adversarial": (-20, 20),
-                "stress":      (0, 20),   # safe cap: handles recursion/DP without blowup
+                "stress":      (0, 20),
             }
             lo, hi = ranges.get(mode, (-50, 50))
             if mode == "edge":
                 return rng.choice([0, 1, -1, 2, -2])
             return rng.randint(lo, hi)
 
-        # Floats
         if "float" in th:
             if mode == "edge":
                 return rng.choice([0.0, 1.0, -1.0])
             return round(rng.uniform(-100.0, 100.0), 2)
 
-        # Booleans
         if "bool" in th:
             return rng.choice([True, False])
 
-        # Strings
         if th in ("str", "string") or (th.startswith("str") and "[" not in th):
             if mode == "edge":
                 return rng.choice(["", "a", " ", "aaaa"])
@@ -194,7 +175,6 @@ class TestAugmentor:
             charset = string.ascii_lowercase + "0123456789"
             return "".join(rng.choices(charset, k=length))
 
-        # List[int]
         if "list[int]" in th or th == "list[int]":
             size = {"normal": (2, 10), "edge": (0, 2),
                     "adversarial": (2, 8), "stress": (15, 30)}.get(mode, (2, 10))
@@ -204,41 +184,34 @@ class TestAugmentor:
             lo, hi = (-10, 10) if mode == "normal" else (-1000, 1000)
             vals = [rng.randint(lo, hi) for _ in range(n)]
             if mode == "adversarial":
-                # Duplicate-heavy to stress hash-map / set solutions
                 seed_val = rng.randint(-5, 5)
                 vals = [seed_val] * (n // 2) + [rng.randint(-10, 10) for _ in range(n - n // 2)]
                 rng.shuffle(vals)
             return vals
 
-        # List[str]
         if "list[str]" in th:
             size = rng.randint(1, 6) if mode != "stress" else rng.randint(20, 50)
             length = 4 if mode != "stress" else 10
             return ["".join(rng.choices(string.ascii_lowercase, k=rng.randint(1, length)))
                     for _ in range(size)]
 
-        # List[List[int]] / matrix
         if "list[list" in th:
             rows = rng.randint(1, 4)
             cols = rng.randint(1, 4)
             return [[rng.randint(0, 9) for _ in range(cols)] for _ in range(rows)]
 
-        # Generic list fallback
         if "list" in th:
             size = rng.randint(1, 8)
             return [rng.randint(-20, 20) for _ in range(size)]
 
-        # Dict
         if "dict" in th:
             size = rng.randint(1, 5)
             return {"".join(rng.choices(string.ascii_lowercase, k=3)): rng.randint(0, 10)
                     for _ in range(size)}
 
-        # Tuple
         if "tuple" in th:
             return tuple(rng.randint(-10, 10) for _ in range(2))
 
-        # Fallback: return a small int
         return rng.randint(0, 10)
 
     def _generate_args(self, params: list[dict], rng: random.Random,

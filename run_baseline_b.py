@@ -9,7 +9,6 @@ async def main():
         
     print(f"Starting EvoFlow on all training problems.")
     
-    # Baseline B: Static reflection, 1 agent per generation, 10 generations
     orchestrator = EvoFlowOrchestrator(pop_size=1)
     await orchestrator.run_generations(num_generations=10, problems=problems, mode="baseline_b")
     print("Run completed successfully.")

@@ -1,7 +1,6 @@
 import sys
 import os
 
-# Add src to path so we can import sandbox
 sys.path.append(os.path.abspath('src'))
 from sandbox import Sandbox
 

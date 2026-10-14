@@ -24,7 +24,6 @@ from src.cloning.utils import (
     infer_modification_value
 )
 
-# ── Control-plane directories that a candidate can never write to ────────────
 _FORBIDDEN_PREFIXES = [
     "src",
     "tests",
@@ -91,7 +90,6 @@ class CloneManager:
         parent_snapshot = parent_genome.model_dump()
         candidate_snapshot = parent_genome.model_copy(deep=True).model_dump()
 
-        # ── Step 5: Apply the hypothesis modification ─────────────────────────
         target_component = hypothesis.get("target_component", "")
         modification_applied = False
 
@@ -108,7 +106,6 @@ class CloneManager:
                 min(1.0, current_temp + 0.15), 4
             )
 
-        # ── Step 8: Structural validation ─────────────────────────────────────
         try:
             AgentGenome(**candidate_snapshot)
         except Exception as e:
@@ -116,12 +113,10 @@ class CloneManager:
                 f"[CloneManager] Candidate genome failed structural validation: {e}"
             )
 
-        # ── Compute hashes and diff ───────────────────────────────────────────
         parent_hash = sha256(parent_snapshot)
         candidate_hash = sha256(candidate_snapshot)
         diff = compute_diff(parent_snapshot, candidate_snapshot)
 
-        # ── Write to disk ─────────────────────────────────────────────────────
         candidate_dir = cls._candidate_dir(agent_id, candidate_id)
         cls._enforce_isolation(
             os.path.join(candidate_dir, "genome.json"), agent_id

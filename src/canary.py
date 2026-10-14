@@ -14,10 +14,8 @@ class CanaryPipeline:
         self.client = client
         self.sandbox = Sandbox(timeout_seconds=60)
         
-        # Load baseline problems
         with open("data/train_problems.json", "r", encoding="utf-8") as f:
             all_problems = json.load(f)
-            # Pick 2 fast, simple problems for the canary suite (e.g., Two Sum)
             self.canary_suite = all_problems[:2]
             
     async def validate_mutation(self, proposed_genome: AgentGenome, language: str = "Python") -> bool:
@@ -27,7 +25,6 @@ class CanaryPipeline:
         """
         print(f"    [Canary] Validating proposed mutation ({proposed_genome.reasoning.planning_strategy}, temp={proposed_genome.temperature:.2f})...")
         
-        # Create a temporary agent
         agent = GeneratorAgent(self.client, language=language)
         
         for problem in self.canary_suite:
@@ -40,7 +37,6 @@ class CanaryPipeline:
                     template=problem.get("function_signature")
                 )
                 
-                # The mutation must result in code that completely solves the basic problem
                 if test_results["passed_tests"] < test_results["total_tests"]:
                     print(f"      [Canary] Failed on '{problem['title']}'. Mutation rejected.")
                     return False

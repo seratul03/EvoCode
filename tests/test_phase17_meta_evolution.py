@@ -18,7 +18,6 @@ from src.meta_evolution.watcher import Watcher, UpgradeTrigger
 from src.meta_evolution.referee import Referee, RefereeVerdict
 
 
-# ─── Helpers ──────────────────────────────────────────────────────────────────
 
 def _make_report(passed: int, total: int, tmpdir: str, filename: str) -> str:
     """Create a minimal structured report JSON with one problem and one evaluation."""
@@ -51,14 +50,12 @@ def _make_report(passed: int, total: int, tmpdir: str, filename: str) -> str:
     return path
 
 
-# ─── Watcher Tests ────────────────────────────────────────────────────────────
 
 class TestWatcher:
 
     def test_healthy_returns_none(self, tmp_path):
         """If success rate >= threshold, Watcher returns None."""
         d = str(tmp_path)
-        # 8 out of 10 problems solved → 80% success rate
         for i in range(8):
             _make_report(5, 5, d, f"report_{i:03d}.json")
         for i in range(8, 10):
@@ -71,7 +68,6 @@ class TestWatcher:
     def test_degraded_returns_trigger(self, tmp_path):
         """If success rate < threshold, Watcher returns an UpgradeTrigger."""
         d = str(tmp_path)
-        # 3 out of 10 problems solved → 30% success rate
         for i in range(3):
             _make_report(5, 5, d, f"report_{i:03d}.json")
         for i in range(3, 10):
@@ -96,7 +92,6 @@ class TestWatcher:
             _make_report(0, 5, d, f"report_{i:03d}.json")
 
         watcher = Watcher(reports_dir=d, threshold=0.50, window=10, max_failures=2)
-        # Simulate 2 failed upgrades
         watcher._consecutive_failures["generator.py"] = 2
 
         trigger = watcher.check()
@@ -117,7 +112,6 @@ class TestWatcher:
         assert watcher._consecutive_failures.get("generator.py", 0) == 2
 
 
-# ─── Referee Tests ────────────────────────────────────────────────────────────
 
 class TestReferee:
 
@@ -183,7 +177,6 @@ class TestReferee:
                     f.write('# upgraded')
         """)
         verdict = self.referee.inspect(code)
-        # Writing to src/agents/ is allowed
         assert verdict.passed, verdict.reason
 
     def test_unsafe_write_fails(self):

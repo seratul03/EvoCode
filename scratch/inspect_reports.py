@@ -30,7 +30,6 @@ for label, path in files.items():
         p_id = p.get('problem_id', p.get('task_id', p.get('id', f'Problem_{p_idx+1}')))
         print(f"\n  --- Problem {p_idx+1}: {p_id} ---")
         
-        # Summary metrics on problem level if any
         for k, v in p.items():
             if k not in ['generations', 'prompt_history', 'candidates', 'history', 'problem_data']:
                 print(f"    {k}: {v}")

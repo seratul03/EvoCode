@@ -9,7 +9,6 @@ async def main():
         
     print(f"Starting EvoFlow on all training problems.")
     
-    # Baseline C: Random mutation, 5 agents per generation, 6 generations
     orchestrator = EvoFlowOrchestrator(pop_size=5)
     await orchestrator.run_generations(num_generations=6, problems=problems, mode="baseline_c")
     print("Run completed successfully.")
