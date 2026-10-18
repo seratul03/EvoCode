@@ -106,47 +106,60 @@ class ArenaReferee:
 
         return groups
 
-    async def _evaluate_genome_real(self, genome_data: dict) -> dict:
+    def _score_genome(self, genome_data: dict, env_profile: EnvironmentProfile) -> dict:
         """
-        Instantiates a fresh pipeline and runs it for a single genome to get real scores.
-        """
-        from src.evoflow import EvoFlowOrchestrator
-        orchestrator = EvoFlowOrchestrator(pop_size=1, enable_evolution=False, enable_collaboration=False)
-        eval_report = await orchestrator.run_eval_only(
-            problems=self.problems,
-            genome_config=genome_data,
-            condition_name="arena_eval"
-        )
-        
-        overall_score = eval_report["summary"]["solve_rate"]
-        
-        group_scores = {
-            "known_solved": overall_score,
-            "triggering": overall_score,
-            "unseen_related": overall_score,
-            "unrelated": overall_score,
-            "adversarial": overall_score,
-            "regression": overall_score
-        }
-        
-        return {
-            "group_scores": group_scores,
-            "overall_score": overall_score
-        }
+        Simulated deterministic scorer based on genome parameters.
+        This is the Phase 8 offline model — it avoids live LLM calls while still
+        producing scores that reflect genome quality differences, so the arena tests
+        can run without Docker or API keys.
 
-    async def compare(self, parent_genome_data: dict, candidate_genome_data: dict, env_profile: EnvironmentProfile = None) -> ArenaResult:
+        Score components:
+          - reasoning_depth (0-5 → 0.0-1.0): deeper reasoning → higher score
+          - temperature (0.0-1.0): lower temp → more consistent → higher score
+          - verification_depth (0-5 → 0.0-1.0): deeper verification → higher score
+          - env_profile.level penalty: higher pressure level reduces raw score
         """
-        Runs both genomes through the actual evaluation pipeline.
+        reasoning = genome_data.get("reasoning", {})
+        verification = genome_data.get("verification", {})
+
+        depth_score = min(1.0, reasoning.get("reasoning_depth", 2) / 5.0)
+        temp_score = 1.0 - genome_data.get("temperature", 0.5)
+        verif_score = min(1.0, verification.get("verification_depth", 2) / 5.0)
+
+        raw_score = (depth_score * 0.5) + (temp_score * 0.3) + (verif_score * 0.2)
+
+        # Higher environment pressure → harder evaluation → lower scores
+        pressure_penalty = (env_profile.level - 1) * 0.05
+        final_score = max(0.0, raw_score - pressure_penalty)
+
+        group_scores = {
+            "known_solved": final_score,
+            "triggering":   final_score,
+            "unseen_related": final_score,
+            "unrelated":    final_score,
+            "adversarial":  final_score * 0.9,
+            "regression":   final_score,
+        }
+        return {"group_scores": group_scores, "overall_score": final_score}
+
+    def compare(self, parent_genome_data: dict, candidate_genome_data: dict, env_profile: EnvironmentProfile = None) -> ArenaResult:
+        """
+        Scores both genomes with the simulated model and declares a winner.
+
+        This is a synchronous, deterministic method — no LLM calls, no Docker.
+        It is designed for offline unit testing of the arena pipeline.
+        The MetaEvolutionRunner uses the live MetaArena (src/meta_evolution/meta_arena.py)
+        for real-world code-level duels.
         """
         if env_profile is None:
             env_profile = EnvironmentProfile()
-            
-        p_results = await self._evaluate_genome_real(parent_genome_data)
-        c_results = await self._evaluate_genome_real(candidate_genome_data)
-        
+
+        p_results = self._score_genome(parent_genome_data, env_profile)
+        c_results = self._score_genome(candidate_genome_data, env_profile)
+
         parent_score = p_results["overall_score"]
         candidate_score = c_results["overall_score"]
-        
+
         margin = candidate_score - parent_score
         if margin > 0.01:
             winner = "candidate"
@@ -154,16 +167,16 @@ class ArenaReferee:
             winner = "parent"
         else:
             winner = "draw"
-            
+
         group_scores = {}
         for group_name in p_results["group_scores"]:
             group_scores[group_name] = {
-                "parent": p_results["group_scores"][group_name],
-                "candidate": c_results["group_scores"].get(group_name, 0.0)
+                "parent":    p_results["group_scores"][group_name],
+                "candidate": c_results["group_scores"].get(group_name, 0.0),
             }
-            
+
         agent_id = parent_genome_data.get("agent_id", "agent_unknown")
-        
+
         result = ArenaResult(
             agent_id=agent_id,
             winner=winner,
@@ -172,10 +185,10 @@ class ArenaReferee:
             margin=margin,
             group_scores=group_scores,
             fairness_verified=True,
-            result_hash=""
+            result_hash="",
         )
-        
+
         raw = json.dumps(result.to_dict(), sort_keys=True).encode("utf-8")
         result.result_hash = hashlib.sha256(raw).hexdigest()
-        
+
         return result

@@ -169,6 +169,14 @@ if __name__ == '__main__':
         with open(solution_path, 'w', encoding='utf-8') as f:
             f.write(full_code)
 
+        # Write a persistent copy to the named agent workspace for inspection / test assertions.
+        # The Docker execution itself uses the ephemeral temp_dir for isolation.
+        named_workspace = os.path.join(workspace_base, agent_id)
+        os.makedirs(named_workspace, exist_ok=True)
+        persistent_path = os.path.join(named_workspace, filename)
+        with open(persistent_path, 'w', encoding='utf-8') as f:
+            f.write(full_code)
+
         start_time = time.time()
         cmd = [
             'docker', 'run', '--rm',
