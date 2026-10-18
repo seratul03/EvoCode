@@ -16,6 +16,9 @@ from src.agents.mutator import MutatorAgent
 from src.agents.bugfixer import EvoFixerAgent
 from src.agents.template import TemplateAgent
 from src.agents.hypothesis_engine import HypothesisEngine
+from src.agents.architect import ArchitectAgent
+from src.agents.reviewer import ReviewerAgent
+from src.agents.optimizer import OptimizerAgent
 from src.canary import CanaryPipeline
 
 from src.genome import AgentGenome, CriticGenome, MutatorGenome, EvaluatorGenome
@@ -38,7 +41,7 @@ class EvoFlowOrchestrator:
     The main orchestrator for the Co-Evolutionary system.
     Manages the 4 populations, runs the generations, and records everything via EventLogger and JSON run logs.
     """
-    def __init__(self, pop_size=3, enable_evolution=True, enable_collaboration=True, enable_memory=True, single_agent_mode=False, disable_critic=False, disable_property_testing=False, disable_mutation=False):
+    def __init__(self, pop_size=3, enable_evolution=True, enable_collaboration=True, enable_memory=True, single_agent_mode=False, disable_critic=False, disable_property_testing=False, disable_mutation=False, enable_architect=True, enable_reviewer=True, enable_optimizer=True):
         self.client = EvoClient()
         self.logger = EventLogger()
         self.sandbox = Sandbox(timeout_seconds=60)
@@ -53,6 +56,9 @@ class EvoFlowOrchestrator:
         self.disable_critic = disable_critic
         self.disable_property_testing = disable_property_testing
         self.disable_mutation = disable_mutation
+        self.enable_architect = enable_architect
+        self.enable_reviewer = enable_reviewer
+        self.enable_optimizer = enable_optimizer
 
         if self.single_agent_mode:
             self.agent_names = ["Evo_py"]
@@ -93,6 +99,11 @@ class EvoFlowOrchestrator:
         self.mutator = MutatorAgent(self.client)
         self.evo_fixer = EvoFixerAgent(self.client)
         self.canary_pipeline = CanaryPipeline(self.client)
+
+        # Agency layer agents (Phase Step 2)
+        self.architect = ArchitectAgent(self.client)
+        self.reviewer = ReviewerAgent(self.client)
+        self.optimizer = OptimizerAgent(self.client)
 
         self.pop_size = pop_size 
 

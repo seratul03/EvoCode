@@ -32,7 +32,7 @@ class GeneratorAgent:
                       If provided, the generator is asked to fill in ONLY the body.
                       The generator has no knowledge of how the template was created.
         """
-        system_prompt = self._build_system_prompt(genome)
+        system_prompt = self._build_system_prompt(genome, problem)
         user_prompt = self._build_user_prompt(problem, genome, template)
 
         response = await self.client.create_completion(
@@ -44,7 +44,7 @@ class GeneratorAgent:
         )
         return self._extract_code(response["content"])
 
-    def _build_system_prompt(self, genome: AgentGenome) -> str:
+    def _build_system_prompt(self, genome: AgentGenome, problem: dict | None = None) -> str:
         base_prompt = f"You are an expert software engineer specializing in {self.language}.\n"
         invalid_rule = self._get_invalid_input_instruction()
 
@@ -70,7 +70,17 @@ class GeneratorAgent:
         prompt = base_prompt + core
 
         if self.enable_memory:
-            recent_memory = MemoryHistorianAgent.load_memory(max_entries=5)
+            query = f"{problem.get('title', '')} {problem.get('description', '')}" if problem else None
+            learning = getattr(genome, "learning", None)
+            strategy = getattr(learning, "memory_retrieval_strategy", "similarity_search") if learning else "similarity_search"
+            prioritization = getattr(learning, "experience_prioritization", "balanced") if learning else "balanced"
+
+            recent_memory = MemoryHistorianAgent.load_memory(
+                max_entries=5,
+                query=query,
+                strategy=strategy,
+                prioritization=prioritization
+            )
             if recent_memory:
                 prompt += (
                     "\n\n--- GLOBAL AGENT MEMORY (Lessons from Past Runs) ---\n"
@@ -108,6 +118,15 @@ class GeneratorAgent:
                 "4. If writing Java, your public class MUST be named exactly `Solution`.\n"
                 "5. If writing C++, do NOT include a main() function, and your solution "
                 "function MUST be named exactly `solve`.\n\n"
+            )
+
+        if problem.get("architect_plan"):
+            plan = problem["architect_plan"]
+            prompt += (
+                "--- ARCHITECTURAL PLAN ---\n"
+                f"{plan}\n"
+                "--- END OF PLAN ---\n"
+                "Follow the algorithmic strategy above to structure your solution.\n\n"
             )
 
         in_cache_loop = genome.critic_feedback and "break_cache_loop" in genome.critic_feedback

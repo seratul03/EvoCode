@@ -37,7 +37,7 @@ class FitnessScorer:
         self.complexity = ComplexityEvaluator()
         self.robustness = RobustnessEvaluator()
 
-    def calculate_fitness(self, code: str, test_results: dict, genome: EvaluatorGenome, pop_stats: dict = None) -> dict:
+    def calculate_fitness(self, code: str, test_results: dict, genome: EvaluatorGenome, pop_stats: dict = None, language: str = "Python") -> dict:
         """
         Returns a dict with 'fitness_value' (float in [0, 1]) and 'breakdown' (dict).
 
@@ -55,8 +55,8 @@ class FitnessScorer:
             "runtime":    self.runtime.score(test_results, genome, pop_stats),
             "memory":     self.memory.score(test_results, genome, pop_stats),
             "efficiency": self.efficiency.score(code, test_results, genome),
-            "complexity": self.complexity.score(code, genome),
-            "robustness": self.robustness.score(code, genome),
+            "complexity": self.complexity.score(code, genome, language=language),
+            "robustness": self.robustness.score(code, genome, language=language),
         }
 
         quality_score = sum(
@@ -75,3 +75,19 @@ class FitnessScorer:
                 **{k: round(v, 4) for k, v in quality_scores.items()},
             },
         }
+
+
+_default_scorer = FitnessScorer()
+
+def calculate_fitness(
+    code: str,
+    test_results: dict,
+    genome: EvaluatorGenome | None = None,
+    pop_stats: dict | None = None,
+    language: str = "Python"
+) -> dict:
+    """Convenience module-level function for calculating fitness."""
+    if genome is None:
+        genome = EvaluatorGenome(agent_id="eval_default", generation_id=0)
+    return _default_scorer.calculate_fitness(code, test_results, genome, pop_stats, language=language)
+

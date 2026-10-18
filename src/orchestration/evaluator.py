@@ -3,6 +3,7 @@ import ast
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.evoflow import EvoFlowOrchestrator
+from src.genome import AgentGenome
 
 def _normalize_code(code: str) -> str:
     try:
@@ -31,6 +32,21 @@ class EvoEvaluator:
         code = await generator.solve(problem, gen_genome, template=template)
         safe_code = code[:100].replace(chr(10), ' ').encode('ascii', 'replace').decode('ascii')
         print(f"      [Code Generated] (Truncated): {safe_code}...")
+
+        if getattr(self.orchestrator, "enable_reviewer", True) and hasattr(self.orchestrator, "reviewer"):
+            try:
+                review_res = await self.orchestrator.reviewer.review(
+                    code, problem, generator.language, gen_genome
+                )
+                revised = review_res.get("revised_code")
+                if revised and revised.strip() != code.strip():
+                    issues_str = ", ".join(review_res.get("issues", [])) or "Static improvements"
+                    print(f"      [Reviewer] Pre-execution review revised code ({issues_str}).")
+                    code = revised
+                    safe_revised = code[:100].replace(chr(10), ' ').encode('ascii', 'replace').decode('ascii')
+                    print(f"      [Code Revised by Reviewer] (Truncated): {safe_revised}...")
+            except Exception as e:
+                print(f"      [Reviewer] Review failed ({e}). Proceeding with generated code.")
         
         problem_tests = problem.get("tests", [])
         if mode == "evolve":
@@ -97,6 +113,32 @@ class EvoEvaluator:
 
         passed = test_results["passed_tests"]
         total = test_results["total_tests"]
+
+        if passed == total and total > 0 and getattr(self.orchestrator, "enable_optimizer", True) and hasattr(self.orchestrator, "optimizer"):
+            try:
+                print("      [Optimizer] Code passed all tests. Attempting post-correctness optimization...")
+                opt_code = await self.orchestrator.optimizer.optimize(
+                    code, problem, generator.language, gen_genome
+                )
+                if opt_code and opt_code.strip() != code.strip():
+                    opt_agent_id = f"prob{problem_id}_gen{generation_id}_{agent_name}_optimized"
+                    opt_results = await asyncio.to_thread(
+                        self.orchestrator.sandbox.run,
+                        opt_code, all_tests,
+                        language=generator.language,
+                        template=template,
+                        agent_id=opt_agent_id
+                    )
+                    if opt_results.get("passed_tests") == total and len(opt_results.get("crash_tests", [])) == 0:
+                        print(f"      [Optimizer] \u2705 SUCCESS: Optimized code verified against test suite ({total}/{total}).")
+                        code = opt_code
+                        test_results = opt_results
+                        passed = test_results["passed_tests"]
+                        code_hash = hash((generator.language, _normalize_code(code), test_suite_repr))
+                    else:
+                        print(f"      [Optimizer] \u274c Optimization broke tests ({opt_results.get('passed_tests')}/{total}). Keeping original code.")
+            except Exception as e:
+                print(f"      [Optimizer] Optimization failed ({e}). Keeping original code.")
         self.orchestrator.logger.log_test_result(
             problem_id, generation_id, i,
             passed, total,
@@ -130,7 +172,7 @@ class EvoEvaluator:
         passed = test_results["passed_tests"]
         total = test_results["total_tests"]
         
-        fitness = self.orchestrator.fitness_scorer.calculate_fitness(code, test_results, eval_genome, pop_stats)
+        fitness = self.orchestrator.fitness_scorer.calculate_fitness(code, test_results, eval_genome, pop_stats, language=generator.language)
         self.orchestrator.logger.log_fitness("generator", i, generation_id, problem_id, fitness["fitness_value"], fitness)
         
         if len(test_results["crash_tests"]) == total and total > 0:
@@ -226,6 +268,19 @@ class EvoEvaluator:
 
         templates = problem.get("templates", {})
 
+        if getattr(self.orchestrator, "enable_architect", True) and hasattr(self.orchestrator, "architect") and "architect_plan" not in problem:
+            print("    [ArchitectAgent] Generating algorithmic plan...")
+            try:
+                rep_genome = self.orchestrator.pop_generator[0] if self.orchestrator.pop_generator else AgentGenome()
+                plan = await self.orchestrator.architect.plan(problem, rep_genome)
+                problem["architect_plan"] = plan or ""
+                if plan:
+                    preview = plan.splitlines()[0] if plan else ""
+                    print(f"      [Architect] Plan produced: {preview[:80]}...")
+            except Exception as e:
+                print(f"    [ArchitectAgent] Failed to generate plan: {e}. Continuing without plan.")
+                problem["architect_plan"] = ""
+
         import asyncio
         tasks = [
             self._generate_and_test(i, generation_id, problem, problem_id, templates, mode)
@@ -277,3 +332,18 @@ class EvoEvaluator:
             
         problem_report["generations"].append(gen_report)
         return generation_results, gen_report
+
+    async def evaluate_single_genome(self, i: int, generation_id: int, problem: dict, problem_id: int, templates: dict | None = None, mode: str = "evolve"):
+        if getattr(self.orchestrator, "enable_architect", True) and hasattr(self.orchestrator, "architect") and "architect_plan" not in problem:
+            try:
+                rep_genome = self.orchestrator.pop_generator[i] if i < len(self.orchestrator.pop_generator) else AgentGenome()
+                plan = await self.orchestrator.architect.plan(problem, rep_genome)
+                problem["architect_plan"] = plan or ""
+            except Exception:
+                problem["architect_plan"] = ""
+
+        phase1_res = await self._generate_and_test(i, generation_id, problem, problem_id, templates, mode)
+        code, test_results, validation, code_hash, is_cache_hit, cached_data = phase1_res
+        pop_stats = {"min_runtime": 0.0, "max_runtime": 1.0, "min_memory": 0.0, "max_memory": 1.0}
+        return self._score_and_critique(i, generation_id, problem_id, code, test_results, validation, code_hash, is_cache_hit, cached_data, pop_stats)
+

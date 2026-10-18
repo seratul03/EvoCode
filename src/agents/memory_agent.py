@@ -42,8 +42,9 @@ class MemoryHistorianAgent:
         "Be concise. Each entry must be under 300 words. Do NOT include raw JSON or code blocks."
     )
 
-    def __init__(self, client: EvoClient):
+    def __init__(self, client: EvoClient, memory_file: str = MEMORY_FILE, **kwargs):
         self.client = client
+        self.memory_file = kwargs.get("memory_path", kwargs.get("db_path", memory_file))
 
     async def synthesize_latest(self, n_reports: int = 3) -> str:
         """
@@ -204,46 +205,141 @@ class MemoryHistorianAgent:
                     logged.add(line.split(":", 1)[-1].strip())
         return logged
 
-    def _append_to_memory_file(self, entry_text: str, source_filename: str):
+    def _append_to_memory_file(self, entry_text: str, source_filename: str = "", memory_file: str | None = None):
         """
-        Appends a synthesized memory entry to the global memory file,
+        Appends a synthesized memory entry to the memory file,
         along with a hidden sentinel line for tracking which reports have been logged.
         """
-        os.makedirs(os.path.dirname(MEMORY_FILE), exist_ok=True)
-        with open(MEMORY_FILE, "a", encoding="utf-8") as f:
-            f.write(entry_text)
-            f.write(f"\n# SOURCE_REPORT:{source_filename}\n\n")
+        target = memory_file or getattr(self, "memory_file", MEMORY_FILE)
+        os.makedirs(os.path.dirname(os.path.abspath(target)), exist_ok=True)
+        with open(target, "a", encoding="utf-8") as f:
+            f.write(f"\n---\n{entry_text.strip()}\n---\n")
+            if source_filename:
+                f.write(f"# SOURCE_REPORT:{source_filename}\n\n")
 
-    @staticmethod
-    def load_memory(max_entries: int = 5) -> str:
+    def append_entry(self, entry_text: str, source_filename: str = ""):
+        """Convenience method to append an entry to the agent's memory file."""
+        self._append_to_memory_file(entry_text, source_filename)
+
+    @classmethod
+    def parse_memory_entries(cls, memory_file: str = MEMORY_FILE) -> list[str]:
+        """Parses all memory entries from the specified memory file."""
+        if not os.path.exists(memory_file):
+            return []
+        with open(memory_file, "r", encoding="utf-8") as f:
+            lines = [line for line in f.readlines() if not line.startswith("# SOURCE_REPORT:")]
+        full_text = "".join(lines).strip()
+        if not full_text:
+            return []
+        raw_segments = full_text.split("---")
+        return [seg.strip() for seg in raw_segments if seg.strip()]
+
+    @classmethod
+    def search_memory(
+        cls,
+        query: str,
+        max_entries: int = 5,
+        prioritization: str = "balanced",
+        memory_file: str = MEMORY_FILE
+    ) -> list[str]:
         """
-        Reads the content of `agent_memory.txt` and returns the most recent
-        memory entries as a single string.
+        Performs semantic vector search across historical memory passages
+        using TF-IDF cosine similarity with prioritization weighting.
 
         Args:
-            max_entries: Maximum number of memory entries to return. Entries are
-                         delimited by '---' separators in the file. Pass 0 to
-                         return all entries (full file, useful for analysis).
-                         Default is 5 to keep prompts within token budgets.
-
-        Returns:
-            A string containing the selected memory entries, or "" if the file
-            doesn't exist yet. Hidden sentinel comment lines are always stripped.
+            query: Problem description or keywords to match against.
+            max_entries: Maximum entries to return.
+            prioritization: 'balanced', 'successes', or 'failures'.
+            memory_file: Path to memory file to search.
         """
-        if not os.path.exists(MEMORY_FILE):
+        entries = cls.parse_memory_entries(memory_file=memory_file)
+        if not entries:
+            return []
+        if not query or not query.strip():
+            return entries[-max_entries:]
+
+        try:
+            from sklearn.feature_extraction.text import TfidfVectorizer
+            from sklearn.metrics.pairwise import cosine_similarity
+
+            vectorizer = TfidfVectorizer(
+                stop_words="english",
+                ngram_range=(1, 2),
+                token_pattern=r"(?u)\b\w+\b"
+            )
+            corpus = entries + [query]
+            tfidf_matrix = vectorizer.fit_transform(corpus)
+
+            doc_vectors = tfidf_matrix[:-1]
+            query_vector = tfidf_matrix[-1:]
+
+            similarities = cosine_similarity(query_vector, doc_vectors)[0]
+
+            scored_entries = []
+            for idx, entry in enumerate(entries):
+                sim = float(similarities[idx])
+                is_solved = "Result: SOLVED" in entry or "RESULT: SOLVED" in entry or "Result: Solved" in entry
+                
+                # Apply prioritization bonuses
+                if prioritization == "successes" and is_solved:
+                    sim += 0.25
+                elif prioritization == "failures" and not is_solved:
+                    sim += 0.25
+
+                scored_entries.append((sim, idx, entry, is_solved))
+
+            if prioritization == "balanced" and max_entries >= 2:
+                # Select a balanced mix of best-matching successes and best-matching failures
+                successes = sorted([e for e in scored_entries if e[3]], key=lambda x: x[0], reverse=True)
+                failures = sorted([e for e in scored_entries if not e[3]], key=lambda x: x[0], reverse=True)
+
+                half = max_entries // 2
+                chosen = successes[:half] + failures[:(max_entries - half)]
+                # If one category doesn't have enough entries, fill with the other
+                if len(chosen) < max_entries:
+                    remaining = [e for e in sorted(scored_entries, key=lambda x: x[0], reverse=True) if e not in chosen]
+                    chosen += remaining[:(max_entries - len(chosen))]
+                chosen.sort(key=lambda x: x[0], reverse=True)
+                return [c[2] for c in chosen[:max_entries]]
+
+            # Standard similarity rank
+            scored_entries.sort(key=lambda x: x[0], reverse=True)
+            return [e[2] for e in scored_entries[:max_entries]]
+
+        except Exception as e:
+            # Fallback to recent entries if vectorization fails
+            return entries[-max_entries:]
+
+    @classmethod
+    def load_memory(
+        cls,
+        max_entries: int = 5,
+        query: str | None = None,
+        strategy: str = "similarity_search",
+        prioritization: str = "balanced",
+        memory_file: str = MEMORY_FILE
+    ) -> str:
+        """
+        Retrieves relevant memory passages.
+        If query is provided and strategy in ('similarity_search', 'vector', 'failure_focused'),
+        uses semantic vector search. Otherwise falls back to recent entries.
+        """
+        if not os.path.exists(memory_file):
             return ""
 
-        with open(MEMORY_FILE, "r", encoding="utf-8") as f:
-            lines = [line for line in f.readlines() if not line.startswith("# SOURCE_REPORT:")]
+        strat = (strategy or "").lower()
+        if query and strat in ("similarity_search", "vector", "failure_focused"):
+            selected = cls.search_memory(
+                query,
+                max_entries=max_entries,
+                prioritization=prioritization,
+                memory_file=memory_file
+            )
+        else:
+            entries = cls.parse_memory_entries(memory_file=memory_file)
+            if not entries or max_entries == 0:
+                return "\n---\n".join(entries)
+            selected = entries[-max_entries:]
 
-        full_text = "".join(lines).strip()
+        return "\n---\n".join(selected)
 
-        if not full_text or max_entries == 0:
-            return full_text
-
-        raw_segments = full_text.split("---")
-        entries = [seg.strip() for seg in raw_segments if seg.strip()]
-
-        recent = entries[-max_entries:]
-
-        return "\n---\n".join(recent)

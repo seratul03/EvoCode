@@ -108,7 +108,8 @@ class MutatorAgent:
         Injects global agent memory so the mutator can draw on historical lessons.
         """
         memory_section = ""
-        recent_memory = MemoryHistorianAgent.load_memory(max_entries=5)
+        fail_query = f"{diagnosis.get('primary_failure', '')} {' '.join(diagnosis.get('code_issues', []))}"
+        recent_memory = MemoryHistorianAgent.load_memory(max_entries=5, query=fail_query, prioritization="failures")
         if recent_memory:
             memory_section = (
                 "\n\nGLOBAL AGENT MEMORY (Lessons from past runs — use these to guide your mutation):\n"

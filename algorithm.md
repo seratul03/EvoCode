@@ -18,10 +18,11 @@ Each agent in the population attempts to solve the given programming problem. Th
 
 ### 2.3 Evaluation (Fitness Scoring)
 Solutions are not simply graded on a Pass/Fail binary. They are executed inside a secure Docker **Sandbox** and assigned a quantitative **Fitness Score** based on multiple dimensions:
-*   **Correctness (Test Cases):** Percentage of unit tests passed.
-*   **AST Complexity:** Static analysis of the Abstract Syntax Tree (cyclomatic complexity, nesting depth).
-*   **Execution Time:** Runtime efficiency of the solution.
-*   **Memory Usage:** Resource constraints during execution.
+*   **Correctness (Test Cases):** Percentage of unit tests passed (strict multiplicative gate: 0 tests passed = 0.0 fitness).
+*   **AST & Cyclomatic Complexity:** Static analysis of the Abstract Syntax Tree using `lizard` across Python, Java, and C++, with lexical decision-point fallback counting branches (`if`, `for`, `while`, `case`, `catch`, `&&`, `||`, `?`).
+*   **Defensive Robustness:** Language-tailored defensive programming detection (`try/catch`, `null`, `nullptr`, `NULL`, `empty()`, `isEmpty()`).
+*   **Execution Time:** Runtime efficiency relative to population boundaries.
+*   **Memory Usage:** Resource constraints and peak memory footprint during execution.
 
 ### 2.4 Selection & Crossover
 After evaluation, the population is ranked.
@@ -31,13 +32,14 @@ After evaluation, the population is ranked.
 ---
 
 ## 3. Specialized Multi-Agent Collaboration
-Instead of relying on a monolithic prompt, the algorithm distributes cognitive load across a pipeline of specialized agents.
+Instead of relying on a monolithic prompt, the algorithm distributes cognitive load across a pipeline of specialized agents:
 
-1.  **The Architect:** Analyzes the problem and proposes a high-level structural design.
-2.  **The Generator:** Takes the Architect's design and writes the initial source code.
-3.  **The Reviewer:** Critiques the generated code for edge cases and logic flaws.
-4.  **The Optimizer:** Refactors the code for performance and readability.
-5.  **The BugFixer:** Triggered *only* if the Sandbox detects a runtime or logical error. It reads the stack trace and patches the code.
+1.  **The TemplateAgent:** Produces clean, polyglot starter scaffolds and entry points for Python, Java, and C++.
+2.  **The Architect:** Analyzes problem constraints and time/space complexity to formulate an algorithmic plan.
+3.  **The Generator:** Translates the Architect's plan and relevant vector memory passages into executable source code.
+4.  **The Reviewer:** Inspects candidate code prior to execution for subtle edge cases, off-by-one errors, or constraint violations.
+5.  **The BugFixer:** Triggered *only* when the Sandbox detects a runtime crash, timeout, or failed test. Parses compiler and runtime stack traces to apply surgical patches.
+6.  **The Optimizer:** Triggered *only* when code passes 100% of the tests. Refactors for cyclomatic complexity, memory footprint, and execution speed without breaking functional correctness.
 
 ---
 
@@ -49,10 +51,14 @@ Safety and determinism are enforced by the **Sandbox Engine**.
 ---
 
 ## 5. Memory & Knowledge Synthesis
-EvoGenesis is designed to learn over time across multiple runs.
-*   **Structured Reports:** Every generation produces a structured JSON report detailing the problem, the code, the fitness score, and the exact errors encountered.
-*   **Memory Historian:** Periodically, the algorithm aggregates all structured reports and synthesizes them into "Insights" (e.g., "The model consistently struggles with dynamic programming array bounds").
-*   **Feedback Loop:** These synthesized insights are loaded at runtime and injected into the system prompts of the Generator and Reviewer, effectively giving the algorithm long-term memory without requiring model fine-tuning.
+EvoGenesis is designed to learn over time across multiple runs without fine-tuning:
+*   **Structured Reports:** Every generation produces a structured JSON report detailing the problem, the code, the fitness score, mutations, and the exact errors encountered.
+*   **Memory Historian:** Distills reports into structured memory passages and indexes them for vector search.
+*   **Semantic Vector Retrieval:** Uses TF-IDF unigram+bigram representations and cosine similarity to match current problem descriptions against historical experiences.
+*   **Prioritization Dynamics:**
+    - `balanced`: Blends successful implementation strategies with failure warnings.
+    - `successes`: High-fitness exemplars prioritized for initial code generation.
+    - `failures`: Failure modes and crash patterns prioritized for mutation and debugging.
 
 ---
 
@@ -60,16 +66,18 @@ EvoGenesis is designed to learn over time across multiple runs.
 The most advanced layer of the algorithm is its ability to upgrade its own source code when performance degrades.
 
 ### 6.1 The Watcher
-Continuously monitors the rolling success rate of specific AI agents (e.g., `generator.py`). If the success rate drops below a defined threshold, Meta-Evolution is triggered.
+Continuously monitors the rolling success rate across any agent (`generator.py`, `architect.py`, `reviewer.py`, `optimizer.py`, `bugfixer.py`, `template.py`). If the success rate drops below 50%, an `UpgradeTrigger` is emitted.
 
 ### 6.2 The CloneBuilder
-Rather than blindly rewriting the entire agent, the CloneBuilder extracts specific target methods (using Python `ast`). It spawns parallel LLM "Architect" agents to propose targeted patches to the method, dramatically reducing hallucination risks and generation time.
+Rather than blindly rewriting an entire file, the CloneBuilder extracts specific target methods (`plan`, `review`, `optimize`, `fix`, `_build_system_prompt`, `generate`) using Python `ast`. It spawns parallel LLM "Architect" agents to propose targeted patches to the method, dramatically reducing hallucination risks and generation time.
 
 ### 6.3 The SourceJudge
 The proposed patches are reviewed by a panel of LLM judges that vote on the best implementation based on prompt engineering best practices and error-handling robustness.
 
 ### 6.4 The Referee (Static Safety Gate)
-A hardcoded, non-LLM safety layer. The Referee parses the winning patch and blocks it if it contains syntax errors, disallowed imports, or attempts to modify restricted files. This ensures the system cannot irreparably corrupt itself.
+A hardcoded, non-LLM safety layer. The Referee parses the winning patch and blocks it if it contains syntax errors, disallowed imports (`requests`, `urllib`), or attempts to modify restricted files (`system_guard.py`, `sandbox.py`, `evoflow.py`). This ensures the system cannot irreparably corrupt itself.
 
 ### 6.5 The MetaArena (Rigorous Duel)
-The surviving patch (Challenger) is pitted against the original source code (Original) in a rigorous, isolated **Duel**. Instead of a simple baseline script, the Arena executes a fast-tracked slice of the 100-problem `benchmark_suite.json` using the full autonomous pipeline. Both versions are graded on normalized runtime, memory, and correctness fitness scores. If the Challenger achieves a higher normalized fitness score, it atomically replaces the Original file. If there is a tie or degradation, the system safely rolls back. The system has successfully evolved itself.
+The surviving patch (Challenger) is pitted against the original source code (Original) in an isolated subprocess **Fast Duel** on the benchmark suite. Candidates are evaluated on normalized duel fitness:
+$$\text{Score} = \text{clamp}_{[0, 1]}\left(0.45 \cdot \text{Mean Fitness} + 0.35 \cdot \text{Max Fitness} + 0.20 \cdot \text{Correctness Rate} - 0.10 \cdot \text{Crash Rate}\right)$$
+If the Challenger achieves a higher normalized fitness score, it atomically replaces the Original file. If there is a tie or degradation, the system safely rolls back. The system has successfully evolved itself.

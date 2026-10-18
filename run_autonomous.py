@@ -227,6 +227,9 @@ async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
                                   disable_critic: bool = False,
                                   disable_property_testing: bool = False,
                                   disable_mutation: bool = False,
+                                  disable_architect: bool = False,
+                                  disable_reviewer: bool = False,
+                                  disable_optimizer: bool = False,
                                   baseline: str = "none",
                                   pop_size: int = 3):
     print("=" * 60)
@@ -325,7 +328,10 @@ async def run_autonomous_pipeline(n_runs: int, n_gens: int, memory_only: bool,
                 single_agent_mode=single_agent_mode,
                 disable_critic=disable_critic,
                 disable_property_testing=disable_property_testing,
-                disable_mutation=disable_mutation
+                disable_mutation=disable_mutation,
+                enable_architect=not disable_architect,
+                enable_reviewer=not disable_reviewer,
+                enable_optimizer=not disable_optimizer
             )
             await orchestrator.run_generations(
                 num_generations=actual_n_gens,
@@ -490,6 +496,21 @@ if __name__ == "__main__":
         help="Disable the MutatorAgent during crossover (parents are cloned exactly). Used for ablation."
     )
     parser.add_argument(
+        "--disable-architect",
+        action="store_true",
+        help="Disable the ArchitectAgent pre-generation planning. Used for ablation."
+    )
+    parser.add_argument(
+        "--disable-reviewer",
+        action="store_true",
+        help="Disable the ReviewerAgent pre-execution static review. Used for ablation."
+    )
+    parser.add_argument(
+        "--disable-optimizer",
+        action="store_true",
+        help="Disable the OptimizerAgent post-correctness refinement. Used for ablation."
+    )
+    parser.add_argument(
         "--dataset",
         type=str,
         default=None,
@@ -535,6 +556,9 @@ if __name__ == "__main__":
         disable_critic=args.disable_critic,
         disable_property_testing=args.disable_property_testing,
         disable_mutation=args.disable_mutation,
+        disable_architect=args.disable_architect,
+        disable_reviewer=args.disable_reviewer,
+        disable_optimizer=args.disable_optimizer,
         baseline=args.baseline,
         pop_size=args.pop_size
     ))

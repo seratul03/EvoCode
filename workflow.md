@@ -26,32 +26,35 @@ The primary operational mode for EvoCode is autonomous execution, managed by `ru
 
 For each specific problem, the core evolutionary loop (EvoFlow) is executed:
 
-1. **Architect Phase:** The `ArchitectAgent` reviews the problem and writes a high-level solution design.
-2. **Generation Phase:** The `GeneratorAgent` translates the architectural design into Python, Java, or C++ source code based on its Genome parameters. Memory Insights from past successful runs are injected into the prompt.
-3. **Review Phase:** The `ReviewerAgent` analyzes the code for logical errors before execution.
-4. **Optimization Phase:** The `OptimizerAgent` refines the code for peak efficiency and readability.
-5. **Execution (Sandbox):** The code is sent to the Docker Sandbox. It runs against generated test cases and ephemeral property tests. Telemetry (execution time, memory peak, AST complexity) is recorded.
-6. **BugFixing (Conditional):** If the Sandbox throws a runtime error or fails a test, the `BugFixerAgent` reads the stack trace and attempts a patch.
-7. **Fitness Scoring & Evolution:** The `FitnessScorer` evaluates the final codebase. Elites are kept, and lower performers are replaced via crossover and mutation for the next generation.
+1. **Template Phase:** The `TemplateAgent` generates polyglot function scaffolds and signatures for Python, Java, and C++.
+2. **Architect Phase:** The `ArchitectAgent` reviews the problem and writes a high-level solution blueprint (algorithmic choice, edge cases, time/space targets).
+3. **Generation Phase:** The `GeneratorAgent` translates the architectural design into Python, Java, or C++ source code. Contextual memories matched via semantic vector search are injected into the prompt.
+4. **Review Phase:** The `ReviewerAgent` analyzes the code for potential logical errors, off-by-one errors, and constraint violations prior to execution.
+5. **Execution (Sandbox):** The code is sent to the Docker Sandbox. It runs against generated test cases and ephemeral property tests. Telemetry (execution time, peak memory, compiler/runtime errors) is recorded.
+6. **BugFixing (Conditional):** If the Sandbox throws a runtime error or fails a test, the `BugFixerAgent` reads the compiler/runtime stack trace and attempts a surgical repair.
+7. **Optimization (Conditional):** If the code passes 100% of the tests, the `OptimizerAgent` refactors the solution for cyclomatic complexity, memory usage, and runtime without breaking correctness.
+8. **Fitness Scoring & Evolution:** The `FitnessScorer` evaluates the final codebase across correctness and quality metrics (using `lizard` for polyglot AST/cyclomatic complexity). Elites are kept, and survivors undergo crossover and mutation for the next generation.
 
 ---
 
 ## 🧠 3. Memory Synthesis Phase
 
-At the conclusion of the generation cycles, EvoCode compiles its learnings.
+At the conclusion of the generation cycles, EvoCode compiles its learnings:
 
-1. **Structured Reports:** The entire run's data is dumped into JSON reports.
-2. **Historian Agent:** The `MemoryHistorianAgent` reads all unprocessed reports and extracts core strategies, common pitfalls, and successful patterns.
-3. **Vector Storage:** These insights are appended to the `agent_memory.md` file, acting as long-term memory for future generations.
+1. **Structured Reports:** The entire run's data is dumped into JSON reports in `structured_reports/`.
+2. **Historian Agent:** The `MemoryHistorianAgent` reads all unprocessed reports and distills core strategies, common pitfalls, and successful patterns.
+3. **Vector Memory Storage:** These insights are appended to `memory/agent_memory.txt`. Future generations retrieve relevant passages via TF-IDF cosine vector search with multi-objective experience prioritization (`balanced`, `successes`, `failures`).
 
 ---
 
 ## 🤖 4. Meta-Evolution Phase
 
-After memory is synthesized, the system checks if it needs to evolve its own source code.
+After memory is synthesized, the system checks if it needs to evolve its own source code:
 
-1. **Watcher:** The `Watcher` reads the rolling success rates of core agents (e.g., `generator.py`). If the success rate is below 50% across the defined window, Meta-Evolution triggers.
-2. **CloneBuilder:** The `CloneBuilder` uses AST parsing to extract the failing method from the agent's Python file. It spawns two LLM Architects to propose targeted patches.
-3. **SourceJudge:** Two LLM Judges vote on the best proposed patch.
-4. **Referee:** The winning patch is statically analyzed by the `Referee` to ensure no syntax errors or unauthorized imports exist.
-5. **MetaArena Duel:** The original agent and the newly patched agent fight in a real, rigorous competition by running `run_autonomous.py` against a subset of the 100-problem `benchmark_suite.json`. If the Challenger achieves a higher normalized fitness score, it atomically overwrites the original source code. If it ties or loses, a strict rollback occurs to guarantee system stability.
+1. **Watcher:** The `Watcher` reads rolling success rates across any agent (`generator.py`, `architect.py`, `reviewer.py`, `optimizer.py`, `bugfixer.py`, `template.py`). If the success rate is below 50% across the defined window, Meta-Evolution triggers.
+2. **CloneBuilder:** The `CloneBuilder` dynamically locates and extracts the target method from the agent's Python file using AST parsing. It spawns two LLM calls to propose targeted patches.
+3. **SourceJudge:** LLM Judges vote on the best proposed patch.
+4. **Referee:** The winning patch is statically analyzed by the `Referee` to ensure no syntax errors, banned imports, or unauthorized writes exist.
+5. **MetaArena Duel:** The original agent and the newly patched challenger compete in isolated subprocesses on the benchmark suite. The winner is decided by normalized duel fitness:
+   $$\text{Score} = \text{clamp}_{[0, 1]}\left(0.45 \cdot \text{Mean Fitness} + 0.35 \cdot \text{Max Fitness} + 0.20 \cdot \text{Correctness Rate} - 0.10 \cdot \text{Crash Rate}\right)$$
+   If the Challenger achieves a higher normalized fitness score, it atomically overwrites the original source code. If it ties or loses, a strict rollback occurs to guarantee system stability.

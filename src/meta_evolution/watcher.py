@@ -28,7 +28,21 @@ LOCKED_FILES = {
 
 UPGRADEABLE_AGENTS = [
     "generator.py",
+    "architect.py",
+    "reviewer.py",
+    "optimizer.py",
+    "bugfixer.py",
+    "template.py",
 ]
+
+AGENT_TARGET_METHODS = {
+    "generator.py": "_build_system_prompt",
+    "architect.py": "plan",
+    "reviewer.py": "review",
+    "optimizer.py": "optimize",
+    "bugfixer.py": "fix",
+    "template.py": "generate",
+}
 
 
 @dataclass
@@ -37,8 +51,9 @@ class UpgradeTrigger:
     agent_file: str
     agent_name: str
     rolling_success_rate: float
-    window_size: int
-    consecutive_upgrade_failures: int
+    window_size: int = 10
+    consecutive_upgrade_failures: int = 0
+    target_method: str = "_build_system_prompt"
 
 
 class Watcher:
@@ -110,7 +125,7 @@ class Watcher:
             return 1.0
         return solved / total
 
-    def check(self) -> Optional[UpgradeTrigger]:
+    def check(self, target_agent: Optional[str] = None) -> Optional[UpgradeTrigger]:
         """
         Run a health check. Returns an UpgradeTrigger if performance is below
         threshold, or None if everything is fine.
@@ -125,7 +140,9 @@ class Watcher:
         rate = self._compute_success_rate(reports)
         print(f"[Watcher] Rolling success rate (last {len(reports)} reports): {rate:.1%}")
 
-        for agent_file in UPGRADEABLE_AGENTS:
+        candidates = [target_agent] if target_agent else UPGRADEABLE_AGENTS
+
+        for agent_file in candidates:
             failures = self._consecutive_failures.get(agent_file, 0)
 
             if failures >= self.max_failures:
@@ -138,10 +155,11 @@ class Watcher:
             if rate < self.threshold:
                 agent_name = agent_file.replace(".py", "")
                 full_path = os.path.join("src", "agents", agent_file)
+                target_method = AGENT_TARGET_METHODS.get(agent_file, "_build_system_prompt")
 
                 print(
                     f"[Watcher] SUCCESS RATE {rate:.1%} < THRESHOLD {self.threshold:.1%}. "
-                    f"Triggering upgrade for: {full_path}"
+                    f"Triggering upgrade for: {full_path} (target_method: {target_method})"
                 )
                 return UpgradeTrigger(
                     agent_file=full_path,
@@ -149,6 +167,7 @@ class Watcher:
                     rolling_success_rate=rate,
                     window_size=len(reports),
                     consecutive_upgrade_failures=failures,
+                    target_method=target_method,
                 )
 
         return None

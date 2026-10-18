@@ -62,23 +62,29 @@ class CloneBuilder:
         with open(trigger.agent_file, "r", encoding="utf-8") as f:
             original_source = f.read()
 
-        target_method_source = self._extract_method(original_source, TARGET_METHOD)
+        target_method = getattr(trigger, "target_method", None)
+        if not target_method:
+            from src.meta_evolution.watcher import AGENT_TARGET_METHODS
+            target_method = AGENT_TARGET_METHODS.get(f"{trigger.agent_name}.py", TARGET_METHOD)
+        target_method = self._resolve_target_method(original_source, target_method)
+
+        target_method_source = self._extract_method(original_source, target_method)
         if not target_method_source:
-            print(f"[CloneBuilder] WARNING: Could not extract '{TARGET_METHOD}'. Using full file approach.")
+            print(f"[CloneBuilder] WARNING: Could not extract '{target_method}'. Using full file approach.")
             target_method_source = original_source
 
-        user_prompt = self._build_user_prompt(trigger, target_method_source)
+        user_prompt = self._build_user_prompt(trigger, target_method_source, target_method)
 
-        print(f"[CloneBuilder] Spawning 2 Architect agents for '{trigger.agent_name}.{TARGET_METHOD}'...")
+        print(f"[CloneBuilder] Spawning 2 Architect agents for '{trigger.agent_name}.{target_method}'...")
         print(f"[CloneBuilder] Sending {len(target_method_source)} chars to each architect (~15-30s)...")
 
         proposal_a_method, proposal_b_method = await asyncio.gather(
-            self._call_architect(user_prompt, architect_id=1),
-            self._call_architect(user_prompt, architect_id=2),
+            self._call_architect(user_prompt, architect_id=1, target_method=target_method),
+            self._call_architect(user_prompt, architect_id=2, target_method=target_method),
         )
 
-        patched_a = self._apply_patch(original_source, TARGET_METHOD, proposal_a_method)
-        patched_b = self._apply_patch(original_source, TARGET_METHOD, proposal_b_method)
+        patched_a = self._apply_patch(original_source, target_method, proposal_a_method)
+        patched_b = self._apply_patch(original_source, target_method, proposal_b_method)
 
         path_a = os.path.join(STAGING_DIR, f"{trigger.agent_name}_proposal_a.py")
         path_b = os.path.join(STAGING_DIR, f"{trigger.agent_name}_proposal_b.py")
@@ -91,7 +97,21 @@ class CloneBuilder:
         print(f"[CloneBuilder] Proposals saved -> {path_a}, {path_b}")
         return path_a, path_b
 
-    async def _call_architect(self, user_prompt: str, architect_id: int) -> str:
+    def _resolve_target_method(self, source: str, preferred: str) -> str:
+        """Finds preferred method in source; if not found, locates the primary callable method."""
+        if self._extract_method(source, preferred):
+            return preferred
+        try:
+            tree = ast.parse(source)
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    if not node.name.startswith("__"):
+                        return node.name
+        except Exception:
+            pass
+        return preferred
+
+    async def _call_architect(self, user_prompt: str, architect_id: int, target_method: str = TARGET_METHOD) -> str:
         print(f"[CloneBuilder] Architect {architect_id} thinking...")
         try:
             response = await asyncio.wait_for(
@@ -107,17 +127,17 @@ class CloneBuilder:
         except asyncio.TimeoutError:
             print(f"[CloneBuilder] Architect {architect_id} timed out. Using original method.")
             return self._extract_method(
-                open(self._original_path).read(), TARGET_METHOD
+                open(self._original_path, encoding="utf-8").read(), target_method
             ) or ""
         code = self._clean_output(response["content"])
         print(f"[CloneBuilder] Architect {architect_id} done ({len(code)} chars).")
         return code
 
-    def _build_user_prompt(self, trigger: UpgradeTrigger, method_source: str) -> str:
+    def _build_user_prompt(self, trigger: UpgradeTrigger, method_source: str, target_method: str = TARGET_METHOD) -> str:
         return (
             f"The agent '{trigger.agent_name}' has a rolling success rate of "
             f"{trigger.rolling_success_rate:.1%} — it needs improvement.\n\n"
-            f"Here is the '{TARGET_METHOD}' method you must improve:\n\n"
+            f"Here is the '{target_method}' method you must improve:\n\n"
             f"{method_source}\n\n"
             f"Return ONLY the improved method body with the same def signature. "
             f"No markdown, no explanations."

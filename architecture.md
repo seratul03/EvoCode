@@ -32,27 +32,34 @@ EvoCode is an orchestration of specialized systems working in tandem to produce,
 The system enforces a rigorous 4-layer evaluation protocol to ensure code correctness and robustness:
 
 1. **Layer 1: The Base Tests**
-   - The predefined static input/output test cases provided in the JSON problem definition.
+   - Predefined static input/output test cases provided in the JSON problem definition.
 2. **Layer 2: Property-Based Ephemeral Tests**
-   - Dynamically generated random inputs on the fly.
+   - Dynamically generated random inputs on the fly to test boundaries and prevent overfitting.
 3. **Layer 3: Multiplicative Fitness & Viability Gate**
-   - **Layer 3A (Viability Gate):** Total failures are eliminated from the breeding pool.
-   - **Layer 3B (Multiplicative Fitness):** The `FitnessScorer` calculates `Correctness Rate × Quality Score` (evaluating AST complexity, cyclomatic complexity heuristics, execution time, and memory).
+   - **Layer 3A (Viability Gate):** Total failures (zero tests passed) receive an unconditional fitness of `0.0` and are eliminated from breeding.
+   - **Layer 3B (Multiplicative Fitness):** The `FitnessScorer` calculates:
+     $$\text{Fitness} = \text{Correctness Rate} \times \text{Quality Score}$$
+     $$\text{Quality Score} = 0.30 \cdot \text{Runtime} + 0.20 \cdot \text{Memory} + 0.20 \cdot \text{Efficiency} + 0.20 \cdot \text{Complexity} + 0.10 \cdot \text{Robustness}$$
+     - **Polyglot Complexity Evaluator:** Uses `lizard` to parse and compute AST/cyclomatic complexity across Python, Java, and C++, with a fallback decision-point counter (`if`, `for`, `while`, `case`, `catch`, `&&`, `||`, `?`).
+     - **Polyglot Robustness Evaluator:** Detects defensive error handling and null checks across languages (`try/catch`, `null`, `nullptr`, `NULL`, `empty()`, `isEmpty()`).
 4. **Layer 4: Held-Out Evaluation (Validation)**
-   - The logical verification of sandbox results to catch unhandled edge cases missed by tests.
+   - Verification against a separate held-out test suite (`data/test_problems.json`) to quantify the generalization gap between train and test sets.
 
 ---
 
 ## 🧬 The Co-Evolutionary Agent Framework
 
-The EvoGenesis algorithm models a genetic algorithm where the "DNA" is the prompt engineering configuration. Each agent is driven by a Pydantic "Genome".
+The EvoGenesis algorithm models a genetic algorithm where the "DNA" is the prompt engineering configuration. Each agent is driven by a Pydantic `AgentGenome` with tunable hyper-parameters (temperature, prompt styles, reasoning styles, memory retrieval strategies).
 
-### Agent Behaviors
-- **Architect:** Analyzes the problem and proposes a high-level structural design.
-- **Generator:** Translates the design into source code based on genome settings (e.g., if `prompt_style == "chain_of_thought"`).
-- **Reviewer:** Critiques the generated code.
-- **Optimizer:** Refactors for performance and readability.
-- **BugFixer:** Triggered *only* if the Sandbox detects a runtime or logical error. It reads the stack trace and patches the code.
+### Full Agency Lifecycle
+The multi-agent pipeline operates in a sequential, cooperating agency cycle:
+1. **TemplateAgent:** Generates clean, language-specific scaffolding for the problem (Python function headers, Java `Solution` classes, C++ headers).
+2. **ArchitectAgent:** Examines problem constraints and decomposes requirements into an algorithmic blueprint (data structures, edge case hazards, time/space complexity goals).
+3. **GeneratorAgent:** Translates the Architect's plan and relevant historical vector memory into full implementation code.
+4. **ReviewerAgent:** Pre-execution critique. Validates syntax, edge cases, loop terminations, and potential off-by-one errors before any execution occurs.
+5. **Sandbox Execution:** Runs code in the isolated Docker container.
+6. **BugFixerAgent:** Triggered *only* when the Sandbox detects runtime errors, syntax crashes, or test failures. Parses compiler/runtime stack traces and surgically fixes the code.
+7. **OptimizerAgent:** Triggered *only* when the code successfully passes 100% of the tests. Refactors the code for reduced cyclomatic complexity, improved runtime, and lower memory footprint without compromising correctness.
 
 ---
 
@@ -83,22 +90,28 @@ Executing AI-generated code on a host machine is a severe security risk. EvoCode
 
 ## 🧠 Historical Memory Synthesis
 
-EvoCode learns over time.
-1. **Structured Reports:** Every generation produces a JSON report detailing the code, fitness score, and errors.
-2. **Memory Historian:** Aggregates reports and synthesizes them into actionable "Insights".
-3. **Feedback Loop:** These synthesized insights are injected into the system prompts of future Generations, effectively giving the algorithm long-term memory without requiring model fine-tuning.
+EvoCode continuously learns from experience without requiring expensive model fine-tuning:
+1. **Structured Reports:** Every generation outputs a structured JSON report detailing code, fitness breakdown, mutations, and error logs.
+2. **Memory Historian:** Distills raw reports into readable memory entries tagged with problem context, results, and actionable lessons learned.
+3. **Semantic Vector Retrieval:** Uses scikit-learn `TfidfVectorizer` (unigrams + bigrams) and cosine similarity to search memory passages by problem context.
+4. **Experience Prioritization:**
+   - `"balanced"`: Equal distribution of best matching successes and failures.
+   - `"successes"`: Prioritizes proven working patterns for code generation.
+   - `"failures"`: Prioritizes bug traps and anti-patterns for mutation and debugging.
 
 ---
 
 ## 🤖 Meta-Evolution Engine
 
-EvoCode can upgrade its own source code when performance degrades.
+EvoCode can rewrite and evolve its own Python source files when performance degrades:
 
-1. **The Watcher:** Monitors rolling success rates of agents.
-2. **The CloneBuilder:** Extracts specific methods using AST and spawns LLMs to propose targeted patches (minimizing hallucination).
-3. **The SourceJudge:** Panel of LLM judges vote on the best patch based on prompt engineering best practices.
-4. **The Referee:** Static safety gate that blocks patches with syntax errors, bad imports, or unauthorized file access.
-5. **The MetaArena:** A rigorous "Fast Duel" pitting the surviving patch against the original source code. Instead of a lightweight mock script, the Arena executes a fast-tracked slice of the 100-problem `benchmark_suite.json` via `run_autonomous.py`. The winner is atomically promoted based on normalized fitness scores, with a strict rollback protocol if a tie occurs.
+1. **The Watcher:** Tracks rolling success rates across any agent (`generator.py`, `architect.py`, `reviewer.py`, `optimizer.py`, `bugfixer.py`, `template.py`). If the rate drops below 50%, an `UpgradeTrigger` is emitted.
+2. **The CloneBuilder:** Uses Python `ast` to dynamically locate and extract the target method (`plan`, `review`, `optimize`, `fix`, `_build_system_prompt`, `generate`). Spawns parallel LLM calls to propose two alternative rewritten implementations.
+3. **The SourceJudge:** Panel of LLM judges evaluates the candidates and votes on the best proposal.
+4. **The Referee:** Static analysis AST gate that verifies Python syntax, blocks dangerous imports (`requests`, `urllib`), and prevents modification of locked infrastructure files (`system_guard.py`, `sandbox.py`, `evoflow.py`).
+5. **The MetaArena:** Fast Duel validation. The surviving candidate is tested against the original in an isolated subprocess. Winners are decided by normalized duel fitness:
+   $$\text{Score} = \text{clamp}_{[0, 1]}\left(0.45 \cdot \text{Mean Fitness} + 0.35 \cdot \text{Max Fitness} + 0.20 \cdot \text{Correctness Rate} - 0.10 \cdot \text{Crash Rate}\right)$$
+   If the challenger wins, it is atomically promoted to overwrite the original agent file; otherwise, the original is retained and the staging directory is cleared.
 
 ---
 
