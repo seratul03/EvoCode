@@ -306,9 +306,55 @@ class MemoryHistorianAgent:
             scored_entries.sort(key=lambda x: x[0], reverse=True)
             return [e[2] for e in scored_entries[:max_entries]]
 
-        except Exception as e:
-            # Fallback to recent entries if vectorization fails
+        except Exception:
+            return cls._pure_python_search(entries, query, max_entries, prioritization)
+
+    @classmethod
+    def _pure_python_search(cls, entries: list[str], query: str, max_entries: int, prioritization: str) -> list[str]:
+        """Pure-Python word vector cosine similarity search fallback when scikit-learn is unavailable."""
+        import re
+        import math
+        from collections import Counter
+
+        def tokenize(text: str) -> list[str]:
+            return [w for w in re.findall(r"\b\w+\b", text.lower()) if len(w) > 2]
+
+        query_tokens = tokenize(query)
+        if not query_tokens:
             return entries[-max_entries:]
+
+        q_counter = Counter(query_tokens)
+        q_norm = math.sqrt(sum(v * v for v in q_counter.values())) or 1.0
+
+        scored = []
+        for idx, entry in enumerate(entries):
+            e_tokens = tokenize(entry)
+            e_counter = Counter(e_tokens)
+            dot = sum(q_counter[w] * e_counter.get(w, 0) for w in q_counter)
+            e_norm = math.sqrt(sum(v * v for v in e_counter.values())) or 1.0
+            sim = dot / (q_norm * e_norm)
+
+            is_solved = "Result: SOLVED" in entry or "RESULT: SOLVED" in entry or "Result: Solved" in entry
+            if prioritization == "successes" and is_solved:
+                sim += 0.25
+            elif prioritization == "failures" and not is_solved:
+                sim += 0.25
+
+            scored.append((sim, idx, entry, is_solved))
+
+        if prioritization == "balanced" and max_entries >= 2:
+            successes = sorted([e for e in scored if e[3]], key=lambda x: x[0], reverse=True)
+            failures = sorted([e for e in scored if not e[3]], key=lambda x: x[0], reverse=True)
+            half = max_entries // 2
+            chosen = successes[:half] + failures[:(max_entries - half)]
+            if len(chosen) < max_entries:
+                remaining = [e for e in sorted(scored, key=lambda x: x[0], reverse=True) if e not in chosen]
+                chosen += remaining[:(max_entries - len(chosen))]
+            chosen.sort(key=lambda x: x[0], reverse=True)
+            return [c[2] for c in chosen[:max_entries]]
+
+        scored.sort(key=lambda x: x[0], reverse=True)
+        return [e[2] for e in scored[:max_entries]]
 
     @classmethod
     def load_memory(
